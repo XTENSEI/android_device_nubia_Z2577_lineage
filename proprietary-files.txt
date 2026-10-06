@@ -303,6 +303,10 @@ vendor/lib64/hw/fingerprint.silead.default.so
 vendor/lib64/libsl_fp_impl.so
 vendor/lib64/vendor.zte.hardware.fingerprint-V1-ndk.so
 
+# Gatekeeper
+vendor/bin/hw/android.hardware.gatekeeper@1.0-service.trusty
+vendor/lib64/android.hardware.gatekeeper@1.0.so
+
 # GNSS
 vendor/bin/gpsd
 vendor/bin/hw/vendor.sprd.hardware.gnss-service
@@ -324,6 +328,16 @@ vendor/etc/.tp/zte_battery_life.conf
 vendor/bin/hw/android.hardware.identity-service.trusty
 vendor/bin/hw/android.hardware.power.stats-service.example
 vendor/lib64/hw/local_time.default.so
+vendor/lib64/libeic_trusty.so
+
+# Keymint
+vendor/bin/hw/android.hardware.security.keymint@2.0-unisoc.service.trusty
+vendor/lib64/android.hardware.security.keymint-V1-ndk.so
+vendor/lib64/lib_android_keymaster_keymint_utils.so
+vendor/lib64/libkeymaster_messages.so
+vendor/lib64/libkeymaster_portable.so
+vendor/lib64/libkeymint.so
+vendor/lib64/libpuresoftkeymasterdevice.so
 
 # Media
 vendor/bin/hw/android.hardware.media.c2@1.1-unisoc-service
@@ -608,32 +622,15 @@ vendor/lib64/vendor.unisoc.hardware.radio.sim-V1-ndk.so
 vendor/lib64/vendor.unisoc.hardware.radio.voice-V1-ndk.so
 
 # Security
-vendor/bin/hw/android.hardware.gatekeeper@1.0-service.trusty
-vendor/bin/hw/android.hardware.security.keymint@2.0-unisoc.service.trusty
-vendor/bin/tee_rpc
 vendor/bin/ztekeys_client
 vendor/etc/client.crt
 vendor/etc/client_key.pem
-vendor/lib64/android.hardware.gatekeeper@1.0.so
-vendor/lib64/android.hardware.security.keymint-V1-ndk.so
 vendor/lib64/android.system.keystore2-V1-ndk.so
 vendor/lib64/android.system.wifi.keystore@1.0.so
-vendor/lib64/lib_android_keymaster_keymint_utils.so
-vendor/lib64/libeic_trusty.so
-vendor/lib64/libkernelbootcp.trusty.so
 vendor/lib64/libkey.so
-vendor/lib64/libkeymaster_messages.so
-vendor/lib64/libkeymaster_portable.so
-vendor/lib64/libkeymint.so
 vendor/lib64/libkeystore-engine-wifi-hidl.so
 vendor/lib64/libkeystore-wifi-hidl.so
-vendor/lib64/libpuresoftkeymasterdevice.so
 vendor/lib64/libsecure_backup_ca.so
-vendor/lib64/libteec.so
-vendor/lib64/libteecPlatform.so
-vendor/lib64/libteeproduction.so
-vendor/lib64/libtrusty.so
-vendor/lib64/libtrustyHalHelper.so
 vendor/lib64/libztekeys_ca_vendor.so
 vendor/lib64/libzteprodkeyauth.so
 vendor/lib64/oemlock_ca.so
@@ -674,6 +671,15 @@ vendor/etc/thermal_scene.xml
 vendor/lib64/android.hardware.thermal@1.0.so
 vendor/lib64/android.hardware.thermal@2.0.so
 vendor/lib64/hw/thermal.default.so
+
+# Trusty
+vendor/bin/tee_rpc
+vendor/lib64/libkernelbootcp.trusty.so
+vendor/lib64/libteec.so
+vendor/lib64/libteecPlatform.so
+vendor/lib64/libteeproduction.so
+vendor/lib64/libtrusty.so
+vendor/lib64/libtrustyHalHelper.so
 
 # USB
 vendor/bin/hw/android.hardware.usb-service.unisoc
