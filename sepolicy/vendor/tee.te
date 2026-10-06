@@ -5,3 +5,8 @@ allow tee ss_file:file create_file_perms;
 
 # tsupplicant
 allow tee vendor_tee_prop:property_service set;
+
+# Storage proxy
+allow tee mmcblk_device:chr_file rw_file_perms;
+allow tee rpmb_socket:sock_file rw_file_perms;
+allow tee vendor_storageproxyd_default_prop:property_service set;
