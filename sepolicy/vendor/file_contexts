@@ -21,3 +21,6 @@
 
 # Keymint
 /(vendor|system/vendor)/bin/hw/android\.hardware\.security\.keymint@2\.0-unisoc\.service\.trusty  u:object_r:hal_keymint_unisoc_exec:s0
+
+# Identity
+/(vendor|system/vendor)/bin/hw/android\.hardware\.identity-service\.trusty  u:object_r:hal_identity_default_exec:s0
