@@ -1,0 +1,2 @@
+# Gatekeeper
+allow hal_gatekeeper_default teetz_device:chr_file rw_file_perms;
