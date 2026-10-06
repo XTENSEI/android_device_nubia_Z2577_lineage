@@ -1,0 +1,8 @@
+# TEE
+/(vendor|system/vendor)/bin/tee_rpc                              u:object_r:tee_exec:s0
+/(vendor|system/vendor)/bin/tsupplicant                          u:object_r:tee_exec:s0
+/dev/trusty-ipc-dev0                                             u:object_r:teetz_device:s0
+/dev/tshm                                                        u:object_r:teetz_device:s0
+/dev/tui_dev                                                     u:object_r:teetz_device:s0
+/data/vendor/sprd_ss(/.*)?                                       u:object_r:ss_file:s0
+/data/vendor/sprd_tee_ss(/.*)?                                   u:object_r:ss_file:s0
