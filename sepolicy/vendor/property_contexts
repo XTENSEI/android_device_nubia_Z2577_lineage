@@ -1,2 +1,5 @@
+# Storage proxy
+vendor.sprd.storageproxyd.                    u:object_r:vendor_storageproxyd_default_prop:s0
+
 # TEE
 vendor.sprd.tsupplicant.                      u:object_r:vendor_tee_prop:s0

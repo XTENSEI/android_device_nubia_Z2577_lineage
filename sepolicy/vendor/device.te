@@ -1,2 +1,5 @@
 # TEE
 type teetz_device, dev_type;
+
+# Storage proxy
+type mmcblk_device, dev_type;
