@@ -8,3 +8,6 @@ $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 
 # Inherit from the Z2577 vendor blobs
 $(call inherit-product, vendor/nubia/Z2577/Z2577-vendor.mk)
+
+# APEX
+$(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
