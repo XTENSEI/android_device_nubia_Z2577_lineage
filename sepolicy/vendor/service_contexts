@@ -1,0 +1,2 @@
+# Trusty HAL
+vendor.sprd.hardware.trusty.ITrustyClientProvider/default  u:object_r:hal_trustyclientaidl_service:s0
