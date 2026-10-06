@@ -14,6 +14,28 @@ TARGET_CPU_VARIANT_RUNTIME := cortex-a75
 TARGET_SUPPORTS_32_BIT_APPS := false
 TARGET_SUPPORTS_64_BIT_APPS := true
 
+# A/B, virtual A/B with compressed snapshots
+AB_OTA_UPDATER := true
+AB_OTA_PARTITIONS += \
+    boot \
+    dtbo \
+    init_boot \
+    odm \
+    product \
+    system \
+    system_dlkm \
+    system_ext \
+    vendor \
+    vendor_boot \
+    vendor_dlkm \
+    vbmeta \
+    vbmeta_odm \
+    vbmeta_product \
+    vbmeta_system \
+    vbmeta_system_ext \
+    vbmeta_vendor
+BOARD_USES_METADATA_PARTITION := true
+
 # Dynamic partitions, values read with lpdump from the stock super.bin
 # The build appends the slot suffix, so the names are declared without it
 BOARD_SUPER_PARTITION_SIZE := 13690208256
