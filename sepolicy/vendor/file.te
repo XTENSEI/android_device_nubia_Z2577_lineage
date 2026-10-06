@@ -1,3 +1,8 @@
 # TEE
 type ss_file, file_type, data_file_type, mlstrustedobject;
 type rpmb_socket, file_type;
+
+# Sensors
+type sensorhub_data_file, file_type, data_file_type;
+type ps_sensor_file, file_type, sysfs_type;
+type sysfs_sensor, fs_type, sysfs_type;
