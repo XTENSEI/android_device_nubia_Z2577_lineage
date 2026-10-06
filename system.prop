@@ -1,0 +1,25 @@
+#
+# SPDX-FileCopyrightText: The Z2577 Project
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# Display
+ro.surface_flinger.game_default_frame_rate_override=60
+
+# Miscellaneous
+ro.config.vc_call_vol_steps=10
+ro.config.vc_call_vol_default=7
+ro.config.media_vol_steps=150
+ro.config.media_vol_default=70
+ro.config.alarm_vol_steps=15
+ro.config.alarm_vol_default=8
+ro.config.system_vol_steps=15
+ro.config.system_vol_default=6
+ro.config.ring_vol_steps=15
+ro.config.ring_vol_default=10
+ro.config.notify_vol_steps=15
+ro.config.notify_vol_default=6
+ro.support_one_handed_mode=true
+
+# Wi-Fi
+ro.wifi.channels=
