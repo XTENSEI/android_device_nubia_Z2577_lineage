@@ -1,0 +1,8 @@
+# Keymint
+type hal_keymint_unisoc, domain;
+hal_server_domain(hal_keymint_unisoc, hal_keymint)
+
+type hal_keymint_unisoc_exec, exec_type, vendor_file_type, file_type;
+init_daemon_domain(hal_keymint_unisoc)
+
+allow hal_keymint_unisoc teetz_device:chr_file rw_file_perms;
