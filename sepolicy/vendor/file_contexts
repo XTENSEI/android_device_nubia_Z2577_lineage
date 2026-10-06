@@ -12,3 +12,6 @@
 /dev/socket/rpmbserver                                           u:object_r:rpmb_socket:s0
 /data/vendor/sprd_ss(/.*)?                                       u:object_r:ss_file:s0
 /data/vendor/sprd_tee_ss(/.*)?                                   u:object_r:ss_file:s0
+
+# Trusty HAL
+/(vendor|system/vendor)/bin/hw/vendor\.sprd\.hardware\.trusty-service  u:object_r:hal_trustyclientaidl_default_exec:s0

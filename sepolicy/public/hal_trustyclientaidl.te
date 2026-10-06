@@ -1,0 +1,6 @@
+# Trusty HAL
+attribute hal_trustyclientaidl;
+attribute hal_trustyclientaidl_client;
+attribute hal_trustyclientaidl_server;
+
+type hal_trustyclientaidl_service, service_manager_type;
