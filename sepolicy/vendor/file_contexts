@@ -15,3 +15,6 @@
 
 # Trusty HAL
 /(vendor|system/vendor)/bin/hw/vendor\.sprd\.hardware\.trusty-service  u:object_r:hal_trustyclientaidl_default_exec:s0
+
+# Gatekeeper
+/(vendor|system/vendor)/bin/hw/android\.hardware\.gatekeeper@1\.0-service\.trusty  u:object_r:hal_gatekeeper_default_exec:s0
