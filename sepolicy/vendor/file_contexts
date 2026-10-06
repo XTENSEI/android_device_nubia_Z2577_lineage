@@ -18,3 +18,6 @@
 
 # Gatekeeper
 /(vendor|system/vendor)/bin/hw/android\.hardware\.gatekeeper@1\.0-service\.trusty  u:object_r:hal_gatekeeper_default_exec:s0
+
+# Keymint
+/(vendor|system/vendor)/bin/hw/android\.hardware\.security\.keymint@2\.0-unisoc\.service\.trusty  u:object_r:hal_keymint_unisoc_exec:s0
