@@ -6,3 +6,6 @@ type rpmb_socket, file_type;
 type sensorhub_data_file, file_type, data_file_type;
 type ps_sensor_file, file_type, sysfs_type;
 type sysfs_sensor, fs_type, sysfs_type;
+
+# Touch
+type thp_vendor_data_file, file_type, data_file_type, mlstrustedobject;
