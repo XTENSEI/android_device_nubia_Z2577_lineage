@@ -54,6 +54,11 @@ BOARD_KERNEL_PAGESIZE := 4096
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 BOARD_FLASH_BLOCK_SIZE := 262144
 
+# Kernel, the stock image ships as a prebuilt
+# prebuilts/kernel and prebuilts/dtb.img come out of the stock boot and vendor_boot
+TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilts/kernel
+BOARD_KERNEL_IMAGE_NAME := Image
+
 # Bootloader
 TARGET_NO_BOOTLOADER := true
 
