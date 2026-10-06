@@ -5,6 +5,15 @@
 
 DEVICE_PATH := device/nubia/Z2577
 
+# Architecture, arm64 only, no 32-bit runtime
+TARGET_ARCH := arm64
+TARGET_ARCH_VARIANT := armv8-a
+TARGET_CPU_ABI := arm64-v8a
+TARGET_CPU_VARIANT := generic
+TARGET_CPU_VARIANT_RUNTIME := cortex-a75
+TARGET_SUPPORTS_32_BIT_APPS := false
+TARGET_SUPPORTS_64_BIT_APPS := true
+
 # Dynamic partitions, values read with lpdump from the stock super.bin
 # The build appends the slot suffix, so the names are declared without it
 BOARD_SUPER_PARTITION_SIZE := 13690208256
