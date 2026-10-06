@@ -24,3 +24,8 @@
 
 # Identity
 /(vendor|system/vendor)/bin/hw/android\.hardware\.identity-service\.trusty  u:object_r:hal_identity_default_exec:s0
+
+# Sensors
+/mnt/vendor/sensorhub(/.*)?                                      u:object_r:sensorhub_data_file:s0
+/sys/class/sprd_sensorhub(/.*)?                                  u:object_r:sysfs_sensor:s0
+/sys/devices/virtual/misc/sprd_sensor(/.*)?                      u:object_r:ps_sensor_file:s0
