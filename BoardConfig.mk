@@ -57,7 +57,10 @@ BOARD_FLASH_BLOCK_SIZE := 262144
 # Kernel, the stock image ships as a prebuilt
 # prebuilts/kernel and prebuilts/dtb.img come out of the stock boot and vendor_boot
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilts/kernel
+TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilts/dtb.img
+BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilts/dtbo.img
 BOARD_KERNEL_IMAGE_NAME := Image
+BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
 
 # Bootloader
 TARGET_NO_BOOTLOADER := true
