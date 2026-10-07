@@ -1,3 +1,6 @@
+# Kernel modules
+vendor.all.modules.ready                      u:object_r:vendor_all_modules_ready_prop:s0
+
 # Storage proxy
 vendor.sprd.storageproxyd.                    u:object_r:vendor_storageproxyd_default_prop:s0
 

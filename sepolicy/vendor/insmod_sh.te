@@ -1,0 +1,27 @@
+# Kernel modules
+type insmod_sh, domain;
+type insmod_sh_exec, exec_type, vendor_file_type, file_type;
+init_daemon_domain(insmod_sh)
+
+allow insmod_sh insmod_sh:key write;
+allow insmod_sh kernel:key search;
+allow insmod_sh kernel:process setsched;
+allow insmod_sh self:global_capability_class_set { sys_module sys_nice };
+
+allow insmod_sh kmsg_device:chr_file w_file_perms;
+allow insmod_sh proc_cmdline:file r_file_perms;
+allow insmod_sh proc_modules:file r_file_perms;
+allow insmod_sh rootfs:dir r_dir_perms;
+allow insmod_sh vendor_shell_exec:file rx_file_perms;
+allow insmod_sh vendor_toolbox_exec:file execute_no_trans;
+
+# The modules sit on vendor_dlkm, which is labelled vendor_file
+allow insmod_sh system_file:system module_load;
+allow insmod_sh system_dlkm_file:system module_load;
+allow insmod_sh vendor_file:system module_load;
+allow insmod_sh vendor_kernel_modules:system module_load;
+
+r_dir_file(insmod_sh, system_dlkm_file)
+r_dir_file(insmod_sh, vendor_file)
+
+set_prop(insmod_sh, vendor_all_modules_ready_prop)

@@ -30,5 +30,8 @@
 /sys/class/sprd_sensorhub(/.*)?                                  u:object_r:sysfs_sensor:s0
 /sys/devices/virtual/misc/sprd_sensor(/.*)?                      u:object_r:ps_sensor_file:s0
 
+# Kernel modules
+/(vendor|system/vendor)/bin/init\.insmod\.sh                     u:object_r:insmod_sh_exec:s0
+
 # Touch
 /data/vendor/touchscreen(/.*)?                                   u:object_r:thp_vendor_data_file:s0
