@@ -68,6 +68,12 @@ BOARD_VENDOR_KERNEL_MODULES_LOAD := $(strip $(shell cat $(DEVICE_PATH)/prebuilts
 BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE := erofs
 TARGET_COPY_OUT_VENDOR_DLKM := vendor_dlkm
 
+# System dlkm, the stock GKI modules on their own partition
+BOARD_USES_SYSTEM_DLKMIMAGE := true
+TARGET_COPY_OUT_SYSTEM_DLKM := system_dlkm
+BOARD_SYSTEM_KERNEL_MODULES := $(wildcard $(DEVICE_PATH)/prebuilts/modules_system/*.ko)
+BOARD_SYSTEM_KERNEL_MODULES_LOAD := $(strip $(shell cat $(DEVICE_PATH)/prebuilts/modules_system/modules.load))
+
 # ODM image, its own partition, the odm blobs do not belong in the vendor image
 BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := erofs
 TARGET_COPY_OUT_ODM := odm
