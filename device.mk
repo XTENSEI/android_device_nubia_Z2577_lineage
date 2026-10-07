@@ -52,6 +52,12 @@ PRODUCT_PACKAGES += \
     android.hardware.fastboot@1.1-impl-mock \
     fastbootd
 
+# Kernel modules, the loader config and the boot mode lists
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/prebuilts/modules/init.insmod.cfg:vendor_dlkm/lib/modules/init.insmod.cfg \
+    $(LOCAL_PATH)/prebuilts/modules/modules.load.cali:vendor_dlkm/lib/modules/modules.load.cali \
+    $(LOCAL_PATH)/prebuilts/modules/modules.load.charger:vendor_dlkm/lib/modules/modules.load.charger
+
 # Partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
