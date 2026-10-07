@@ -150,4 +150,7 @@ TARGET_VENDOR_PROP += $(DEVICE_PATH)/vendor.prop
 PRODUCT_SOONG_NAMESPACES += \
     $(DEVICE_PATH)
 
+# VINTF
+DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := $(DEVICE_PATH)/configs/vintf/framework_compatibility_matrix.xml
+
 # TODO(dtb name): the stock dtb lives in vendor_boot.img, the dtb partition is empty
