@@ -62,6 +62,12 @@ BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilts/dtbo.img
 BOARD_KERNEL_IMAGE_NAME := Image
 BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
 
+# Kernel modules, the stock vendor_dlkm partition ships as a prebuilt
+BOARD_VENDOR_KERNEL_MODULES := $(wildcard $(DEVICE_PATH)/prebuilts/modules/*.ko)
+BOARD_VENDOR_KERNEL_MODULES_LOAD := $(strip $(shell cat $(DEVICE_PATH)/prebuilts/modules/modules.load))
+BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE := erofs
+TARGET_COPY_OUT_VENDOR_DLKM := vendor_dlkm
+
 # Bootloader
 TARGET_NO_BOOTLOADER := true
 
