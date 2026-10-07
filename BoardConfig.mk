@@ -54,6 +54,19 @@ BOARD_KERNEL_PAGESIZE := 4096
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 BOARD_FLASH_BLOCK_SIZE := 262144
 
+# GKI, the cmdline and the boot config belong in vendor_boot, boot.img is kernel only
+BOARD_USES_GENERIC_KERNEL_IMAGE := true
+BOARD_KERNEL_CMDLINE := console=ttyS1,115200n8 bootconfig
+BOARD_BOOTCONFIG := androidboot.hardware=ums9230_6h10
+TARGET_BOOTLOADER_BOARD_NAME := ums9230_6h10
+
+# The stock vendor_boot header addresses, the mkbootimg defaults differ on the ramdisk
+BOARD_MKBOOTIMG_ARGS += --base 0x00000000
+BOARD_MKBOOTIMG_ARGS += --kernel_offset 0x00008000
+BOARD_MKBOOTIMG_ARGS += --ramdisk_offset 0x05400000
+BOARD_MKBOOTIMG_ARGS += --tags_offset 0x00000100
+BOARD_MKBOOTIMG_ARGS += --dtb_offset 0x01f00000
+
 # Kernel, the stock image ships as a prebuilt
 # prebuilts/kernel and prebuilts/dtb.img come out of the stock boot and vendor_boot
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilts/kernel
