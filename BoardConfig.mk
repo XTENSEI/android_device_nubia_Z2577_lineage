@@ -170,5 +170,9 @@ PRODUCT_SOONG_NAMESPACES += \
 
 # VINTF
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := $(DEVICE_PATH)/configs/vintf/framework_compatibility_matrix.xml
+ODM_MANIFEST_FILES := $(DEVICE_PATH)/configs/vintf/odm/manifest.xml
+ODM_MANIFEST_SKUS += singlesim wifionly
+ODM_MANIFEST_SINGLESIM_FILES := $(DEVICE_PATH)/configs/vintf/odm/manifest_singlesim.xml
+ODM_MANIFEST_WIFIONLY_FILES := $(DEVICE_PATH)/configs/vintf/odm/manifest_wifionly.xml
 
 # TODO(dtb name): the stock dtb lives in vendor_boot.img, the dtb partition is empty

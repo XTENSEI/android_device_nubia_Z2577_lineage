@@ -1,0 +1,67 @@
+<!--
+    Input:
+        manifest_wifionly.xml
+        manifest_disable_soter.xml
+        manifest_disable_tui.xml
+        manifest_disable_ifaa.xml
+-->
+<manifest version="5.0" type="device">
+    <hal format="aidl" override="true">
+        <name>android.hardware.radio.config</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>android.hardware.radio.data</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>android.hardware.radio.messaging</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>android.hardware.radio.modem</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>android.hardware.radio.network</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>android.hardware.radio.sim</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>android.hardware.radio.voice</name>
+    </hal>
+    <hal format="hidl" override="true">
+        <name>android.hardware.secure_element</name>
+        <transport>hwbinder</transport>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>vendor.sprd.hardware.ifaa</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>vendor.sprd.hardware.soter</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>vendor.sprd.hardware.tui</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>vendor.unisoc.hardware.radio.data</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>vendor.unisoc.hardware.radio.ims</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>vendor.unisoc.hardware.radio.lite</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>vendor.unisoc.hardware.radio.messaging</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>vendor.unisoc.hardware.radio.modem</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>vendor.unisoc.hardware.radio.network</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>vendor.unisoc.hardware.radio.sim</name>
+    </hal>
+    <hal format="aidl" override="true">
+        <name>vendor.unisoc.hardware.radio.voice</name>
+    </hal>
+</manifest>
