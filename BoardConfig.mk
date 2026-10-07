@@ -68,6 +68,10 @@ BOARD_VENDOR_KERNEL_MODULES_LOAD := $(strip $(shell cat $(DEVICE_PATH)/prebuilts
 BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE := erofs
 TARGET_COPY_OUT_VENDOR_DLKM := vendor_dlkm
 
+# ODM image, its own partition, the odm blobs do not belong in the vendor image
+BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := erofs
+TARGET_COPY_OUT_ODM := odm
+
 # Bootloader
 TARGET_NO_BOOTLOADER := true
 
