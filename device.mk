@@ -58,6 +58,10 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilts/modules/modules.load.cali:vendor_dlkm/lib/modules/modules.load.cali \
     $(LOCAL_PATH)/prebuilts/modules/modules.load.charger:vendor_dlkm/lib/modules/modules.load.charger
 
+# The symlink the module loaders open
+PRODUCT_PACKAGES += \
+    vendor_lib_modules
+
 # Partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
