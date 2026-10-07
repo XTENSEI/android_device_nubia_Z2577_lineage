@@ -5,13 +5,23 @@
 
 DEVICE_PATH := device/nubia/Z2577
 
-# Architecture, arm64 only, no 32-bit runtime
+# Architecture, arm64 with the stock 32 bit vendor runtime
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_VARIANT := generic
 TARGET_CPU_VARIANT_RUNTIME := cortex-a75
-TARGET_SUPPORTS_32_BIT_APPS := false
+
+# The stock vendor ships 563 32 bit libraries and six 32 bit services, and
+# ro.zygote is zygote64_32, so the second arch is built
+TARGET_2ND_ARCH := arm
+TARGET_2ND_ARCH_VARIANT := armv8-a
+TARGET_2ND_CPU_ABI := armeabi-v7a
+TARGET_2ND_CPU_ABI2 := armeabi
+TARGET_2ND_CPU_VARIANT := generic
+TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a55
+
+TARGET_SUPPORTS_32_BIT_APPS := true
 TARGET_SUPPORTS_64_BIT_APPS := true
 
 # A/B, virtual A/B with compressed snapshots
