@@ -1,0 +1,51 @@
+#
+# SPDX-FileCopyrightText: The Z2577 Project
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# Camera
+persist.vendor.cam.front.high.resolution.mode=0
+persist.vendor.cam.shot2shot.enable=11
+persist.vendor.cam.fast.thumb=11111
+persist.vendor.cam.hdr.select.num=8
+persist.vendor.cam.faceid.version=1
+
+# Face id and the trusty UI
+persist.vendor.faceid.livenessgrade=2
+ro.vendor.tui.support=false
+ro.vendor.faceid.support=false
+
+# Recovery UI
+ro.recovery.ui.dropscreen=1
+ro.recovery.ui.margin_height=45
+
+# SurfaceFlinger
+debug.sf.high_fps_late_sf_phase_offset_ns=-3000000
+debug.sf.high_fps_late_app_phase_offset_ns=-4000000
+debug.sf.hwc.min.duration=3000000
+debug.sf.enable_changezorder_flag=1
+
+# WCN, wifi and Bluetooth
+persist.sys.wifi.reset.devpath=devices/platform/87000000.cpwcn-btwf/87000000.cpwcn-btwf:sprd-wlan
+ro.vendor.wcn.hardware.product=marlin3_internal
+persist.bluetooth.a2dp_offload.disabled=false
+ro.bluetooth.a2dp_offload.supported=true
+
+# Gnss
+ro.vendor.gnsschip=marlin3lite-Integ
+ro.vendor.wcn.gpschip=marlin3lite-Integ
+
+# Media
+ro.media.xml_variant.codecs=_c2_secure
+ro.media.xml_variant.codecs_performance=_c2_secure
+
+# Radio
+persist.vendor.radio.phone_count=2
+persist.radio.multisim.config=dsds
+
+# Product
+ro.product.hardware=ums9230_6h10
+
+# Miscellaneous
+qemu.hw.mainkeys=0
+ro.vendor.sp.support.reset=0
