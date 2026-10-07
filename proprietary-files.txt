@@ -49,7 +49,7 @@ vendor/lib64/hw/audio.bluetooth.ums9230.so
 vendor/lib64/hw/audio.primary.default.so
 vendor/lib64/hw/audio.r_submix.default.so
 vendor/lib64/hw/audio.usb.default.so
-vendor/lib64/hw/awinic.audio.effect.so
+vendor/lib64/hw/awinic.audio.effect.so;FIX_SONAME
 vendor/lib64/libarcsoft_high_dynamic_range_unisoc.so
 vendor/lib64/libaudioclient_aidl_conversion.so
 vendor/lib64/libaudiofoundation.so
@@ -298,7 +298,7 @@ vendor/lib64/libhwc2onfbadapter.so
 vendor/bin/hw/vendor.zte.hardware.biometrics.fingerprint-service
 vendor/lib64/android.hardware.biometrics.common-V2-ndk.so
 vendor/lib64/android.hardware.biometrics.fingerprint-V2-ndk.so
-vendor/lib64/hw/fingerprint.focaltech.default.so
+vendor/lib64/hw/fingerprint.focaltech.default.so;FIX_SONAME
 vendor/lib64/hw/fingerprint.silead.default.so
 vendor/lib64/libsl_fp_impl.so
 vendor/lib64/vendor.zte.hardware.fingerprint-V1-ndk.so
