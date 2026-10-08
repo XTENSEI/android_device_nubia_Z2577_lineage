@@ -5589,3 +5589,6 @@ odm/overlay/DualSimOverlay.apk;MAKE_COPY_RULE_ONLY
 odm/overlay/WifiOnlyOverlay.apk;MAKE_COPY_RULE_ONLY
 odm/overlay/WifiOnlySettingsOverlay.apk;MAKE_COPY_RULE_ONLY
 odm/overlay/unisoc_overlay_core_max_cached_processed_28.apk;MAKE_COPY_RULE_ONLY
+
+# System
+system/bin/ztecharger
