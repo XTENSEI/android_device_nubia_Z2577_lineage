@@ -1,0 +1,7 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+type slogmodem_vendor, domain;
+typeattribute slogmodem_vendor mlstrustedsubject;
+
+type slogmodem_vendor_exec, exec_type, vendor_file_type, file_type;
+init_daemon_domain(slogmodem_vendor)
+

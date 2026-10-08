@@ -6,3 +6,64 @@ vendor_internal_prop(vendor_storageproxyd_default_prop)
 
 # TEE
 vendor_internal_prop(vendor_tee_prop)
+
+# Stock odm and vendor property types
+type dts_audio_prop, property_type;
+type jsonweb_default_prop, property_type;
+type jsonweb_system_prop, property_type;
+type nfc_nxp_prop, property_type;
+type vendor_ag_prop, property_type;
+type vendor_anti_rollback_prop, property_type;
+type vendor_arm_prop, property_type;
+type vendor_armnn-gpu_prop, property_type;
+type vendor_audio_prop, property_type;
+type vendor_bt_prop, property_type;
+type vendor_camera_prop, property_type;
+type vendor_camera_ro_prop, property_type;
+type vendor_ch_prop, property_type;
+type vendor_display_prop, property_type;
+type vendor_dynamic_sensor_prop, property_type;
+type vendor_emmcid_prop, property_type;
+type vendor_eng_prop, property_type;
+type vendor_engpc_prop, property_type;
+type vendor_fdtop_prop, property_type;
+type vendor_feature_prop, property_type;
+type vendor_fingerprint_id_prop, property_type;
+type vendor_fingerprint_test_prop, property_type, mlstrustedobject;
+type vendor_fp_prop, property_type;
+type vendor_fp_test_prop, property_type;
+type vendor_gpu_fbc_prop, property_type;
+type vendor_gpu_prop, property_type;
+type vendor_hwc_prop, property_type;
+type vendor_hwrotation_prop, property_type;
+type vendor_jsonweb_default_prop, property_type;
+type vendor_jsonweb_system_prop, property_type;
+type vendor_lddtest_prop, property_type;
+type vendor_logctrl_prop, property_type;
+type vendor_media_prop, property_type;
+type vendor_modem_prop, property_type;
+type vendor_nfc_nxp_prop, property_type;
+type vendor_night_charge_prop, property_type;
+type vendor_power_prop, property_type;
+type vendor_powerhint_prop, property_type;
+type vendor_product_prop, property_type;
+type vendor_pvr_prop, property_type;
+type vendor_radio_noril_prop, property_type;
+type vendor_radio_prop, property_type;
+type vendor_sensor_test_prop, property_type;
+type vendor_sensorcali_test_prop, property_type;
+type vendor_sensors_prop, property_type;
+type vendor_sf_fbc_prop, property_type;
+type vendor_sp_prop, property_type;
+type vendor_sys_prop, property_type;
+type vendor_sysh_prop, property_type;
+type vendor_systemdebuggerd_prop, property_type;
+type vendor_thermald_prop, property_type;
+type vendor_tms_nfc_prop, property_type;
+type vendor_transform_varaint_prop, property_type;
+type vendor_video_prop, property_type;
+type vendor_vsp_fbc_prop, property_type;
+type vendor_whale2_afbc_prop, property_type;
+type vendor_wifi_prop, property_type;
+type vendor_wifi_version, property_type;
+type vendor_ylog_lite_prop, property_type;

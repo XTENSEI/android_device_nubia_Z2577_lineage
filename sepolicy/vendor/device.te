@@ -3,3 +3,39 @@ type teetz_device, dev_type;
 
 # Storage proxy
 type mmcblk_device, dev_type;
+
+# Stock odm and vendor device types
+type armnn-gpu_device, dev_type;
+type autotest0_device, dev_type;
+type bm_device, dev_type;
+type console_device_uwb, dev_type, mlstrustedobject;
+type dev_vdsp, dev_type;
+type device_emmc_powp, dev_type;
+type etb_device, dev_type;
+type fm_device, dev_type, mlstrustedobject;
+type hidraw_device, dev_type;
+type imgnna_device, dev_type;
+type loader_device, dev_type;
+type log_device, dev_type, mlstrustedobject;
+type logo_block_device, dev_type;
+type madev_fp_device, dev_type;
+type map_device, dev_type;
+type mpu_device, dev_type;
+type oem_blk_device, dev_type;
+type power_device, dev_type;
+type refnotify_device, dev_type;
+type sdcard_device, dev_type;
+type sipc_debug_device, dev_type;
+type slog_device, dev_type;
+type spipe_device, dev_type;
+type sprd_img_device, dev_type, mlstrustedobject;
+type sprd_time_sync_device, dev_type;
+type sqc_device, dev_type;
+type systemheap_device, dev_type, mlstrustedobject, domain;
+type ufs_device, dev_type;
+type userlog_device, dev_type;
+type wcn_device, dev_type;
+type zlog_device, dev_type, mlstrustedobject;
+type zte_fp_dev, dev_type;
+type zte_ldd_tp_dev, dev_type;
+type zte_nfc_device, dev_type;

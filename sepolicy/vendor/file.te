@@ -9,3 +9,31 @@ type sysfs_sensor, fs_type, sysfs_type;
 
 # Touch
 type thp_vendor_data_file, file_type, data_file_type, mlstrustedobject;
+
+# Stock odm and vendor file types
+type audio_vendor_data_file, file_type, data_file_type;
+type aw_smartpa_cali_data_file, file_type, data_file_type;
+type battery_record_data_file, file_type, data_file_type;
+type blackbox_file, file_type;
+type camerapostproc_exec, exec_type, file_type, vendor_file_type;
+type engpc_data, file_type, data_file_type;
+type gnss_file, file_type, data_file_type;
+type hwc_stat_file, file_type, data_file_type, mlstrustedobject;
+type mediadrm_vendor_data_file, file_type, data_file_type;
+type mlog_file, file_type, data_file_type, mlstrustedobject;
+type nfc_vendor_data_file, file_type, data_file_type;
+type phasecheckserver_tmpfs, file_type;
+type prod_file, file_type, mlstrustedobject;
+type prodv_file, file_type;
+type slogmodem_vendor_config_file, file_type, data_file_type;
+type slogmodem_vendor_data, file_type, data_file_type;
+type sprd_audio_file, file_type, data_file_type;
+type sysdumpdb_data, file_type, data_file_type;
+type vendor_camera_data_file, file_type, data_file_type;
+type vendor_camera_data_icap_file, file_type, data_file_type;
+type vendor_camera_morphoir_data_file, file_type, data_file_type, mlstrustedobject;
+type vendor_camera_videodebug_data_file, file_type, data_file_type, mlstrustedsubject;
+type vendor_camera_watermark_data_file, file_type, data_file_type, mlstrustedobject;
+type vendor_charger_data_file, file_type, data_file_type;
+type vendor_goodix_gf_data_file, file_type, data_file_type;
+type zte_fp_data_file, file_type, data_file_type;

@@ -1,0 +1,8 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+type hal_armnn-gpu_default, domain;
+hal_server_domain(hal_armnn-gpu_default, hal_neuralnetworks)
+typeattribute hal_armnn-gpu_default mlstrustedsubject;
+
+type hal_armnn-gpu_default_exec, exec_type, vendor_file_type, file_type;
+init_daemon_domain(hal_armnn-gpu_default)
+

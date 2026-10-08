@@ -1,0 +1,7 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+type hal_toolaidl_default, domain;
+typeattribute hal_toolaidl_default mlstrustedsubject;
+
+type hal_toolaidl_default_exec, exec_type, vendor_file_type, file_type;
+init_daemon_domain(hal_toolaidl_default)
+
