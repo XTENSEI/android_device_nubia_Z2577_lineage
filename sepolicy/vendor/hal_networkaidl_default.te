@@ -4,3 +4,22 @@ type hal_networkaidl_default, domain;
 type hal_networkaidl_default_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(hal_networkaidl_default)
 
+allow hal_networkaidl_default dumpstate:binder transfer;
+allow hal_networkaidl_default hal_networkaidl_default_exec:file { read getattr map execute open entrypoint };
+allow hal_networkaidl_default system_server:binder { call transfer };
+allow hal_networkaidl_default system_server:fd use;
+allow hal_networkaidl_default servicemanager:binder { call transfer };
+allow hal_networkaidl_default hal_networkaidl_service:service_manager { add find };
+allow hal_networkaidl_default modem_control:unix_stream_socket connectto;
+allow hal_networkaidl_default vendor_shell_exec:file execute_no_trans;
+allow hal_networkaidl_default sprd_networkcontrol:binder { call transfer };
+allow hal_networkaidl_default dnsproxyd_socket:sock_file write;
+allow hal_networkaidl_default fwmarkd_socket:sock_file write;
+allow hal_networkaidl_default node:icmp_socket node_bind;
+allow hal_networkaidl_default proc_net:file { read write getattr setattr open };
+allow hal_networkaidl_default self:capability { setuid net_admin net_raw sys_module };
+allow hal_networkaidl_default self:netlink_route_socket { read write create getattr setattr bind setopt nlmsg_read nlmsg_write nlmsg_readpriv };
+allow hal_networkaidl_default self:udp_socket { ioctl create getattr setattr bind connect getopt setopt };
+allow hal_networkaidl_default self:icmp_socket { ioctl read write create bind getopt setopt };
+allow hal_networkaidl_default vendor_radio_prop:file { read getattr map open };
+allowxperm hal_networkaidl_default hal_networkaidl_default:udp_socket ioctl { 0x8913 0x8914 0x8916 0x8927 0x8933 };
