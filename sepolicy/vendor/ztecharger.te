@@ -1,0 +1,2 @@
+# The stock service runs with seclabel u:r:ueventd:s0
+allow ueventd ztecharger_exec:file { read getattr map execute open entrypoint };

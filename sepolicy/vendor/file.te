@@ -37,3 +37,4 @@ type vendor_camera_watermark_data_file, file_type, data_file_type, mlstrustedobj
 type vendor_charger_data_file, file_type, data_file_type;
 type vendor_goodix_gf_data_file, file_type, data_file_type;
 type zte_fp_data_file, file_type, data_file_type;
+type ztecharger_exec, exec_type, file_type;

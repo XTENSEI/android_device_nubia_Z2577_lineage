@@ -197,6 +197,7 @@
 /dev/block/sdc[0-9]*    u:object_r:ufs_device:s0
 /dev/block/loop[0-28]*   u:object_r:loop_device:s0
 /system/bin/fsck.exfat     u:object_r:fsck_exec:s0
+/system/bin/ztecharger     u:object_r:ztecharger_exec:s0
 /dev/vbc_turning[0-9]*           u:object_r:spipe_device:s0
 /data/vendor/fpc(/.*)?                          u:object_r:zte_fp_data_file:s0
 /data/vendor/nfc(/.*)? u:object_r:nfc_vendor_data_file:s0
