@@ -4,3 +4,10 @@ type init-ssdaemon_vendor-sh, domain;
 type init-ssdaemon_vendor-sh_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(init-ssdaemon_vendor-sh)
 
+allow init-ssdaemon_vendor-sh init-ssdaemon_vendor-sh_exec:file { read getattr map execute open entrypoint };
+allow init-ssdaemon_vendor-sh vendor_toolbox_exec:file { ioctl read getattr lock map execute open watch watch_reads execute_no_trans };
+allow init-ssdaemon_vendor-sh vendor_feature_prop:file { read getattr map open };
+allow init-ssdaemon_vendor-sh property_socket:sock_file write;
+allow init-ssdaemon_vendor-sh init:unix_stream_socket connectto;
+allow init-ssdaemon_vendor-sh ctl_start_prop:property_service set;
+allow init-ssdaemon_vendor-sh ctl_start_prop:file { read getattr map open };

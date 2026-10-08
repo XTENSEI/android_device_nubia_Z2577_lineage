@@ -4,3 +4,11 @@ type variantidBin, domain;
 type variantidBin_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(variantidBin)
 
+allow variantidBin variantidBin_exec:file { read getattr map execute open entrypoint };
+allow variantidBin vendor_transform_varaint_prop:property_service set;
+allow variantidBin init:unix_stream_socket connectto;
+allow variantidBin property_socket:sock_file write;
+allow variantidBin variantidBin_exec:file { read getattr entrypoint };
+allow variantidBin oem_blk_device:blk_file { ioctl read write getattr lock append map open watch watch_reads };
+allow variantidBin block_device:dir search;
+allow variantidBin rootfs:lnk_file getattr;

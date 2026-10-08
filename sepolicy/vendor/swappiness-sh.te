@@ -4,3 +4,9 @@ type swappiness-sh, domain;
 type swappiness-sh_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(swappiness-sh)
 
+allow swappiness-sh swappiness-sh_exec:file { read getattr map execute open entrypoint };
+allow swappiness-sh vendor_toolbox_exec:file execute_no_trans;
+allow swappiness-sh vendor_file:file execute_no_trans;
+allow swappiness-sh proc_swappiness:file { read write open };
+allow swappiness-sh proc_meminfo:file { read open };
+allow swappiness-sh proc_watermark_scale_factor:file { read write open };
