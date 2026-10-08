@@ -4,3 +4,21 @@ type refnotify, domain;
 type refnotify_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(refnotify)
 
+allow refnotify refnotify_device:chr_file { ioctl read write open };
+allow refnotify sprd_time_sync_device:chr_file { read open };
+allow refnotify spipe_device:chr_file { ioctl read write open };
+allow refnotify bm_device:chr_file { ioctl read write open };
+allow refnotify sysfs:file { read write open };
+allow refnotify property_socket:sock_file write;
+allow refnotify init:unix_stream_socket connectto;
+allow refnotify powerctl_prop:property_service set;
+allow refnotify rtc_device:chr_file { read write };
+allow refnotify vendor_radio_prop:file { read getattr map open };
+allow refnotify refnotify:netlink_kobject_uevent_socket { read create bind getopt setopt };
+allow refnotify sysfs_iq:file { read open };
+allow refnotify self:capability sys_time;
+allow refnotify self:capability { setgid setuid };
+allow refnotify exported_default_prop:file { read getattr open };
+allow refnotify vendor_sys_prop:file read;
+allow refnotify vendor_sys_prop:property_service set;
+allow refnotify refnotify_exec:file { read getattr map execute open entrypoint };

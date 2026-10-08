@@ -4,3 +4,19 @@ type systemDebuggerd, domain;
 type systemDebuggerd_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(systemDebuggerd)
 
+allow systemDebuggerd proc:file { read write getattr open };
+allow systemDebuggerd property_socket:sock_file write;
+allow systemDebuggerd init:unix_stream_socket connectto;
+allow systemDebuggerd vendor_systemdebuggerd_prop:property_service set;
+allow systemDebuggerd vendor_systemdebuggerd_prop:file { read getattr map open };
+allow systemDebuggerd vendor_eng_prop:property_service set;
+allow systemDebuggerd vendor_eng_prop:file { read getattr map open };
+allow systemDebuggerd vendor_product_prop:property_service set;
+allow systemDebuggerd vendor_product_prop:file { read getattr map open };
+allow systemDebuggerd block_device:dir search;
+allow systemDebuggerd mmcblk_device:blk_file { read write getattr open };
+allow systemDebuggerd ufs_device:blk_file { read write create getattr setattr append unlink open };
+allow systemDebuggerd userdata_block_device:blk_file { read write getattr open };
+allow systemDebuggerd sysdumpdb_data:dir { read write create getattr setattr unlink rename open add_name remove_name search rmdir };
+allow systemDebuggerd sysdumpdb_data:file { read write create getattr setattr append unlink rename open };
+allow systemDebuggerd systemDebuggerd_exec:file { read getattr map execute open entrypoint };
