@@ -1,0 +1,15 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_bluetooth_default hal_bluetooth_default_exec:file { read getattr map execute open entrypoint };
+allow hal_bluetooth_default coredump_file:dir { read write getattr open add_name remove_name search };
+allow hal_bluetooth_default coredump_file:file { read write create getattr setattr unlink open };
+allow hal_bluetooth_default sysfs:file { ioctl read write open };
+allow hal_bluetooth_default prod_file:dir search;
+allow hal_bluetooth_default prod_file:file { ioctl read write getattr setattr lock append map open watch watch_reads };
+allow hal_bluetooth_default serial_device:chr_file { ioctl read write open };
+allow hal_bluetooth_default tty_device:chr_file { ioctl read write open };
+allow hal_bluetooth_default vendor_data_file:dir { read write create getattr open add_name remove_name search };
+allow hal_bluetooth_default vendor_data_file:file { read write create getattr setattr unlink rename open };
+allow hal_bluetooth_default port:tcp_socket name_connect;
+allow hal_bluetooth_default self:tcp_socket { read write create connect getopt setopt shutdown name_connect };
+allow hal_bluetooth_default vendor_sys_prop:file { read getattr map open };
+allow hal_bluetooth_default sysfs_bluetooth_file:file { read write open };

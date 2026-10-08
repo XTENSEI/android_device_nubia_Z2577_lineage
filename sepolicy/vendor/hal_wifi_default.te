@@ -1,0 +1,27 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_wifi_default hal_wifi_default_exec:file { read getattr map execute open entrypoint };
+allow hal_wifi_default hal_wifi_default:netlink_route_socket { read write create bind nlmsg_read };
+allow hal_wifi_default rootfs:system module_load;
+allow hal_wifi_default rootfs:file { read getattr open };
+allow hal_wifi_default hal_wifi_default:capability sys_module;
+allow hal_wifi_default proc_modules:file { read getattr open };
+allow hal_wifi_default kernel:system module_request;
+allow hal_wifi_default exported_default_prop:file { read getattr open };
+allow hal_wifi_default exported_overlay_prop:file { read getattr open };
+allow hal_wifi_default exported_system_prop:file { read getattr open };
+allow hal_wifi_default vendor_default_prop:file { read getattr open };
+allow hal_wifi_default vendor_file:system module_load;
+allow hal_wifi_default mnt_vendor_file:dir search;
+allow hal_wifi_default vendor_data_file:dir { write create getattr open add_name remove_name search };
+allow hal_wifi_default vendor_data_file:file { read write create open };
+allow hal_wifi_default prod_file:dir search;
+allow hal_wifi_default prod_file:file { read getattr open };
+allow hal_wifi_default vendor_data_file:dir { read write create getattr open add_name remove_name search };
+allow hal_wifi_default vendor_data_file:file { read write create getattr open };
+allow hal_wifi_default mnt_vendor_file:file { read getattr open };
+allow hal_wifi_default persist_vendor_debug_wifi_prop:file read;
+allow hal_wifi_default property_socket:sock_file write;
+allow hal_wifi_default init:unix_stream_socket connectto;
+allow hal_wifi_default vendor_wifi_version:property_service set;
+allow hal_wifi_default vendor_wifi_version:file { read getattr map open };
+allowxperm hal_wifi_default hal_wifi_default:udp_socket ioctl { 0x89f8 };

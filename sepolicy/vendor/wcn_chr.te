@@ -5,3 +5,9 @@ typeattribute wcn_chr mlstrustedsubject;
 type wcn_chr_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(wcn_chr)
 
+allow wcn_chr wcn_chr_exec:file { read getattr map execute open entrypoint };
+allow wcn_chr slogmodem_vendor_data:dir { read write create getattr setattr open add_name remove_name search };
+allow wcn_chr slogmodem_vendor_data:file { read write create getattr setattr append map unlink open };
+allow wcn_chr slog_device:chr_file { read open };
+allow wcn_chr proc:file { read write open };
+allow wcn_chr proc_minidump_gesture:file { read write open };
