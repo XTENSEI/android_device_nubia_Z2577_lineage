@@ -1,0 +1,7 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+type ylog_lite, domain;
+typeattribute ylog_lite mlstrustedsubject;
+
+type ylog_lite_exec, exec_type, vendor_file_type, file_type;
+init_daemon_domain(ylog_lite)
+

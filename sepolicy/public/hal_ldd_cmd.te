@@ -1,0 +1,4 @@
+# Vendor hal attribute
+attribute hal_ldd_cmd;
+attribute hal_ldd_cmd_client;
+attribute hal_ldd_cmd_server;

@@ -1,0 +1,4 @@
+# Vendor hal attribute
+attribute hal_subsys;
+attribute hal_subsys_client;
+attribute hal_subsys_server;

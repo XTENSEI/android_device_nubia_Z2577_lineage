@@ -1,0 +1,82 @@
+# Stock vendor hwservice types
+type hal_connmgr_hwservice, hwservice_manager_type;
+type hal_default_algo_hwservice, hwservice_manager_type;
+type hal_default_hdcp_hwservice, hwservice_manager_type;
+type hal_extGnss_hwservice, hwservice_manager_type;
+type hal_extRadio_hwservice, hwservice_manager_type;
+type hal_extbroadcastradio_hwservice, hwservice_manager_type;
+type hal_extthermal_hwservice, hwservice_manager_type;
+type hal_hostapd_hwservice, hwservice_manager_type;
+type hal_nfcese_hwservice, hwservice_manager_type;
+type hal_nxpnfc_hwservice, hwservice_manager_type;
+type tmsnfc_hwservice, hwservice_manager_type;
+
+# Stock vendor policy types
+type camerapostproc, domain;
+type debugfs_binder, fs_type, debugfs_type;
+type debugfs_ion, fs_type, debugfs_type;
+type debugfs_pinctrl, fs_type, debugfs_type;
+type debugfs_reg, fs_type, debugfs_type;
+type debugfs_sipc, fs_type, debugfs_type;
+type goodix_fingerprint_vndservice;
+type hal_cplog_connmgr_default, domain;
+type hal_log_default, mlstrustedsubject, domain;
+type hal_network_default, domain;
+type proc_aoniram, fs_type, proc_type;
+type proc_cptlmem, fs_type, proc_type;
+type proc_fgp_set, fs_type, proc_type;
+type proc_hbm_set, fs_type, proc_type;
+type proc_mini_dump, fs_type, proc_type;
+type proc_pdbg, fs_type, proc_type;
+type proc_pmicmem, fs_type, proc_type;
+type proc_pmicpmsys, fs_type, proc_type;
+type proc_pubcpiram, fs_type, proc_type;
+type proc_sprd_dmc, fs_type, proc_type;
+type proc_swappiness, fs_type, proc_type;
+type proc_uidiodebug, fs_type, proc_type;
+type remosaic_daemon, domain;
+type remosaic_daemon_service;
+type tmsdev_proc_file, fs_type, proc_type;
+type vdspserver, domain;
+type vendor_algo_service, domain;
+
+# Stock vendor service types
+type camerapostproc_service, service_manager_type;
+type ext_radio_service, service_manager_type;
+type goodix_aidl_service, service_manager_type;
+type hal_ai_engine_service, service_manager_type;
+type hal_cplog_svcaidl_service, service_manager_type, mlstrustedobject;
+type hal_enhanceaidl_service, service_manager_type;
+type hal_extGnss_service, service_manager_type, hwservice_manager_type;
+type hal_hdcp_service, service_manager_type;
+type hal_networkaidl_service, service_manager_type;
+type hal_toolaidl_service, service_manager_type;
+type hal_unionpnp_service, service_manager_type;
+type nxpnfc_hal_aidl_service, service_manager_type;
+type tmsnfc_aidl_service, service_manager_type;
+
+# Stock vendor sysfs types
+type fpc_sysfs, sysfs_type, fs_type;
+type oem_zte_misc, sysfs_type, fs_type;
+type sprd_goodix_brightness, sysfs_type, fs_type;
+type sys_mmc, sysfs_type, fs_type;
+type sys_proc, sysfs_type, fs_type, proc_type, mlstrustedobject;
+type sysfile, sysfs_type, fs_type, mlstrustedobject;
+type sysfs_bluetooth_file, sysfs_type, fs_type;
+type sysfs_ddr_dfs, sysfs_type, fs_type;
+type sysfs_dpu_vendor, sysfs_type, fs_type;
+type sysfs_dpu_vsp, sysfs_type, fs_type;
+type sysfs_extdata, sysfs_type, fs_type;
+type sysfs_gnss, sysfs_type, fs_type;
+type sysfs_gpu_boost, sysfs_type, fs_type;
+type sysfs_hall, sysfs_type, fs_type;
+type sysfs_iq, sysfs_type, fs_type;
+type sysfs_jit_can_reclaim, sysfs_type, fs_type;
+type sysfs_lcd, sysfs_type, fs_type;
+type sysfs_mipi, sysfs_type, fs_type;
+type sysfs_multipanel, sysfs_type, fs_type;
+type sysfs_nv, sysfs_type, fs_type, mlstrustedobject;
+type sysfs_sarstatus_file, sysfs_type, fs_type;
+type sysfs_sone_gpios, sysfs_type, fs_type;
+type sysfs_spool, sysfs_type, fs_type;
+type sysfs_wcn, sysfs_type, fs_type;

@@ -1,0 +1,8 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+type hal_gnss_ext_default, domain;
+hal_server_domain(hal_gnss_ext_default, hal_wifi_supplicant)
+typeattribute hal_gnss_ext_default netdomain;
+
+type hal_gnss_ext_default_exec, exec_type, vendor_file_type, file_type;
+init_daemon_domain(hal_gnss_ext_default)
+
