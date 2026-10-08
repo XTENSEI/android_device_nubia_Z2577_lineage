@@ -1,0 +1,7 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_memtrack_default hal_memtrack_default_exec:file { read getattr map execute open entrypoint };
+allow hal_memtrack_default debugfs_ion:dir { read open search };
+allow hal_memtrack_default sysfs:file { read getattr open };
+allow hal_memtrack_default proc:file { read getattr open };
+allow hal_memtrack_default sysfs_gpu:dir search;
+allow hal_memtrack_default sysfs_gpu:file { read getattr open };

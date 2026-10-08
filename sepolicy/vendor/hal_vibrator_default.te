@@ -1,0 +1,7 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_vibrator_default hal_vibrator_default_exec:file { read getattr map execute open entrypoint };
+allow hal_vibrator_default sysfs:file { read write open };
+allow hal_vibrator_default input_device:chr_file { ioctl read write open };
+allow hal_vibrator_default input_device:dir { read open search };
+allow hal_vibrator_default sysfs_leds:file { read write open };
+allow hal_vibrator_default sysfs_leds:dir { read open search };

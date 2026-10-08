@@ -1,0 +1,9 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_light_default hal_light_default_exec:file { read getattr map execute open entrypoint };
+allow hal_light_default sysfs:file { read write open };
+allow hal_light_default sysfs_ddr_dfs:file { read write getattr open };
+allow hal_light_default sysfs_ddr_dfs:dir { read getattr open search };
+allow hal_light_default property_socket:sock_file write;
+allow hal_light_default init:unix_stream_socket connectto;
+allow hal_light_default vendor_display_prop:property_service set;
+allow hal_light_default vendor_display_prop:file { read getattr map open };

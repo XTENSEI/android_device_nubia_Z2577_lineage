@@ -1,0 +1,24 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_nfc_default hal_nfc_default_exec:file { read getattr map execute open entrypoint };
+allow hal_nfc_default tmsnfc_hwservice:hwservice_manager { add find };
+allow hal_nfc_default vendor_tms_nfc_prop:property_service set;
+allow hal_nfc_default ctl_stop_prop:property_service set;
+allow hal_nfc_default tmsdev_proc_file:file { read getattr open };
+allow hal_nfc_default property_socket:sock_file write;
+allow hal_nfc_default init:unix_stream_socket connectto;
+allow hal_nfc_default vendor_tms_nfc_prop:file { read getattr map open };
+allow hal_nfc_default tmsnfc_aidl_service:service_manager { add find };
+allow hal_nfc_default vendor_feature_prop:file { read getattr map open };
+allow hal_nfc_default debugfs_tracing:file { write open };
+allow hal_nfc_default nfc_nxp_prop:file read;
+allow hal_nfc_default nfc_nxp_prop:property_service set;
+allow hal_nfc_default vendor_nfc_nxp_prop:file read;
+allow hal_nfc_default vendor_nfc_nxp_prop:property_service set;
+allow hal_nfc_default hal_nfcese_hwservice:hwservice_manager { add find };
+allow hal_nfc_default hal_nxpnfc_hwservice:hwservice_manager { add find };
+allow hal_nfc_default zte_nfc_device:chr_file { ioctl read write getattr open };
+allow hal_nfc_default nxpnfc_hal_aidl_service:service_manager { add find };
+allow hal_nfc_default nfc_device:chr_file { read write };
+allow hal_nfc_default nfc_data_file:file getattr;
+allow hal_nfc_default nfc_vendor_data_file:dir { read write getattr add_name remove_name search };
+allow hal_nfc_default nfc_vendor_data_file:file { read write create getattr setattr append unlink open };
