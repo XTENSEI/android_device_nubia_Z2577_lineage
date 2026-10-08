@@ -4,3 +4,24 @@ type cp_diskserver, domain;
 type cp_diskserver_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(cp_diskserver)
 
+allow cp_diskserver cp_diskserver_exec:file { read getattr map execute open entrypoint };
+allow cp_diskserver spipe_device:chr_file { read write open };
+allow cp_diskserver block_device:dir search;
+allow cp_diskserver mmcblk_device:blk_file { ioctl read write open };
+allow cp_diskserver ufs_device:blk_file { ioctl read write open };
+allow cp_diskserver userdata_block_device:blk_file { ioctl read write open };
+allow cp_diskserver sysfs:file write;
+allow cp_diskserver sysfs_wake_lock:file { read write open };
+allow cp_diskserver vendor_shell_exec:file { read getattr execute open execute_no_trans };
+allow cp_diskserver self:capability2 block_suspend;
+allow cp_diskserver vendor_radio_prop:file { read getattr map open };
+allow cp_diskserver proc_cmdline:file { read open };
+allow cp_diskserver property_socket:sock_file write;
+allow cp_diskserver init:unix_stream_socket connectto;
+allow cp_diskserver vendor_modem_prop:property_service set;
+allow cp_diskserver vendor_modem_prop:file { read getattr map open };
+allow cp_diskserver vendor_product_prop:property_service set;
+allow cp_diskserver vendor_product_prop:file { read getattr map open };
+allow cp_diskserver proc_bootconfig:file { read getattr open };
+allow cp_diskserver slogmodem_vendor_data:dir { write add_name search };
+allow cp_diskserver slogmodem_vendor_data:file { read write create getattr append open };

@@ -4,3 +4,13 @@ type create_spl_link, domain;
 type create_spl_link_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(create_spl_link)
 
+allow create_spl_link vendor_toolbox_exec:file execute_no_trans;
+allow create_spl_link sysfs:dir { read open };
+allow create_spl_link sysfs:file getattr;
+allow create_spl_link sysfs_wakeup:dir { read open search };
+allow create_spl_link sysfs_wakeup:file getattr;
+allow create_spl_link block_device:dir { write add_name search };
+allow create_spl_link block_device:lnk_file create;
+allow create_spl_link rootfs:dir read;
+allow create_spl_link proc_sysrq:file { write open };
+allow create_spl_link create_spl_link_exec:file { read getattr map execute open entrypoint };

@@ -4,3 +4,11 @@ type start_rkptool, domain;
 type start_rkptool_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(start_rkptool)
 
+allow start_rkptool start_rkptool_exec:file { read getattr map execute open entrypoint };
+allow start_rkptool servicemanager:binder call;
+allow start_rkptool hal_keymint_unisoc:binder call;
+allow start_rkptool hal_remotelyprovisionedcomponent_service:service_manager find;
+allow start_rkptool prod_file:dir { write add_name remove_name search };
+allow start_rkptool prod_file:file { write create getattr setattr unlink open };
+allow start_rkptool vendor_file:file execute_no_trans;
+allow start_rkptool vendor_toolbox_exec:file execute_no_trans;

@@ -4,3 +4,7 @@ type ufs_ffu, domain;
 type ufs_ffu_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(ufs_ffu)
 
+allow ufs_ffu block_device:dir search;
+allow ufs_ffu ufs_device:blk_file { ioctl read write getattr open };
+allowxperm ufs_ffu ufs_device:blk_file ioctl { 0x5379 0x5392 };
+allow ufs_ffu ufs_ffu_exec:file { read getattr map execute open entrypoint };
