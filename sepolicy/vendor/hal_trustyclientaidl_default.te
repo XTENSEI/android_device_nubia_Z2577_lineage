@@ -9,3 +9,15 @@ hal_attribute_service(hal_trustyclientaidl, hal_trustyclientaidl_service)
 binder_call(hal_trustyclientaidl_server, servicemanager)
 
 allow hal_trustyclientaidl_default teetz_device:chr_file rw_file_perms;
+
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_trustyclientaidl_default dumpstate:binder transfer;
+allow hal_trustyclientaidl_default hal_trustyclientaidl_default_exec:file { read getattr map execute open entrypoint };
+allow hal_trustyclientaidl_default hal_codec2_unisoc:binder transfer;
+allow hal_trustyclientaidl_default servicemanager:file { read getattr map open };
+allow hal_trustyclientaidl_default servicemanager:binder { call transfer };
+allow hal_trustyclientaidl_default hal_trustyclientaidl_service:service_manager { add find };
+allow hal_trustyclientaidl_default platform_app:fd use;
+allow hal_trustyclientaidl_default teetz_device:chr_file { ioctl read write open };
+allow hal_trustyclientaidl_default platform_app:binder transfer;
+allow hal_trustyclientaidl_default mediacodec:binder transfer;
