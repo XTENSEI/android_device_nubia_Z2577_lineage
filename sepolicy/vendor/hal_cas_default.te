@@ -1,0 +1,5 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_cas_default hal_cas_default_exec:file { read getattr map execute open entrypoint };
+allow hal_cas_default vndbinder_device:chr_file { ioctl read write getattr lock append map open watch watch_reads };
+allow hal_cas_default vndservicemanager:binder { call transfer };
+allow hal_cas_default hal_allocator:fd use;

@@ -4,3 +4,16 @@ type hal_hdcp_default, domain;
 type hal_hdcp_default_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(hal_hdcp_default)
 
+allow hal_hdcp_default hal_hdcp_default_exec:file { read getattr map execute open entrypoint };
+allow hal_hdcp_default hwservicemanager:binder { call transfer };
+allow hal_hdcp_default mediaserver:binder call;
+allow hal_hdcp_default remotedisplay:binder call;
+allow hal_hdcp_default hwservicemanager_prop:file { read getattr map open };
+allow hal_hdcp_default port:tcp_socket name_connect;
+allow hal_hdcp_default self:tcp_socket { read write create connect getopt setopt };
+allow hal_hdcp_default hal_default_hdcp_hwservice:hwservice_manager { add find };
+allow hal_hdcp_default hidl_base_hwservice:hwservice_manager add;
+allow hal_hdcp_default servicemanager:binder { call transfer };
+allow hal_hdcp_default hal_hdcp_service:service_manager { add find };
+allow hal_hdcp_default remotedisplay:binder { call transfer };
+allow hal_hdcp_default teetz_device:chr_file { ioctl read write open };

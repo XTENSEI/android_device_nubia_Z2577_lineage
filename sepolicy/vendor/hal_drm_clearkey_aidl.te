@@ -1,0 +1,2 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_drm_clearkey_aidl hal_drm_clearkey_aidl_exec:file { read getattr map execute open entrypoint };
