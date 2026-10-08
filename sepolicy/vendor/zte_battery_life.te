@@ -5,3 +5,22 @@ typeattribute zte_battery_life mlstrustedsubject;
 type zte_battery_life_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(zte_battery_life)
 
+allow zte_battery_life zte_battery_life_exec:file { read getattr map execute open entrypoint };
+allow zte_battery_life tmpfs:chr_file relabelfrom;
+allow zte_battery_life kmsg_device:chr_file { write getattr relabelto open };
+allow zte_battery_life tty_device:chr_file { ioctl read write getattr lock append map open watch watch_reads };
+allow zte_battery_life sysfs_power:dir { read open search };
+allow zte_battery_life sysfs_power:file { read write open };
+allow zte_battery_life sysfs:dir { read open search };
+allow zte_battery_life sysfs:file { read write open };
+allow zte_battery_life block_device:dir search;
+allow zte_battery_life sqc_device:chr_file { ioctl read write getattr lock append map open watch watch_reads };
+allow zte_battery_life sqc_device:chr_file { ioctl read write open };
+allow zte_battery_life oem_zte_misc:dir { read open search };
+allow zte_battery_life oem_zte_misc:file { read write open };
+allow zte_battery_life vendor_night_charge_prop:property_service set;
+allow zte_battery_life vendor_night_charge_prop:file { read getattr map open };
+allow zte_battery_life property_socket:sock_file write;
+allow zte_battery_life init:unix_stream_socket connectto;
+allow zte_battery_life self:netlink_kobject_uevent_socket { read write create getattr setattr lock append map bind connect getopt setopt shutdown };
+allow zte_battery_life oem_blk_device:blk_file { read write lock open };

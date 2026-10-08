@@ -1,0 +1,13 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_health_default hal_health_default_exec:file { read getattr map execute open entrypoint };
+allow hal_health_default sysfs_power:dir { ioctl read getattr lock open watch watch_reads search };
+allow hal_health_default sysfs_power:file { ioctl read write getattr lock append map open watch watch_reads };
+allow hal_health_default hal_health_hwservice:hwservice_manager find;
+allow hal_health_default kmsg_device:chr_file getattr;
+allow hal_health_default hal_health_default:capability2 wake_alarm;
+allow hal_health_default sysfs:file { read getattr open };
+allow hal_health_default hal_power_default:binder transfer;
+allow hal_health_default hal_power_default:binder { call transfer };
+allow hal_health_default hal_power_default:fd use;
+allow hal_health_default sysfs:dir search;
+allow hal_health_default sysfs:file { read write getattr open };

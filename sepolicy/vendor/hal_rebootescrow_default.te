@@ -1,0 +1,6 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_rebootescrow_default rebootescrow_hal_prop:file { read getattr map open };
+allow hal_rebootescrow_default hal_rebootescrow_default_exec:file { read getattr map execute open entrypoint };
+allow hal_rebootescrow_default rebootescrow_device:chr_file { ioctl read write getattr lock append map open watch watch_reads };
+allow hal_rebootescrow_default rebootescrow_device:blk_file { ioctl read write getattr lock append map open watch watch_reads };
+allow hal_rebootescrow_default block_device:dir search;

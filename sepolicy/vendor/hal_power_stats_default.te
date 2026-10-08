@@ -1,0 +1,4 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_power_stats_default hal_power_stats_default_exec:file { read getattr map execute open entrypoint };
+allow hal_power_stats_default sysfs:dir { read open };
+allow hal_power_stats_default sysfs:file { read open };
