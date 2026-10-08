@@ -6,3 +6,24 @@ typeattribute wcnd netdomain;
 type wcnd_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(wcnd)
 
+allow wcnd wcnd_exec:file { read getattr map execute open entrypoint };
+allow wcnd init:unix_stream_socket connectto;
+allow wcnd proc_bluetooth_writable:file { write open };
+allow wcnd prod_file:dir { write add_name search };
+allow wcnd prod_file:file { read write create getattr open };
+allow wcnd self:netlink_kobject_uevent_socket { read create bind getopt setopt };
+allow wcnd sysfs_wcn:dir search;
+allow wcnd sysfs_wcn:file { read write open };
+allow wcnd tty_device:chr_file { ioctl read write open };
+allow wcnd vendor_data_file:dir { write create add_name };
+allow wcnd vendor_data_file:file { read write create open };
+allow wcnd vendor_file:file execute_no_trans;
+allow wcnd vendor_file:system module_load;
+allow wcnd vendor_radio_prop:file { read getattr map open };
+allow wcnd vendor_shell_exec:file execute_no_trans;
+allow wcnd vendor_sys_prop:file { read getattr map open };
+allow wcnd vendor_toolbox_exec:file execute_no_trans;
+allow wcnd wcnd:capability { net_admin sys_module sys_admin };
+allow wcnd wcnd:netlink_generic_socket { read write create getattr bind setopt };
+allow wcnd sysfs:file { read write setattr open };
+allowxperm wcnd wcnd:udp_socket ioctl { 0x8914 };

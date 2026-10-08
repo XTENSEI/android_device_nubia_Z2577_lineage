@@ -1,0 +1,26 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_wifi_supplicant_default hal_wifi_supplicant_default_exec:file { read getattr map execute open entrypoint };
+allow hal_wifi_supplicant_default proc_net_type:file write;
+allow hal_wifi_supplicant_default hwservicemanager:binder { call transfer };
+allow hal_wifi_supplicant_default system_wifi_keystore_hwservice:hwservice_manager find;
+allow hal_wifi_supplicant_default wifi_keystore_service_server:binder { call transfer };
+allow hal_wifi_supplicant_default wifi_keystore_service_server:fd use;
+allow hal_wifi_supplicant_default wpa_data_file:dir { ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir };
+allow hal_wifi_supplicant_default wpa_data_file:file { ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads };
+allow hal_wifi_supplicant_default wpa_data_file:sock_file { ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads };
+allow hal_wifi_supplicant_default device_logging_prop:file { read getattr map open };
+dontaudit hal_wifi_supplicant_default wifi_data_file:dir search;
+allow hal_wifi_supplicant_default engpc:unix_dgram_socket sendto;
+allow hal_wifi_supplicant_default exported_default_prop:file { read getattr open };
+allow hal_wifi_supplicant_default exported_overlay_prop:file { read getattr open };
+allow hal_wifi_supplicant_default exported_system_prop:file { read getattr open };
+allow hal_wifi_supplicant_default vendor_default_prop:file { read getattr open };
+allow hal_wifi_supplicant_default vendor_data_file:dir { read write create getattr open add_name search };
+allow hal_wifi_supplicant_default vendor_data_file:file { read write create getattr open };
+allow hal_wifi_supplicant_default wifi_hal_prop:file { read getattr map open };
+allow hal_wifi_supplicant_default property_socket:sock_file write;
+allow hal_wifi_supplicant_default init:unix_stream_socket connectto;
+allow hal_wifi_supplicant_default vendor_wifi_prop:property_service set;
+allow hal_wifi_supplicant_default vendor_wifi_prop:file { read getattr map open };
+allow hal_wifi_supplicant_default vendor_transform_varaint_prop:file { read getattr map open };
+type_transition hal_wifi_supplicant_default wifi_data_file:dir "sockets" wpa_socket;
