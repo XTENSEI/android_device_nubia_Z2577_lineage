@@ -5,3 +5,20 @@ typeattribute srtd mlstrustedsubject;
 type srtd_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(srtd)
 
+allow srtd srtd_exec:file { read getattr map execute open entrypoint };
+allow srtd srtd:capability { kill ipc_lock };
+allow srtd fuse:dir search;
+allow srtd hwservicemanager:binder call;
+allow srtd rild:binder call;
+allow srtd property_socket:sock_file write;
+allow srtd init:unix_stream_socket connectto;
+allow srtd vendor_systemdebuggerd_prop:property_service set;
+allow srtd vendor_systemdebuggerd_prop:file { read getattr map open };
+allow srtd vendor_sys_prop:property_service set;
+allow srtd vendor_sys_prop:file { read getattr map open };
+allow srtd hwservicemanager_prop:file { read getattr map open };
+allow srtd hal_extRadio_hwservice:hwservice_manager find;
+allow srtd servicemanager:binder call;
+allow srtd ext_radio_service:service_manager find;
+allow srtd vendor_eng_prop:property_service set;
+allow srtd vendor_eng_prop:file { read getattr map open };
