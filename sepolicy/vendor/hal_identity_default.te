@@ -1,2 +1,6 @@
 # Identity
 allow hal_identity_default teetz_device:chr_file rw_file_perms;
+
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_identity_default hal_identity_default_exec:file { read getattr map execute open entrypoint };
+allow hal_identity_default teetz_device:chr_file { ioctl read write open };

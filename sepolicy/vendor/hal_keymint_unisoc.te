@@ -6,3 +6,9 @@ type hal_keymint_unisoc_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(hal_keymint_unisoc)
 
 allow hal_keymint_unisoc teetz_device:chr_file rw_file_perms;
+
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_keymint_unisoc hal_keymint_unisoc_exec:file { read getattr map execute open entrypoint };
+allow hal_keymint_unisoc teetz_device:chr_file { ioctl read write open };
+allow hal_keymint_unisoc servicemanager:binder { call transfer };
+allow hal_keymint_unisoc vendor_security_patch_level_prop:file { read getattr map open };

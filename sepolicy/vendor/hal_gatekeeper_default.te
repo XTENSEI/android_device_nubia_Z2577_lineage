@@ -1,2 +1,6 @@
 # Gatekeeper
 allow hal_gatekeeper_default teetz_device:chr_file rw_file_perms;
+
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_gatekeeper_default hal_gatekeeper_default_exec:file { read getattr map execute open entrypoint };
+allow hal_gatekeeper_default teetz_device:chr_file { ioctl read write open };
