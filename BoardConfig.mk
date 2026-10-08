@@ -68,7 +68,6 @@ BOARD_FLASH_BLOCK_SIZE := 262144
 BOARD_USES_GENERIC_KERNEL_IMAGE := true
 BOARD_KERNEL_CMDLINE := console=ttyS1,115200n8 bootconfig
 BOARD_BOOTCONFIG := androidboot.hardware=ums9230_6h10
-TARGET_BOOTLOADER_BOARD_NAME := ums9230_6h10
 
 # The stock vendor_boot header addresses, the mkbootimg defaults differ on the ramdisk
 BOARD_MKBOOTIMG_ARGS += --base 0x00000000
@@ -179,6 +178,15 @@ BOARD_AVB_VBMETA_ODM_ROLLBACK_INDEX_LOCATION := 7
 
 # Platform
 TARGET_BOARD_PLATFORM := ums9230
+# Not the boot hardware name, the fstab follows androidboot.hardware
+TARGET_BOOTLOADER_BOARD_NAME := Z2577
+TARGET_OTA_ASSERT_DEVICE := Z2577
+
+# RIL
+ENABLE_VENDOR_RIL_SERVICE := true
+
+# Vendor patch level, from the stock ro.vendor.build.security_patch
+VENDOR_SECURITY_PATCH := 2026-05-05
 
 # Sepolicy
 SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/public

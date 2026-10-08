@@ -6,6 +6,9 @@
 # Inherit from the device configuration
 $(call inherit-product, $(LOCAL_PATH)/device.mk)
 
+# The stock system is Android 16, the vendor is API 33
+PRODUCT_SHIPPING_API_LEVEL := 36
+
 ## Device identifier, this must come after all inclusions
 PRODUCT_BRAND := nubia
 PRODUCT_DEVICE := Z2577
