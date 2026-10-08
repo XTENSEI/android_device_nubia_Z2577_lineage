@@ -5,3 +5,16 @@ typeattribute zte_thermal_daemon mlstrustedsubject;
 type zte_thermal_daemon_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(zte_thermal_daemon)
 
+allow zte_thermal_daemon zte_thermal_daemon_exec:file { read getattr map execute open entrypoint };
+allow zte_thermal_daemon self:capability2 { syslog wake_alarm block_suspend };
+allow zte_thermal_daemon kmsg_device:chr_file { ioctl read write getattr lock append map open watch watch_reads };
+allow zte_thermal_daemon tty_device:chr_file { ioctl read write getattr lock append map open watch watch_reads };
+allow zte_thermal_daemon self:netlink_kobject_uevent_socket { read write create getattr setattr lock append map bind connect getopt setopt shutdown };
+allow zte_thermal_daemon sysfs_batteryinfo:dir { read open search };
+allow zte_thermal_daemon sysfs_batteryinfo:file { read write open };
+allow zte_thermal_daemon sysfs:dir { read open search };
+allow zte_thermal_daemon sysfs:file { read write open };
+allow zte_thermal_daemon sysfs_power:dir { read open search };
+allow zte_thermal_daemon sysfs_power:file { read write open };
+allow zte_thermal_daemon oem_zte_misc:dir { read open search };
+allow zte_thermal_daemon oem_zte_misc:file { read open };

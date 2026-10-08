@@ -5,3 +5,19 @@ typeattribute battery_record_daemon mlstrustedsubject;
 type battery_record_daemon_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(battery_record_daemon)
 
+allow battery_record_daemon battery_record_daemon_exec:file { read getattr map execute open entrypoint };
+allow battery_record_daemon battery_record_data_file:dir { read write create open add_name remove_name search };
+allow battery_record_daemon battery_record_data_file:file { read write create getattr setattr append unlink open };
+allow battery_record_daemon self:capability2 { syslog wake_alarm block_suspend };
+allow battery_record_daemon tmpfs:chr_file relabelfrom;
+allow battery_record_daemon kmsg_device:chr_file { write relabelto open };
+allow battery_record_daemon tty_device:chr_file { ioctl read write getattr lock append map open watch watch_reads };
+allow battery_record_daemon self:netlink_kobject_uevent_socket { read write create getattr setattr lock append map bind connect getopt setopt shutdown };
+allow battery_record_daemon mnt_vendor_file:dir { read open search };
+allow battery_record_daemon mnt_vendor_file:lnk_file read;
+allow battery_record_daemon vendor_file:dir { read open add_name remove_name search };
+allow battery_record_daemon prod_file:dir { read write create open add_name remove_name search };
+allow battery_record_daemon sysfs_power:dir { read open search };
+allow battery_record_daemon sysfs_power:file { read write open };
+allow battery_record_daemon sysfs:dir { read open search };
+allow battery_record_daemon sysfs:file { read write open };

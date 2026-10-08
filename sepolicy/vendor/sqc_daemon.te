@@ -5,3 +5,21 @@ typeattribute sqc_daemon mlstrustedsubject;
 type sqc_daemon_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(sqc_daemon)
 
+allow sqc_daemon sqc_daemon_exec:file { read getattr map execute open entrypoint };
+allow sqc_daemon self:capability2 { syslog wake_alarm block_suspend };
+allow sqc_daemon kmsg_device:chr_file { ioctl read write getattr lock append map open watch watch_reads };
+allow sqc_daemon tty_device:chr_file { ioctl read write getattr lock append map open watch watch_reads };
+allow sqc_daemon self:netlink_kobject_uevent_socket { read write create getattr setattr lock append map bind connect getopt setopt shutdown };
+allow sqc_daemon sqc_device:chr_file { ioctl read write getattr lock append map open watch watch_reads };
+allow sqc_daemon sqc_device:chr_file { ioctl read write open };
+allow sqc_daemon self:netlink_socket { read write create getattr setattr lock append map bind connect getopt setopt shutdown };
+allow sqc_daemon self:unix_stream_socket connectto;
+allow sqc_daemon self:unix_dgram_socket { read write create getattr setattr bind connect getopt setopt shutdown sendto };
+allow sqc_daemon self:udp_socket { read write create getattr setattr bind connect getopt setopt shutdown sendto };
+allow sqc_daemon port:udp_socket name_bind;
+allow sqc_daemon node:udp_socket node_bind;
+allow sqc_daemon oem_zte_misc:dir { read open search };
+allow sqc_daemon oem_zte_misc:file { read open };
+allow sqc_daemon sysfs_power:dir { read open search };
+allow sqc_daemon sysfs_power:file { read write open };
+allow sqc_daemon sysfs:dir { read open search };

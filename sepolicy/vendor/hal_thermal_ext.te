@@ -5,3 +5,9 @@ hal_server_domain(hal_thermal_ext, hal_thermal)
 type hal_thermal_ext_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(hal_thermal_ext)
 
+allow hal_thermal_ext hal_thermal_ext_exec:file { read getattr map execute open entrypoint };
+allow hal_thermal_ext hal_extthermal_hwservice:hwservice_manager { add find };
+allow hal_thermal_ext thermald:unix_stream_socket connectto;
+allow hal_thermal_ext sysfs:dir { read open };
+allow hal_thermal_ext sysfs:file { read getattr open };
+allow hal_thermal_ext proc_stat:file { read getattr open };

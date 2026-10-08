@@ -4,3 +4,25 @@ type charged, domain;
 type charged_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(charged)
 
+allow charged charged_exec:file { read getattr map execute open entrypoint };
+allow charged device:dir { read write open };
+allow charged device:chr_file { create unlink };
+allow charged vendor_shell_exec:file { read execute open execute_no_trans };
+allow charged charge:capability { sys_admin sys_boot sys_tty_config };
+allow charged refnotify_device:chr_file { ioctl read write getattr map execute open entrypoint };
+allow charged kmsg_device:chr_file { write open };
+allow charged sysfs:file { read write open };
+allow charged sysfs:dir { read open };
+allow charged prod_file:dir { read getattr open search };
+allow charged prod_file:file { ioctl read write getattr setattr lock unlink open };
+allow charged sysfs_power:dir { read open search };
+allow charged sysfs_power:file { read write open };
+allow charged sysfs_extdata:dir { read open search };
+allow charged sysfs_extdata:file { read write getattr open };
+allow charged sysfs_rtc:dir { read open search };
+allow charged sysfs_rtc:file { read write open };
+allow charged tty_device:chr_file { ioctl read write open };
+allow charged vendor_hwrotation_prop:file { read getattr map open };
+allow charged mmcblk_device:blk_file { read write getattr open };
+allow charged block_device:dir search;
+allow charged ufs_device:blk_file { read write getattr open };
