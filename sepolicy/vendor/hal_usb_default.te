@@ -1,0 +1,6 @@
+# From the stock odm_sepolicy.cil and vendor_sepolicy.cil
+allow hal_usb_default hal_usb_default_exec:file { read getattr map execute open entrypoint };
+allow hal_usb_default configfs:dir { read write add_name search };
+allow hal_usb_default configfs:file { read write getattr open };
+allow hal_usb_default sysfs_power:dir { read search };
+allow hal_usb_default sysfs_power:file { read write getattr open };
