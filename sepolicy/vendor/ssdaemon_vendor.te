@@ -5,3 +5,20 @@ hal_server_domain(ssdaemon_vendor, hal_subsys)
 type ssdaemon_vendor_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(ssdaemon_vendor)
 
+allow ssdaemon_vendor ssdaemon_vendor_exec:file { read getattr map execute open entrypoint };
+allow ssdaemon_vendor block_device:dir { write add_name search };
+allow ssdaemon_vendor oem_blk_device:blk_file { read write create lock open };
+allow ssdaemon_vendor hal_log_default:unix_stream_socket connectto;
+allow ssdaemon_vendor vendor_emmcid_prop:file { read getattr map open };
+allow ssdaemon_vendor sysfs_sensor:file { read write getattr open };
+allow ssdaemon_vendor sysfs:file { read write getattr open };
+allow ssdaemon_vendor prod_file:dir { write create add_name search };
+allow ssdaemon_vendor prod_file:file { read write create getattr setattr open };
+allow ssdaemon_vendor system_server:binder { call transfer };
+allow ssdaemon_vendor fwk_sensor_hwservice:hwservice_manager find;
+allow ssdaemon_vendor vendor_logctrl_prop:file { read getattr map open };
+allow ssdaemon_vendor property_socket:sock_file write;
+allow ssdaemon_vendor init:unix_stream_socket connectto;
+allow ssdaemon_vendor vendor_logctrl_prop:property_service set;
+allow ssdaemon_vendor mmcblk_device:blk_file { read write create lock open };
+allow ssdaemon_vendor servicemanager:binder { call transfer };

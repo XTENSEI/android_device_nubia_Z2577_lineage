@@ -4,3 +4,12 @@ type zte_ldd_test, domain;
 type zte_ldd_test_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(zte_ldd_test)
 
+allow zte_ldd_test zte_ldd_test_exec:file { read getattr map execute open entrypoint };
+allow zte_ldd_test sys_proc:file { read getattr open };
+allow zte_ldd_test sysfs:file { read getattr open };
+allow zte_ldd_test oemfs:dir search;
+allow zte_ldd_test property_socket:sock_file write;
+allow zte_ldd_test init:unix_stream_socket connectto;
+allow zte_ldd_test vendor_lddtest_prop:property_service set;
+allow zte_ldd_test vendor_fingerprint_id_prop:file { read getattr map open };
+allow zte_ldd_test vendor_feature_prop:file { read getattr map open };

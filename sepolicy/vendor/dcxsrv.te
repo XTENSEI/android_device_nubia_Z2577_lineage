@@ -4,3 +4,7 @@ type dcxsrv, domain;
 type dcxsrv_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(dcxsrv)
 
+allow dcxsrv sysfs:file { ioctl read write open };
+allow dcxsrv prod_file:dir { read write open add_name remove_name search };
+allow dcxsrv prod_file:file { ioctl read write create getattr setattr lock append map unlink open watch watch_reads };
+allow dcxsrv dcxsrv_exec:file { read getattr map execute open entrypoint };
