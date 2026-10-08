@@ -5,3 +5,14 @@ typeattribute sensor_cali_test mlstrustedsubject;
 type sensor_cali_test_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(sensor_cali_test)
 
+allow sensor_cali_test sensor_cali_test_exec:file { read getattr map execute open entrypoint };
+allow sensor_cali_test prod_file:file { read write create getattr setattr unlink open };
+allow sensor_cali_test prod_file:dir { write create add_name remove_name search };
+allow sensor_cali_test system_server:binder { call transfer };
+allow sensor_cali_test fwk_sensor_hwservice:hwservice_manager find;
+allow sensor_cali_test property_socket:sock_file write;
+allow sensor_cali_test init:unix_stream_socket connectto;
+allow sensor_cali_test vendor_sensorcali_test_prop:file { read getattr open };
+allow sensor_cali_test vendor_sensorcali_test_prop:property_service set;
+allow sensor_cali_test hwservicemanager:binder { call transfer };
+allow sensor_cali_test hwservicemanager_prop:file { read getattr open };

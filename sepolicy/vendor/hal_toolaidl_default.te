@@ -5,3 +5,23 @@ typeattribute hal_toolaidl_default mlstrustedsubject;
 type hal_toolaidl_default_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(hal_toolaidl_default)
 
+allow hal_toolaidl_default hal_toolaidl_default_exec:file { read getattr map execute open entrypoint };
+allow hal_toolaidl_default servicemanager:binder { call transfer };
+allow hal_toolaidl_default hal_toolaidl_service:service_manager { add find };
+allow hal_toolaidl_default gpsd:unix_stream_socket connectto;
+allow hal_toolaidl_default srtd:unix_stream_socket { read write connectto };
+allow hal_toolaidl_default phasecheckserver:unix_stream_socket { read write connectto };
+allow hal_toolaidl_default wcnd:unix_stream_socket { read write connectto };
+allow hal_toolaidl_default tool_service:binder { call transfer };
+allow hal_toolaidl_default rild:binder call;
+allow hal_toolaidl_default ext_radio_service:service_manager find;
+allow hal_toolaidl_default init:unix_stream_socket connectto;
+allow hal_toolaidl_default property_socket:sock_file write;
+allow hal_toolaidl_default vendor_sys_prop:property_service set;
+allow hal_toolaidl_default vendor_sys_prop:file { read getattr map open };
+allow hal_toolaidl_default engpc:unix_stream_socket connectto;
+allow hal_toolaidl_default vendor_systemdebuggerd_prop:property_service set;
+allow hal_toolaidl_default vendor_systemdebuggerd_prop:file { read getattr map open };
+allow hal_toolaidl_default vendor_eng_prop:property_service set;
+allow hal_toolaidl_default vendor_eng_prop:file { read getattr map open };
+allow hal_toolaidl_default hal_bluetooth_default:unix_stream_socket connectto;

@@ -4,3 +4,20 @@ type hal_enhanceaidl_default, domain;
 type hal_enhanceaidl_default_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(hal_enhanceaidl_default)
 
+allow hal_enhanceaidl_default dumpstate:binder transfer;
+allow hal_enhanceaidl_default hal_enhanceaidl_default_exec:file { read getattr map execute open entrypoint };
+allow hal_enhanceaidl_default servicemanager:binder { call transfer };
+allow hal_enhanceaidl_default hal_enhanceaidl_service:service_manager { add find };
+allow hal_enhanceaidl_default app_data_file:file { read write getattr };
+allow hal_enhanceaidl_default platform_app:fd use;
+allow hal_enhanceaidl_default vendor_camera_prop:file { read getattr map open };
+allow hal_enhanceaidl_default prod_file:file { read write create getattr setattr open };
+allow hal_enhanceaidl_default prod_file:dir { read write create getattr open add_name search };
+allow hal_enhanceaidl_default mnt_vendor_file:dir search;
+allow hal_enhanceaidl_default vendor_configs_file:dir { read getattr open search };
+allow hal_enhanceaidl_default vendor_configs_file:file { read getattr open };
+allow hal_enhanceaidl_default sysfs:file { read write open };
+allow hal_enhanceaidl_default sysfs_dpu_vendor:file { read open };
+allow hal_enhanceaidl_default sysfs_dpu_vsp:file { read open };
+allow hal_enhanceaidl_default self:capability fowner;
+allow hal_enhanceaidl_default sysfs_multipanel:file { read open };
