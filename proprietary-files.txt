@@ -431,7 +431,7 @@ vendor/lib64/hw/android.hardware.broadcastradio@1.0-impl.so
 vendor/lib64/mediacas/libclearkeycasplugin.so
 
 # DRM
-vendor/bin/hw/android.hardware.drm-service.clearkey
+# vendor/bin/hw/android.hardware.drm-service.clearkey
 vendor/bin/hw/android.hardware.drm-service.widevine
 vendor/lib/android.hardware.drm@1.0.so
 vendor/lib/android.hardware.drm@1.1.so
@@ -452,8 +452,6 @@ vendor/lib64/mediadrm/libdrmclearkeyplugin.so
 # Display
 vendor/bin/hw/android.hardware.graphics.allocator@4.0-service
 vendor/bin/hw/android.hardware.graphics.composer@2.4-service
-vendor/lib/android.hardware.graphics.allocator-V1-ndk.so
-vendor/lib/android.hardware.graphics.common-V3-ndk.so
 vendor/lib/android.hidl.allocator@1.0.so
 vendor/lib/arm.graphics-V1-ndk_platform.so
 vendor/lib/arm.graphics-V2-ndk.so
@@ -471,8 +469,6 @@ vendor/lib/libSegLite.so
 vendor/lib/libcamfb.so
 vendor/lib/libeyeanalyze_for_fb2_2.so
 vendor/lib/libhwc2on1adapter.so
-vendor/lib64/android.hardware.graphics.allocator-V1-ndk.so
-vendor/lib64/android.hardware.graphics.common-V3-ndk.so
 vendor/lib64/android.hardware.graphics.composer@2.1.so
 vendor/lib64/android.hardware.graphics.composer@2.2.so
 vendor/lib64/android.hardware.graphics.composer@2.3.so
@@ -502,8 +498,6 @@ vendor/bin/hw/vendor.zte.hardware.biometrics.fingerprint-service
 vendor/lib/hw/fingerprint.focaltech.default.so;FIX_SONAME
 vendor/lib/hw/fingerprint.silead.default.so
 vendor/lib/libsl_fp_impl.so
-vendor/lib64/android.hardware.biometrics.common-V2-ndk.so
-vendor/lib64/android.hardware.biometrics.fingerprint-V2-ndk.so
 vendor/lib64/hw/fingerprint.focaltech.default.so;FIX_SONAME
 vendor/lib64/hw/fingerprint.silead.default.so
 vendor/lib64/libsl_fp_impl.so
@@ -516,7 +510,7 @@ vendor/lib64/android.hardware.gatekeeper@1.0.so
 # GNSS
 vendor/bin/gpsd
 vendor/bin/hw/vendor.sprd.hardware.gnss-service
-vendor/bin/rkp_factory_extraction_tool
+# vendor/bin/rkp_factory_extraction_tool
 vendor/etc/supl.xml
 vendor/etc/suplrootca.pem
 vendor/lib/hw/gps.default.so
@@ -529,13 +523,13 @@ vendor/lib64/vendor.sprd.hardware.gnss-V1-ndk.so
 
 # Health
 vendor/bin/battery_record_daemon
-vendor/bin/hw/android.hardware.health-service.example
+# vendor/bin/hw/android.hardware.health-service.example
 vendor/bin/zte_battery_life
 vendor/etc/.tp/zte_battery_life.conf
 
 # Identity
 vendor/bin/hw/android.hardware.identity-service.trusty
-vendor/bin/hw/android.hardware.power.stats-service.example
+# vendor/bin/hw/android.hardware.power.stats-service.example
 vendor/lib/hw/local_time.default.so
 vendor/lib/libeic_trusty.so
 vendor/lib64/hw/local_time.default.so
@@ -591,8 +585,6 @@ vendor/lib/libTfliteWrapper.so
 vendor/lib/libgesture_mnn.so
 vendor/lib/libsprdfarcnn_SDK.so
 vendor/lib/libumnn.so
-vendor/lib64/android.hardware.neuralnetworks-V1-ndk.so
-vendor/lib64/android.hardware.neuralnetworks-V4-ndk.so
 vendor/lib64/android.hardware.neuralnetworks@1.0.so
 vendor/lib64/android.hardware.neuralnetworks@1.1.so
 vendor/lib64/android.hardware.neuralnetworks@1.2.so
@@ -1007,7 +999,7 @@ vendor/lib64/oemlock_ca.so
 
 # Sensors
 vendor/bin/clear_als_cali.sh
-vendor/bin/hw/android.hardware.sensors-service.multihal
+# vendor/bin/hw/android.hardware.sensors-service.multihal
 vendor/bin/sensor_cali_test
 vendor/etc/zte_ldd_hals.conf
 vendor/lib/android.frameworks.sensorservice@1.0.so
@@ -4313,17 +4305,17 @@ vendor/etc/init/android.hardware.audio.service.rc
 vendor/etc/init/android.hardware.bluetooth@1.1-service.unisoc.rc
 vendor/etc/init/android.hardware.camera.provider@2.7-service_64.rc
 vendor/etc/init/android.hardware.cas@1.2-service.rc
-vendor/etc/init/android.hardware.drm-service.clearkey.rc
+# vendor/etc/init/android.hardware.drm-service.clearkey.rc
 vendor/etc/init/android.hardware.drm-service.widevine.rc
 vendor/etc/init/android.hardware.gatekeeper@1.0-service.trusty.rc
 vendor/etc/init/android.hardware.graphics.allocator@4.0-service.rc
 vendor/etc/init/android.hardware.graphics.composer@2.4-service.rc
-vendor/etc/init/android.hardware.health-service.example.rc
+# vendor/etc/init/android.hardware.health-service.example.rc
 vendor/etc/init/android.hardware.media.c2@1.1-unisoc-service.rc
 vendor/etc/init/android.hardware.media.omx@1.0-service.rc
 vendor/etc/init/android.hardware.neuralnetworks@aidl-service-armnn-gpu.rc
 vendor/etc/init/android.hardware.security.keymint@2.0-unisoc.service.trusty.rc
-vendor/etc/init/android.hardware.sensors-service-multihal.rc
+# vendor/etc/init/android.hardware.sensors-service-multihal.rc
 vendor/etc/init/android.hardware.usb-service.unisoc.rc
 vendor/etc/init/android.hardware.wifi.hostapd-service.rc
 vendor/etc/init/android.hardware.wifi.supplicant-service.rc
@@ -4374,7 +4366,7 @@ vendor/etc/init/modem_control.rc
 vendor/etc/init/network-default.rc
 vendor/etc/init/nfc-service-tms.rc
 vendor/etc/init/phasecheckserver.rc
-vendor/etc/init/power.stats-default.rc
+# vendor/etc/init/power.stats-default.rc
 vendor/etc/init/rebootescrow-default.rc
 vendor/etc/init/refnotify.rc
 vendor/etc/init/rpmbserver.rc
@@ -4412,11 +4404,11 @@ vendor/etc/vintf/manifest.xml
 vendor/etc/vintf/manifest/ai_engine-default.xml
 vendor/etc/vintf/manifest/android.hardware.camera.provider@2.7-service.xml
 vendor/etc/vintf/manifest/android.hardware.cas@1.2-service.xml
-vendor/etc/vintf/manifest/android.hardware.drm-service.clearkey.xml
+# vendor/etc/vintf/manifest/android.hardware.drm-service.clearkey.xml
 vendor/etc/vintf/manifest/android.hardware.gatekeeper@1.0-service.trusty.xml
-vendor/etc/vintf/manifest/android.hardware.health-service.example.xml
+# vendor/etc/vintf/manifest/android.hardware.health-service.example.xml
 vendor/etc/vintf/manifest/android.hardware.security.keymint@2.0-unisoc.service.trusty.xml
-vendor/etc/vintf/manifest/android.hardware.sensors-multihal.xml
+# vendor/etc/vintf/manifest/android.hardware.sensors-multihal.xml
 vendor/etc/vintf/manifest/android.hardware.thermal@2.0-service.xml
 vendor/etc/vintf/manifest/android.hardware.usb-service.unisoc.xml
 vendor/etc/vintf/manifest/android.hardware.wifi.hostapd.xml
@@ -4435,7 +4427,7 @@ vendor/etc/vintf/manifest/manifest_media_c2_V1_1_unisoc.xml
 vendor/etc/vintf/manifest/memtrack.xml
 vendor/etc/vintf/manifest/network-default.xml
 vendor/etc/vintf/manifest/nfc-service-tms.xml
-vendor/etc/vintf/manifest/power.stats-default.xml
+# vendor/etc/vintf/manifest/power.stats-default.xml
 vendor/etc/vintf/manifest/rebootescrow-default.xml
 vendor/etc/vintf/manifest/trusty-default.xml
 vendor/etc/vintf/manifest/unionpnp_service-default.xml
