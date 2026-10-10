@@ -28,6 +28,11 @@ lib_fixups: lib_fixups_user_type = {
     **lib_fixups,
     'libdav1d': lambda lib, partition: 'libdav1d_vendor',
     'libskia': lambda lib, partition: 'libskia_vendor',
+    'libkeymint': lambda lib, partition: 'libkeymint_vendor',
+    'lib_android_keymaster_keymint_utils':
+        lambda lib, partition: 'lib_android_keymaster_keymint_utils_vendor',
+    'audioclient-types-aidl-cpp':
+        lambda lib, partition: 'audioclient-types-aidl-cpp_vendor',
 }
 
 module = ExtractUtilsModule(
