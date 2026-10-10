@@ -23,3 +23,17 @@ The nubia V80 Max (codenamed "Z2577") is a budget smartphone from nubia.
 ## Device Picture
 
 ![nubia V80 Max](docs/z2577.jpg)
+
+## Extracting the blobs
+
+`proprietary-files.txt` is the list and the vendor repo is its generated output.
+Both need a LineageOS checkout, with this tree at `device/nubia/Z2577` and the
+blobs at `vendor/nubia/Z2577`:
+
+    ./extract-files.py
+    ./setup-makefiles.py
+
+`build/tools/extract-utils` builds a symlink module name straight from the target
+path, so `vendor/bin/[` becomes `vendor_bin_[`, which Soong rejects.
+`docs/extract-utils-module-name.patch` fixes that. The patch is lost on
+`repo sync`, so the one symlink it affects is declared by hand in `Android.bp`.

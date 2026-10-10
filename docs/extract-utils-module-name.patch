@@ -1,0 +1,53 @@
+diff --git a/extract_utils/makefiles.py b/extract_utils/makefiles.py
+index 1e0e259..d4d256e 100644
+--- a/extract_utils/makefiles.py
++++ b/extract_utils/makefiles.py
+@@ -653,6 +653,39 @@ def write_product_copy_files(
+     out.write('\n')
+ 
+ 
++# Soong only accepts letters, digits and _ . @ + - in a module name
++MODULE_NAME_CHARS = {
++    '[': 'lbracket',
++    ']': 'rbracket',
++    '(': 'lparen',
++    ')': 'rparen',
++    '{': 'lbrace',
++    '}': 'rbrace',
++    '*': 'star',
++    '?': 'question',
++    '|': 'pipe',
++    '<': 'lt',
++    '>': 'gt',
++    '!': 'bang',
++    ';': 'semicolon',
++    "'": 'apos',
++    '"': 'quote',
++    '\\': 'backslash',
++    ' ': 'space',
++}
++
++MODULE_NAME_ALLOWED = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.@+-')
++
++
++def module_name_from_path(path: str) -> str:
++    name = path.replace('/', '_').replace('.', '_')
++
++    return ''.join(
++        char if char in MODULE_NAME_ALLOWED else MODULE_NAME_CHARS.get(char, '_')
++        for char in name
++    )
++
++
+ def write_symlink_package(
+     file: File,
+     symlink: str,
+@@ -664,7 +697,7 @@ def write_symlink_package(
+     if '/' not in symlink:
+         symlink = f'{os.path.dirname(file.dst)}/{symlink}'
+     part, location = symlink.split('/', 1)
+-    package_name = symlink.replace('/', '_').replace('.', '_')
++    package_name = module_name_from_path(symlink)
+ 
+     (
+         BpBuilder(encoder)
