@@ -25,6 +25,10 @@ PRODUCT_PACKAGES += \
     android.hardware.boot@1.2-impl.recovery \
     android.hardware.boot@1.2-service
 
+# Power stats, the platform builds the service the blob list used to ship
+PRODUCT_PACKAGES += \
+    android.hardware.power.stats-service.example
+
 # OTA
 PRODUCT_PACKAGES += \
     update_engine \

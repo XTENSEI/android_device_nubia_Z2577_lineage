@@ -529,7 +529,7 @@ vendor/etc/.tp/zte_battery_life.conf
 
 # Identity
 vendor/bin/hw/android.hardware.identity-service.trusty
-vendor/bin/hw/android.hardware.power.stats-service.example
+# vendor/bin/hw/android.hardware.power.stats-service.example
 vendor/lib/hw/local_time.default.so
 vendor/lib/libeic_trusty.so
 vendor/lib64/hw/local_time.default.so
@@ -4366,7 +4366,7 @@ vendor/etc/init/modem_control.rc
 vendor/etc/init/network-default.rc
 vendor/etc/init/nfc-service-tms.rc
 vendor/etc/init/phasecheckserver.rc
-vendor/etc/init/power.stats-default.rc
+# vendor/etc/init/power.stats-default.rc
 vendor/etc/init/rebootescrow-default.rc
 vendor/etc/init/refnotify.rc
 vendor/etc/init/rpmbserver.rc
@@ -4427,7 +4427,7 @@ vendor/etc/vintf/manifest/manifest_media_c2_V1_1_unisoc.xml
 vendor/etc/vintf/manifest/memtrack.xml
 vendor/etc/vintf/manifest/network-default.xml
 vendor/etc/vintf/manifest/nfc-service-tms.xml
-vendor/etc/vintf/manifest/power.stats-default.xml
+# vendor/etc/vintf/manifest/power.stats-default.xml
 vendor/etc/vintf/manifest/rebootescrow-default.xml
 vendor/etc/vintf/manifest/trusty-default.xml
 vendor/etc/vintf/manifest/unionpnp_service-default.xml
