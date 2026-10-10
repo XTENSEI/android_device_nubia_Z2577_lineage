@@ -4948,7 +4948,7 @@ vendor/lib/libprotobuf-cpp-full-3.9.1.so
 vendor/lib/libprotobuf-cpp-lite-3.9.1.so
 vendor/lib/libshmemcompat.so
 vendor/lib/libshmemutil.so
-vendor/lib/libskia.so
+vendor/lib/libskia.so;MODULE=libskia_vendor
 vendor/lib/libskia_watermark.so
 vendor/lib/libsky_seg_toning_320.so
 vendor/lib/libsky_toning_realize.so
@@ -5071,7 +5071,7 @@ vendor/lib64/libprotobuf-cpp-full-3.9.1.so
 vendor/lib64/libprotobuf-cpp-lite-3.9.1.so
 vendor/lib64/libshmemcompat.so
 vendor/lib64/libshmemutil.so
-vendor/lib64/libskia.so
+vendor/lib64/libskia.so;MODULE=libskia_vendor
 vendor/lib64/libskia_watermark.so
 vendor/lib64/libsky_seg_toning_320.so
 vendor/lib64/libsky_toning_realize.so
