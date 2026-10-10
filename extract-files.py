@@ -19,8 +19,12 @@ namespace_imports = [
 
 # The tool's own fixups, without which the generated shared_libs keep the blob's
 # soname: the arch suffixed clang runtimes and the protobuf vendorcompat pair
+#
+# libdav1d: the platform builds it static only, so the shared copy the vendor
+# blobs need carries its own module name and they are repointed here
 lib_fixups: lib_fixups_user_type = {
     **lib_fixups,
+    'libdav1d': lambda lib, partition: 'libdav1d_vendor',
 }
 
 module = ExtractUtilsModule(

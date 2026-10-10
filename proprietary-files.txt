@@ -4915,7 +4915,7 @@ vendor/lib/libcamps.so
 vendor/lib/libcamwatermark.so
 vendor/lib/libceres_online.so
 vendor/lib/libcppdrv_r6p0.so
-vendor/lib/libdav1d.so
+vendor/lib/libdav1d.so;MODULE=libdav1d_vendor
 vendor/lib/libdfa.so
 vendor/lib/libeffects.so
 vendor/lib/libeng_tok.so
@@ -5033,7 +5033,7 @@ vendor/lib64/libceres_online.so
 vendor/lib64/libcplog.so
 vendor/lib64/libcppbor_external.so
 vendor/lib64/libcppdrv_r6p0.so
-vendor/lib64/libdav1d.so
+vendor/lib64/libdav1d.so;MODULE=libdav1d_vendor
 vendor/lib64/libdfa.so
 vendor/lib64/libeffects.so
 vendor/lib64/libeng_tok.so
