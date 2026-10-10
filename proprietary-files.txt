@@ -23,12 +23,9 @@ vendor/etc/primary_audio_policy_configuration.xml
 vendor/etc/r_submix_audio_policy_configuration.xml
 vendor/etc/sprd_audio_policy_engine_criteria.xml
 vendor/etc/usb_audio_policy_configuration.xml
-vendor/lib/android.hardware.audio.common-util.so
 vendor/lib/android.hardware.audio.common@5.0.so
-vendor/lib/android.hardware.audio.common@7.0-enums.so
 vendor/lib/android.hardware.audio.common@7.0-util.so
 vendor/lib/android.hardware.audio.common@7.0.so
-vendor/lib/android.hardware.audio.common@7.1-enums.so
 vendor/lib/android.hardware.audio.common@7.1-util.so
 vendor/lib/android.hardware.audio.effect@7.0-util.so
 vendor/lib/android.hardware.audio.effect@7.0.so
@@ -84,7 +81,6 @@ vendor/lib/libomx_vpxenc_hw_sprd.so
 vendor/lib/libsprdaudiohal@7.0.so
 vendor/lib/libsprdaudiohal_deathhandlerv7.so
 vendor/lib/libsprdaudiohalv7.so
-vendor/lib/libstagefright_bufferpool@2.0.1.so
 vendor/lib/libstagefright_hdcp.so
 vendor/lib/libswresample-4.so
 vendor/lib/libunisocaudiodiagnose.so
@@ -104,12 +100,9 @@ vendor/lib/soundfx/libsr.so
 vendor/lib/soundfx/libunisocspatialaudio.so
 vendor/lib/soundfx/libunisocvoiceprocessing.so
 vendor/lib/soundfx/libvisualizer.so
-vendor/lib64/android.hardware.audio.common-util.so
 vendor/lib64/android.hardware.audio.common@5.0.so
-vendor/lib64/android.hardware.audio.common@7.0-enums.so
 vendor/lib64/android.hardware.audio.common@7.0-util.so
 vendor/lib64/android.hardware.audio.common@7.0.so
-vendor/lib64/android.hardware.audio.common@7.1-enums.so
 vendor/lib64/android.hardware.audio.common@7.1-util.so
 vendor/lib64/android.hardware.audio.effect@7.0-util.so
 vendor/lib64/android.hardware.audio.effect@7.0.so
@@ -159,7 +152,6 @@ vendor/lib64/libomx_vpxenc_hw_sprd.so
 vendor/lib64/libsprdaudiohal@7.0.so
 vendor/lib64/libsprdaudiohal_deathhandlerv7.so
 vendor/lib64/libsprdaudiohalv7.so
-vendor/lib64/libstagefright_bufferpool@2.0.1.so
 vendor/lib64/libstagefright_hdcp.so
 vendor/lib64/libswresample-4.so
 vendor/lib64/sensors.dynamic_sensor_subhal.so
@@ -193,14 +185,12 @@ vendor/lib/android.hardware.boot@1.0.so
 vendor/lib/android.hardware.boot@1.1.so
 vendor/lib/android.hardware.boot@1.2.so
 vendor/lib/hw/android.hardware.boot@1.0-impl-1.2.so
-vendor/lib/hw/bootctrl.default.so
 vendor/lib/hw/unisoc.bootctrl.so
 vendor/lib/vendor.sprd.hardware.boot@1.2.so
 vendor/lib64/android.hardware.boot@1.0.so
 vendor/lib64/android.hardware.boot@1.1.so
 vendor/lib64/android.hardware.boot@1.2.so
 vendor/lib64/hw/android.hardware.boot@1.0-impl-1.2.so
-vendor/lib64/hw/bootctrl.default.so
 vendor/lib64/hw/unisoc.bootctrl.so
 vendor/lib64/vendor.sprd.hardware.boot@1.2.so
 
@@ -499,7 +489,6 @@ vendor/lib/libeyeanalyze_for_fb2_2.so
 vendor/lib/libhwc2on1adapter.so
 vendor/lib64/android.hardware.graphics.allocator-V1-ndk.so
 vendor/lib64/android.hardware.graphics.common-V3-ndk.so
-vendor/lib64/android.hardware.graphics.composer@2.1-resources.so
 vendor/lib64/android.hardware.graphics.composer@2.1.so
 vendor/lib64/android.hardware.graphics.composer@2.2-resources.so
 vendor/lib64/android.hardware.graphics.composer@2.2.so
@@ -576,7 +565,6 @@ vendor/lib64/lib_android_keymaster_keymint_utils.so
 vendor/lib64/libkeymaster_messages.so
 vendor/lib64/libkeymaster_portable.so
 vendor/lib64/libkeymint.so
-vendor/lib64/libpuresoftkeymasterdevice.so
 
 # Media
 vendor/bin/hw/android.hardware.media.c2@1.1-unisoc-service
@@ -611,18 +599,12 @@ vendor/lib/libcodec2_unisoc_mpeg4enc.so
 vendor/lib/libcodec2_unisoc_store.so
 vendor/lib/libcodec2_unisoc_vp8dec.so
 vendor/lib/libcodec2_unisoc_vp9dec.so
-vendor/lib/libcodec2_vndk.so
-vendor/lib/libmediautils_vendor.so
-vendor/lib/libsfplugin_ccodec_utils.so
 vendor/lib/libswscale-6.so
 vendor/lib64/libavcodec-59.so
 vendor/lib64/libcodec2_unisoc_common.so
 vendor/lib64/libcodec2_unisoc_deintl.so
 vendor/lib64/libcodec2_unisoc_imaadpcm.so
 vendor/lib64/libcodec2_unisoc_store.so
-vendor/lib64/libcodec2_vndk.so
-vendor/lib64/libmediautils_vendor.so
-vendor/lib64/libsfplugin_ccodec_utils.so
 vendor/lib64/libswscale-6.so
 
 # Neural networks
@@ -1057,7 +1039,6 @@ vendor/lib/android.hardware.sensors@1.0.so
 vendor/lib/android.hardware.sensors@2.0-ScopedWakelock.so
 vendor/lib/android.hardware.sensors@2.0.so
 vendor/lib/android.hardware.sensors@2.1.so
-vendor/lib/libalsautils.so
 vendor/lib/libcamALSC5.x.so
 vendor/lib/libcamAlsc4.0.so
 vendor/lib/libhidparser_sensor.so
@@ -1068,7 +1049,6 @@ vendor/lib64/android.hardware.sensors@1.0.so
 vendor/lib64/android.hardware.sensors@2.0-ScopedWakelock.so
 vendor/lib64/android.hardware.sensors@2.0.so
 vendor/lib64/android.hardware.sensors@2.1.so
-vendor/lib64/libalsautils.so
 vendor/lib64/libcamALSC5.x.so
 vendor/lib64/libcamAlsc4.0.so
 vendor/lib64/libhidparser_sensor.so
@@ -4964,7 +4944,6 @@ vendor/lib/libcppdrv_r6p0.so
 vendor/lib/libdav1d.so
 vendor/lib/libdfa.so
 vendor/lib/libeffects.so
-vendor/lib/libeffectsconfig.so
 vendor/lib/libeng_tok.so
 vendor/lib/libengpc_adapt.so
 vendor/lib/libengpcctl.so
@@ -4989,7 +4968,6 @@ vendor/lib/liblwpswnodes.so
 vendor/lib/liblwptrigger.so
 vendor/lib/libmapuser.so
 vendor/lib/libmemion.so
-vendor/lib/libmemunreachable.so
 vendor/lib/libmotiondetect.so
 vendor/lib/libmpbase.so
 vendor/lib/libmulticam.so
@@ -5056,7 +5034,6 @@ vendor/lib64/lib_crypto.so
 vendor/lib64/libapp-framework.so
 vendor/lib64/libatci.so
 vendor/lib64/libavutil-57.so
-vendor/lib64/libbinderdebug.so
 vendor/lib64/libbqbbt.so
 vendor/lib64/libc++_shared.so
 vendor/lib64/libcalcsharpness.so
@@ -5088,7 +5065,6 @@ vendor/lib64/libcppdrv_r6p0.so
 vendor/lib64/libdav1d.so
 vendor/lib64/libdfa.so
 vendor/lib64/libeffects.so
-vendor/lib64/libeffectsconfig.so
 vendor/lib64/libeng_tok.so
 vendor/lib64/libengbt.so
 vendor/lib64/libengpc_adapt.so
@@ -5117,7 +5093,6 @@ vendor/lib64/liblwpswnodes.so
 vendor/lib64/liblwptrigger.so
 vendor/lib64/libmapuser.so
 vendor/lib64/libmemion.so
-vendor/lib64/libmemunreachable.so
 vendor/lib64/libmotiondetect.so
 vendor/lib64/libmpbase.so
 vendor/lib64/libmulticam.so
