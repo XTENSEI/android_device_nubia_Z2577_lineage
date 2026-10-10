@@ -33,7 +33,13 @@ blobs at `vendor/nubia/Z2577`:
     ./extract-files.py
     ./setup-makefiles.py
 
-`build/tools/extract-utils` builds a symlink module name straight from the target
-path, so `vendor/bin/[` becomes `vendor_bin_[`, which Soong rejects.
-`docs/extract-utils-module-name.patch` fixes that. The patch is lost on
-`repo sync`, so the one symlink it affects is declared by hand in `Android.bp`.
+Soong only accepts letters, digits and `_ . @ + -` in a module name, and
+`build/tools/extract-utils` builds one straight from the path, so
+`vendor/bin/[` becomes `vendor_bin_[`, which Soong rejects. File names have the
+same problem: `lib{bar}.so` would be named `lib{bar}`.
+`docs/extract-utils-module-name.patch` covers both, leaving legal names alone.
+
+The patch is lost on every `repo sync`, because `build/tools/extract-utils`
+belongs to the LineageOS checkout and not to either repo, so the one symlink it
+affects is declared by hand in `Android.bp`. The blob list no longer carries
+that entry, so a regeneration never competes with it.
