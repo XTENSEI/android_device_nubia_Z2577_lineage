@@ -490,7 +490,6 @@ vendor/lib/libhwc2on1adapter.so
 vendor/lib64/android.hardware.graphics.allocator-V1-ndk.so
 vendor/lib64/android.hardware.graphics.common-V3-ndk.so
 vendor/lib64/android.hardware.graphics.composer@2.1.so
-vendor/lib64/android.hardware.graphics.composer@2.2-resources.so
 vendor/lib64/android.hardware.graphics.composer@2.2.so
 vendor/lib64/android.hardware.graphics.composer@2.3.so
 vendor/lib64/android.hardware.graphics.composer@2.4.so
@@ -561,7 +560,6 @@ vendor/lib64/libeic_trusty.so
 # Keymint
 vendor/bin/hw/android.hardware.security.keymint@2.0-unisoc.service.trusty
 vendor/lib64/android.hardware.security.keymint-V1-ndk.so
-vendor/lib64/lib_android_keymaster_keymint_utils.so
 vendor/lib64/libkeymaster_messages.so
 vendor/lib64/libkeymaster_portable.so
 vendor/lib64/libkeymint.so
@@ -1036,7 +1034,6 @@ vendor/bin/sensor_cali_test
 vendor/etc/zte_ldd_hals.conf
 vendor/lib/android.frameworks.sensorservice@1.0.so
 vendor/lib/android.hardware.sensors@1.0.so
-vendor/lib/android.hardware.sensors@2.0-ScopedWakelock.so
 vendor/lib/android.hardware.sensors@2.0.so
 vendor/lib/android.hardware.sensors@2.1.so
 vendor/lib/libcamALSC5.x.so
@@ -1046,7 +1043,6 @@ vendor/lib/libsensorndkbridge.so
 vendor/lib/libtinyalsa.so
 vendor/lib64/android.frameworks.sensorservice@1.0.so
 vendor/lib64/android.hardware.sensors@1.0.so
-vendor/lib64/android.hardware.sensors@2.0-ScopedWakelock.so
 vendor/lib64/android.hardware.sensors@2.0.so
 vendor/lib64/android.hardware.sensors@2.1.so
 vendor/lib64/libcamALSC5.x.so
@@ -4950,7 +4946,6 @@ vendor/lib/libengpcctl.so
 vendor/lib/libfrc.so
 vendor/lib/libgpudataproducer.so
 vendor/lib/libgyrostab.so
-vendor/lib/libhidltransport.so
 vendor/lib/libhwbinder.so
 vendor/lib/libinfo.so
 vendor/lib/libiss.so
@@ -5072,7 +5067,6 @@ vendor/lib64/libengpcctl.so
 vendor/lib64/libfrc.so
 vendor/lib64/libgpudataproducer.so
 vendor/lib64/libgyrostab.so
-vendor/lib64/libhidltransport.so
 vendor/lib64/libhwbinder.so
 vendor/lib64/libimageClassify.so
 vendor/lib64/libinfo.so
