@@ -30,6 +30,7 @@ vendor/lib/android.hardware.bluetooth.audio-impl.so
 vendor/lib/android.hardware.bluetooth.audio@2.0.so
 vendor/lib/android.hardware.bluetooth.audio@2.1.so
 vendor/lib/android.media.audio.common.types-V1-cpp.so
+vendor/lib/audioclient-types-aidl-cpp.so;MODULE=audioclient-types-aidl-cpp_vendor
 vendor/lib/btaudio_offload_if.so
 vendor/lib/hw/android.hardware.audio.effect@7.0-impl.so
 vendor/lib/hw/android.hardware.audio@7.1-impl.so
@@ -99,6 +100,7 @@ vendor/lib64/android.hardware.bluetooth.audio-impl.so
 vendor/lib64/android.hardware.bluetooth.audio@2.0.so
 vendor/lib64/android.hardware.bluetooth.audio@2.1.so
 vendor/lib64/android.media.audio.common.types-V1-cpp.so
+vendor/lib64/audioclient-types-aidl-cpp.so;MODULE=audioclient-types-aidl-cpp_vendor
 vendor/lib64/btaudio_offload_if.so
 vendor/lib64/hw/android.hardware.audio.effect@7.0-impl.so
 vendor/lib64/hw/android.hardware.audio@7.1-impl.so
@@ -108,11 +110,13 @@ vendor/lib64/hw/audio.primary.default.so
 vendor/lib64/hw/audio.r_submix.default.so
 vendor/lib64/hw/audio.usb.default.so
 vendor/lib64/hw/awinic.audio.effect.so;FIX_SONAME
+vendor/lib64/lib_android_keymaster_keymint_utils.so;MODULE=lib_android_keymaster_keymint_utils_vendor
 vendor/lib64/libarcsoft_high_dynamic_range_unisoc.so
 vendor/lib64/libaudioclient_aidl_conversion.so
 vendor/lib64/libaudiofoundation.so
 vendor/lib64/libbluetooth_audio_session.so
 vendor/lib64/libbluetooth_audio_session_aidl.so
+vendor/lib64/libkeymint.so;MODULE=libkeymint_vendor
 vendor/lib64/libomx_MF2SF_sw_sprd.so
 vendor/lib64/libomx_av1dec_sw_sprd.so
 vendor/lib64/libomx_avcdec_hw_sprd.so
