@@ -18,6 +18,7 @@ same class of check over the whole tree at once, offline:
   P13 a shared prebuilt whose AOSP namesake is static only, which Soong
       cannot resolve and which has to be renamed
   P12 prebuilt prefer flags, which regeneration has to drop
+  P14 frozen AIDL versions our prebuilts can reach, the platform ones included
 
 Usage: preflight.py [--aosp /tmp/aosp ...] [--stock /tmp/sysmnt]
 """
@@ -33,6 +34,9 @@ VENDOR = '/home/andrei/Downloads/Trees/vendor_nubia_Z2577_lineage'
 
 LEGAL_NAME = re.compile(r'^[A-Za-z0-9_.@+-]+$')
 MODULE_OPEN = re.compile(r'^([a-z_0-9]+) \{$')
+VERSIONED = re.compile(r'^(?P<iface>.+?)-V(?P<version>\d+)'
+                       r'-(?:ndk|cpp|java|rust|ndk_platform)$')
+LIBS = ('shared_libs', 'static_libs', 'whole_static_libs')
 SRC_PROP = re.compile(r'^\s*srcs?: (\[(.*?)\]|"([^"]+)"),?$', re.M | re.S)
 
 findings = []
@@ -85,9 +89,16 @@ def parse_bp(path, quiet=False):
             else:
                 srcs.append(single)
         defaults = re.search(r'defaults: \[(.*?)\]', text, re.S)
+        libs = {}
+        for prop in LIBS + ('header_libs',):
+            prop_found = re.search(prop + r': \[(.*?)\]', text, re.S)
+            libs[prop] = (
+                re.findall(r'"([^"]+)"', prop_found.group(1)) if prop_found else []
+            )
         info = {
             'type': mtype,
             'srcs': srcs,
+            **libs,
             'defaults': (
                 re.findall(r'"([^"]+)"', defaults.group(1)) if defaults else []
             ),
@@ -123,6 +134,37 @@ def prop_flag(modules, name, prop, seen=None):
 def vendor_flag(modules, name, seen=None):
     """Is a module vendor specific, directly or through its defaults chain?"""
     return prop_flag(modules, name, 'vendor', seen)
+
+
+def lib_versions(modules, lib, cache=None, stack=None):
+    """What declaring one library pulls in, its own frozen version included."""
+    found = VERSIONED.match(lib)
+    if found:
+        return {found.group('iface'): {found.group('version')}}
+    return aidl_versions(modules, lib, cache, stack)
+
+
+def aidl_versions(modules, name, cache=None, stack=None):
+    """Every frozen AIDL interface version reachable from a module.
+
+    Soong rejects a module that reaches two versions of one interface, however
+    many hops away the second one sits, so this walks libraries and defaults.
+    """
+    cache = {} if cache is None else cache
+    stack = set() if stack is None else stack
+    if name in cache:
+        return cache[name]
+    if name in stack or name not in modules:
+        return {}
+    stack.add(name)
+    found = {}
+    info = modules[name]
+    for lib in [l for prop in LIBS for l in info[prop]] + info['defaults']:
+        for iface, versions in lib_versions(modules, lib, cache, stack).items():
+            found.setdefault(iface, set()).update(versions)
+    stack.discard(name)
+    cache[name] = found
+    return found
 
 
 def aosp_counterpart(name, aosp_mods):
@@ -204,10 +246,14 @@ def vendor_path(repo, blob):
 
 
 def main():
+    global DEVICE, VENDOR
     ap = argparse.ArgumentParser()
     ap.add_argument('--aosp', action='append', default=[])
     ap.add_argument('--stock', default='/tmp/sysmnt')
+    ap.add_argument('--device', default=DEVICE, help='override, for older revisions')
+    ap.add_argument('--vendor', default=VENDOR, help='override, for older revisions')
     args = ap.parse_args()
+    DEVICE, VENDOR = args.device, args.vendor
 
     dev_bp = os.path.join(DEVICE, 'Android.bp')
     ven_bp = os.path.join(VENDOR, 'Android.bp')
@@ -367,6 +413,27 @@ def main():
             fail('P12', f'{label} Android.bp: {n} prebuilt modules still carry '
                         f'prefer: true, which makes each one claim the AOSP '
                         f'module of the same name; run setup-makefiles.py')
+
+    # P14, the AIDL interface versions each module can reach. The newer version
+    # arrives through a platform library as often as through one of ours.
+    if not aosp_mods:
+        note('P14', 'needs --aosp: which version a platform library links is '
+                    'only knowable from the tree that builds it')
+    else:
+        merged = {**aosp_mods, **device_mods, **vendor_mods}
+        cache = {}
+        for name in sorted(set(vendor_mods) | set(device_mods)):
+            for iface, versions in sorted(aidl_versions(merged, name, cache).items()):
+                if len(versions) < 2:
+                    continue
+                direct = []
+                for lib in merged[name]['shared_libs'] + merged[name]['whole_static_libs']:
+                    here = lib_versions(merged, lib, cache).get(iface, set())
+                    if here:
+                        direct.append(f'{lib}=V{"/V".join(sorted(here, key=int))}')
+                fail('P14', f'"{name}" reaches {iface} at '
+                            f'V{" and V".join(sorted(versions, key=int))} at once, '
+                            f'through {", ".join(direct) or "its own libs"}')
 
     for check, message in findings:
         print(f'{check}: {message}')
