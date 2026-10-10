@@ -4,6 +4,10 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+from extract_utils.fixups_lib import (
+    lib_fixups,
+    lib_fixups_user_type,
+)
 from extract_utils.main import (
     ExtractUtils,
     ExtractUtilsModule,
@@ -13,9 +17,16 @@ namespace_imports = [
     'device/nubia/Z2577',
 ]
 
+# The tool's own fixups, without which the generated shared_libs keep the blob's
+# soname: the arch suffixed clang runtimes and the protobuf vendorcompat pair
+lib_fixups: lib_fixups_user_type = {
+    **lib_fixups,
+}
+
 module = ExtractUtilsModule(
     'Z2577',
     'nubia',
+    lib_fixups=lib_fixups,
     namespace_imports=namespace_imports,
 )
 
