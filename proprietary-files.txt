@@ -23,10 +23,6 @@ vendor/etc/primary_audio_policy_configuration.xml
 vendor/etc/r_submix_audio_policy_configuration.xml
 vendor/etc/sprd_audio_policy_engine_criteria.xml
 vendor/etc/usb_audio_policy_configuration.xml
-vendor/lib/android.hardware.audio.common@5.0.so
-vendor/lib/android.hardware.audio.common@7.0-util.so
-vendor/lib/android.hardware.audio.common@7.0.so
-vendor/lib/android.hardware.audio.common@7.1-util.so
 vendor/lib/android.hardware.audio.effect@7.0-util.so
 vendor/lib/android.hardware.audio.effect@7.0.so
 vendor/lib/android.hardware.audio@7.0-util.so
@@ -100,10 +96,6 @@ vendor/lib/soundfx/libsr.so
 vendor/lib/soundfx/libunisocspatialaudio.so
 vendor/lib/soundfx/libunisocvoiceprocessing.so
 vendor/lib/soundfx/libvisualizer.so
-vendor/lib64/android.hardware.audio.common@5.0.so
-vendor/lib64/android.hardware.audio.common@7.0-util.so
-vendor/lib64/android.hardware.audio.common@7.0.so
-vendor/lib64/android.hardware.audio.common@7.1-util.so
 vendor/lib64/android.hardware.audio.effect@7.0-util.so
 vendor/lib64/android.hardware.audio.effect@7.0.so
 vendor/lib64/android.hardware.audio@7.0-util.so
@@ -560,9 +552,6 @@ vendor/lib64/libeic_trusty.so
 # Keymint
 vendor/bin/hw/android.hardware.security.keymint@2.0-unisoc.service.trusty
 vendor/lib64/android.hardware.security.keymint-V1-ndk.so
-vendor/lib64/libkeymaster_messages.so
-vendor/lib64/libkeymaster_portable.so
-vendor/lib64/libkeymint.so
 
 # Media
 vendor/bin/hw/android.hardware.media.c2@1.1-unisoc-service
@@ -579,8 +568,6 @@ vendor/etc/media_profiles_v1.xml
 vendor/lib/android.hardware.media.c2@1.0.so
 vendor/lib/android.hardware.media.c2@1.1.so
 vendor/lib/libavcodec-59.so
-vendor/lib/libcodec2_hidl@1.0.so
-vendor/lib/libcodec2_hidl@1.1.so
 vendor/lib/libcodec2_hidl_plugin.so
 vendor/lib/libcodec2_unisoc_av1dec.so
 vendor/lib/libcodec2_unisoc_avcdec.so
@@ -5055,7 +5042,6 @@ vendor/lib64/libcamwatermark.so
 vendor/lib64/libceres_online.so
 vendor/lib64/libcplog.so
 vendor/lib64/libcppbor_external.so
-vendor/lib64/libcppcose_rkp.so
 vendor/lib64/libcppdrv_r6p0.so
 vendor/lib64/libdav1d.so
 vendor/lib64/libdfa.so
@@ -5100,7 +5086,6 @@ vendor/lib64/libskia.so
 vendor/lib64/libskia_watermark.so
 vendor/lib64/libsky_seg_toning_320.so
 vendor/lib64/libsky_toning_realize.so
-vendor/lib64/libsoft_attestation_cert.so
 vendor/lib64/libss-base.so
 vendor/lib64/libss-plugin.so
 vendor/lib64/libsysoffloadstream.so
