@@ -452,8 +452,6 @@ vendor/lib64/mediadrm/libdrmclearkeyplugin.so
 # Display
 vendor/bin/hw/android.hardware.graphics.allocator@4.0-service
 vendor/bin/hw/android.hardware.graphics.composer@2.4-service
-vendor/lib/android.hardware.graphics.allocator-V1-ndk.so
-vendor/lib/android.hardware.graphics.common-V3-ndk.so
 vendor/lib/android.hidl.allocator@1.0.so
 vendor/lib/arm.graphics-V1-ndk_platform.so
 vendor/lib/arm.graphics-V2-ndk.so
@@ -471,8 +469,6 @@ vendor/lib/libSegLite.so
 vendor/lib/libcamfb.so
 vendor/lib/libeyeanalyze_for_fb2_2.so
 vendor/lib/libhwc2on1adapter.so
-vendor/lib64/android.hardware.graphics.allocator-V1-ndk.so
-vendor/lib64/android.hardware.graphics.common-V3-ndk.so
 vendor/lib64/android.hardware.graphics.composer@2.1.so
 vendor/lib64/android.hardware.graphics.composer@2.2.so
 vendor/lib64/android.hardware.graphics.composer@2.3.so
@@ -502,8 +498,6 @@ vendor/bin/hw/vendor.zte.hardware.biometrics.fingerprint-service
 vendor/lib/hw/fingerprint.focaltech.default.so;FIX_SONAME
 vendor/lib/hw/fingerprint.silead.default.so
 vendor/lib/libsl_fp_impl.so
-vendor/lib64/android.hardware.biometrics.common-V2-ndk.so
-vendor/lib64/android.hardware.biometrics.fingerprint-V2-ndk.so
 vendor/lib64/hw/fingerprint.focaltech.default.so;FIX_SONAME
 vendor/lib64/hw/fingerprint.silead.default.so
 vendor/lib64/libsl_fp_impl.so
@@ -591,8 +585,6 @@ vendor/lib/libTfliteWrapper.so
 vendor/lib/libgesture_mnn.so
 vendor/lib/libsprdfarcnn_SDK.so
 vendor/lib/libumnn.so
-vendor/lib64/android.hardware.neuralnetworks-V1-ndk.so
-vendor/lib64/android.hardware.neuralnetworks-V4-ndk.so
 vendor/lib64/android.hardware.neuralnetworks@1.0.so
 vendor/lib64/android.hardware.neuralnetworks@1.1.so
 vendor/lib64/android.hardware.neuralnetworks@1.2.so
