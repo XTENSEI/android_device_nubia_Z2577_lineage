@@ -58,9 +58,10 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilts/modules/modules.load.cali:vendor_dlkm/lib/modules/modules.load.cali \
     $(LOCAL_PATH)/prebuilts/modules/modules.load.charger:vendor_dlkm/lib/modules/modules.load.charger
 
-# The symlink the module loaders open
+# Symlinks declared by hand: the module loader path and the toybox [ builtin
 PRODUCT_PACKAGES += \
-    vendor_lib_modules
+    vendor_lib_modules \
+    vendor_bin_lbracket
 
 # Partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true

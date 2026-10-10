@@ -11,3 +11,11 @@ install_symlink {
     installed_location: "lib/modules",
     symlink_target: "/vendor_dlkm/lib/modules",
 }
+
+// The toybox [ builtin, the generated name would be vendor_bin_[ which Soong rejects
+install_symlink {
+    name: "vendor_bin_lbracket",
+    soc_specific: true,
+    installed_location: "bin/[",
+    symlink_target: "/vendor/bin/toybox_vendor",
+}
