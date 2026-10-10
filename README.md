@@ -23,3 +23,23 @@ The nubia V80 Max (codenamed "Z2577") is a budget smartphone from nubia.
 ## Device Picture
 
 ![nubia V80 Max](docs/z2577.jpg)
+
+## Extracting the blobs
+
+`proprietary-files.txt` is the list and the vendor repo is its generated output.
+Both need a LineageOS checkout, with this tree at `device/nubia/Z2577` and the
+blobs at `vendor/nubia/Z2577`:
+
+    ./extract-files.py
+    ./setup-makefiles.py
+
+Soong only accepts letters, digits and `_ . @ + -` in a module name, and
+`build/tools/extract-utils` builds one straight from the path, so
+`vendor/bin/[` becomes `vendor_bin_[`, which Soong rejects. File names have the
+same problem: `lib{bar}.so` would be named `lib{bar}`.
+`docs/extract-utils-module-name.patch` covers both, leaving legal names alone.
+
+The patch is lost on every `repo sync`, because `build/tools/extract-utils`
+belongs to the LineageOS checkout and not to either repo, so the one symlink it
+affects is declared by hand in `Android.bp`. The blob list no longer carries
+that entry, so a regeneration never competes with it.
