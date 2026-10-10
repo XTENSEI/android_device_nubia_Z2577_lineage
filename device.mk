@@ -29,6 +29,13 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.power.stats-service.example
 
+# DRM, health and sensors, the platform builds what the blob list used to ship
+PRODUCT_PACKAGES += \
+    android.hardware.drm-service.clearkey \
+    android.hardware.health-service.example \
+    android.hardware.sensors-service.multihal \
+    rkp_factory_extraction_tool
+
 # OTA
 PRODUCT_PACKAGES += \
     update_engine \

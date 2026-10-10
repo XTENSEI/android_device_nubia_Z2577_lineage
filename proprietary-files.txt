@@ -431,7 +431,7 @@ vendor/lib64/hw/android.hardware.broadcastradio@1.0-impl.so
 vendor/lib64/mediacas/libclearkeycasplugin.so
 
 # DRM
-vendor/bin/hw/android.hardware.drm-service.clearkey
+# vendor/bin/hw/android.hardware.drm-service.clearkey
 vendor/bin/hw/android.hardware.drm-service.widevine
 vendor/lib/android.hardware.drm@1.0.so
 vendor/lib/android.hardware.drm@1.1.so
@@ -510,7 +510,7 @@ vendor/lib64/android.hardware.gatekeeper@1.0.so
 # GNSS
 vendor/bin/gpsd
 vendor/bin/hw/vendor.sprd.hardware.gnss-service
-vendor/bin/rkp_factory_extraction_tool
+# vendor/bin/rkp_factory_extraction_tool
 vendor/etc/supl.xml
 vendor/etc/suplrootca.pem
 vendor/lib/hw/gps.default.so
@@ -523,7 +523,7 @@ vendor/lib64/vendor.sprd.hardware.gnss-V1-ndk.so
 
 # Health
 vendor/bin/battery_record_daemon
-vendor/bin/hw/android.hardware.health-service.example
+# vendor/bin/hw/android.hardware.health-service.example
 vendor/bin/zte_battery_life
 vendor/etc/.tp/zte_battery_life.conf
 
@@ -999,7 +999,7 @@ vendor/lib64/oemlock_ca.so
 
 # Sensors
 vendor/bin/clear_als_cali.sh
-vendor/bin/hw/android.hardware.sensors-service.multihal
+# vendor/bin/hw/android.hardware.sensors-service.multihal
 vendor/bin/sensor_cali_test
 vendor/etc/zte_ldd_hals.conf
 vendor/lib/android.frameworks.sensorservice@1.0.so
@@ -4305,17 +4305,17 @@ vendor/etc/init/android.hardware.audio.service.rc
 vendor/etc/init/android.hardware.bluetooth@1.1-service.unisoc.rc
 vendor/etc/init/android.hardware.camera.provider@2.7-service_64.rc
 vendor/etc/init/android.hardware.cas@1.2-service.rc
-vendor/etc/init/android.hardware.drm-service.clearkey.rc
+# vendor/etc/init/android.hardware.drm-service.clearkey.rc
 vendor/etc/init/android.hardware.drm-service.widevine.rc
 vendor/etc/init/android.hardware.gatekeeper@1.0-service.trusty.rc
 vendor/etc/init/android.hardware.graphics.allocator@4.0-service.rc
 vendor/etc/init/android.hardware.graphics.composer@2.4-service.rc
-vendor/etc/init/android.hardware.health-service.example.rc
+# vendor/etc/init/android.hardware.health-service.example.rc
 vendor/etc/init/android.hardware.media.c2@1.1-unisoc-service.rc
 vendor/etc/init/android.hardware.media.omx@1.0-service.rc
 vendor/etc/init/android.hardware.neuralnetworks@aidl-service-armnn-gpu.rc
 vendor/etc/init/android.hardware.security.keymint@2.0-unisoc.service.trusty.rc
-vendor/etc/init/android.hardware.sensors-service-multihal.rc
+# vendor/etc/init/android.hardware.sensors-service-multihal.rc
 vendor/etc/init/android.hardware.usb-service.unisoc.rc
 vendor/etc/init/android.hardware.wifi.hostapd-service.rc
 vendor/etc/init/android.hardware.wifi.supplicant-service.rc
@@ -4404,11 +4404,11 @@ vendor/etc/vintf/manifest.xml
 vendor/etc/vintf/manifest/ai_engine-default.xml
 vendor/etc/vintf/manifest/android.hardware.camera.provider@2.7-service.xml
 vendor/etc/vintf/manifest/android.hardware.cas@1.2-service.xml
-vendor/etc/vintf/manifest/android.hardware.drm-service.clearkey.xml
+# vendor/etc/vintf/manifest/android.hardware.drm-service.clearkey.xml
 vendor/etc/vintf/manifest/android.hardware.gatekeeper@1.0-service.trusty.xml
-vendor/etc/vintf/manifest/android.hardware.health-service.example.xml
+# vendor/etc/vintf/manifest/android.hardware.health-service.example.xml
 vendor/etc/vintf/manifest/android.hardware.security.keymint@2.0-unisoc.service.trusty.xml
-vendor/etc/vintf/manifest/android.hardware.sensors-multihal.xml
+# vendor/etc/vintf/manifest/android.hardware.sensors-multihal.xml
 vendor/etc/vintf/manifest/android.hardware.thermal@2.0-service.xml
 vendor/etc/vintf/manifest/android.hardware.usb-service.unisoc.xml
 vendor/etc/vintf/manifest/android.hardware.wifi.hostapd.xml
