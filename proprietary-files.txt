@@ -23,11 +23,8 @@ vendor/etc/primary_audio_policy_configuration.xml
 vendor/etc/r_submix_audio_policy_configuration.xml
 vendor/etc/sprd_audio_policy_engine_criteria.xml
 vendor/etc/usb_audio_policy_configuration.xml
-vendor/lib/android.hardware.audio.effect@7.0-util.so
 vendor/lib/android.hardware.audio.effect@7.0.so
-vendor/lib/android.hardware.audio@7.0-util.so
 vendor/lib/android.hardware.audio@7.0.so
-vendor/lib/android.hardware.audio@7.1-util.so
 vendor/lib/android.hardware.audio@7.1.so
 vendor/lib/android.hardware.bluetooth.audio-impl.so
 vendor/lib/android.hardware.bluetooth.audio@2.0.so
@@ -96,11 +93,8 @@ vendor/lib/soundfx/libsr.so
 vendor/lib/soundfx/libunisocspatialaudio.so
 vendor/lib/soundfx/libunisocvoiceprocessing.so
 vendor/lib/soundfx/libvisualizer.so
-vendor/lib64/android.hardware.audio.effect@7.0-util.so
 vendor/lib64/android.hardware.audio.effect@7.0.so
-vendor/lib64/android.hardware.audio@7.0-util.so
 vendor/lib64/android.hardware.audio@7.0.so
-vendor/lib64/android.hardware.audio@7.1-util.so
 vendor/lib64/android.hardware.audio@7.1.so
 vendor/lib64/android.hardware.bluetooth.audio-impl.so
 vendor/lib64/android.hardware.bluetooth.audio@2.0.so
@@ -551,7 +545,6 @@ vendor/lib64/libeic_trusty.so
 
 # Keymint
 vendor/bin/hw/android.hardware.security.keymint@2.0-unisoc.service.trusty
-vendor/lib64/android.hardware.security.keymint-V1-ndk.so
 
 # Media
 vendor/bin/hw/android.hardware.media.c2@1.1-unisoc-service
@@ -4933,7 +4926,6 @@ vendor/lib/libengpcctl.so
 vendor/lib/libfrc.so
 vendor/lib/libgpudataproducer.so
 vendor/lib/libgyrostab.so
-vendor/lib/libhwbinder.so
 vendor/lib/libinfo.so
 vendor/lib/libiss.so
 vendor/lib/libiwnpi.so
@@ -5053,7 +5045,6 @@ vendor/lib64/libengpcctl.so
 vendor/lib64/libfrc.so
 vendor/lib64/libgpudataproducer.so
 vendor/lib64/libgyrostab.so
-vendor/lib64/libhwbinder.so
 vendor/lib64/libimageClassify.so
 vendor/lib64/libinfo.so
 vendor/lib64/libiss.so
