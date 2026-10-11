@@ -18,6 +18,7 @@ same class of check over the whole tree at once, offline:
   P13 a shared prebuilt whose AOSP namesake is static only, which Soong
       cannot resolve and which has to be renamed
   P12 prebuilt prefer flags, which regeneration has to drop
+  P14 frozen AIDL versions our prebuilts can reach, the platform ones included
 
 Usage: preflight.py [--aosp /tmp/aosp ...] [--stock /tmp/sysmnt]
 """
@@ -33,6 +34,14 @@ VENDOR = '/home/andrei/Downloads/Trees/vendor_nubia_Z2577_lineage'
 
 LEGAL_NAME = re.compile(r'^[A-Za-z0-9_.@+-]+$')
 MODULE_OPEN = re.compile(r'^([a-z_0-9]+) \{$')
+BACKENDS = 'ndk|cpp|java|rust|ndk_platform'
+VERSIONED = re.compile(r'^(?P<iface>.+?)-V(?P<version>\d+)'
+                       r'-(?P<lang>' + BACKENDS + r')$')
+# the `:module` reference a srcs entry can carry, the -source copy of a backend
+SOURCE = re.compile(r'^(?P<iface>.+?)-V(?P<version>\d+)'
+                    r'-(?P<lang>' + BACKENDS + r')-source$')
+LANGS = tuple(BACKENDS.split('|'))
+LIBS = ('shared_libs', 'static_libs', 'whole_static_libs')
 SRC_PROP = re.compile(r'^\s*srcs?: (\[(.*?)\]|"([^"]+)"),?$', re.M | re.S)
 
 findings = []
@@ -52,9 +61,84 @@ def read(path):
         return f.read()
 
 
+ASSIGN = re.compile(r'^([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+?)\s*$', re.M)
+COMMENT = re.compile(r'//[^\n]*')
+
+
+def split_elements(text):
+    """Split a Blueprint list body on the commas outside quotes."""
+    out, current, quoted = [], '', False
+    for char in text:
+        if char == '"':
+            quoted = not quoted
+        if char == ',' and not quoted:
+            out.append(current)
+            current = ''
+        else:
+            current += char
+    out.append(current)
+    return [element.strip() for element in out if element.strip()]
+
+
+def resolve_value(expr, variables):
+    """The string a Blueprint expression evaluates to, or None if it cannot.
+
+    Read character by character rather than splitting on `+`: the operator is
+    the separator, so a path that contains one (`libc++_shared`) would be torn
+    in half and dropped.
+    """
+    parts, i = [], 0
+    while i < len(expr):
+        char = expr[i]
+        if char.isspace() or char == '+':
+            i += 1
+        elif char == '"':
+            end = expr.find('"', i + 1)
+            if end < 0:
+                return None
+            parts.append(expr[i + 1:end])
+            i = end + 1
+        else:
+            word = re.match(r'[A-Za-z_][A-Za-z0-9_]*', expr[i:])
+            if not word or word.group(0) not in variables:
+                return None
+            parts.append(variables[word.group(0)])
+            i += len(word.group(0))
+    return ''.join(parts)
+
+
+def bp_variables(text):
+    """Top level `name = "value"` assignments, concatenations resolved."""
+    raw = dict(ASSIGN.findall(COMMENT.sub('', text)))
+    resolved = {}
+    for _ in range(3):
+        for name, value in raw.items():
+            got = resolve_value(value, resolved)
+            if got is not None:
+                resolved[name] = got
+    return resolved
+
+
+def bp_list(text, prop, variables):
+    """The strings in a `prop: [...]` list, with variables resolved.
+
+    A list element is an expression, not always a quoted name: the AIDL
+    interface files spell the current version as `latest_foo + "-ndk"`, so a
+    checker that reads the quotes alone sees neither the name nor the version.
+    """
+    found = re.search(prop + r':\s*\[(.*?)\]', text, re.S)
+    if not found:
+        return []
+    body = COMMENT.sub('', found.group(1))
+    return [value for value in
+            (resolve_value(element, variables) for element in split_elements(body))
+            if value]
+
+
 def parse_bp(path, quiet=False):
     """Return {module_name: {type, srcs, defaults, vendor, ...}}."""
     modules = {}
+    variables = bp_variables(read(path))
     lines = read(path).splitlines()
     i = 0
     while i < len(lines):
@@ -81,16 +165,21 @@ def parse_bp(path, quiet=False):
         for array, single in re.findall(
                 r'^\s*(?:srcs?|jars): (?:\[(.*?)\]|"([^"]+)")', text, re.M | re.S):
             if array:
-                srcs += re.findall(r'"([^"]+)"', array)
+                srcs += [value for value in
+                         (resolve_value(element, variables)
+                          for element in split_elements(COMMENT.sub('', array)))
+                         if value]
             else:
                 srcs.append(single)
-        defaults = re.search(r'defaults: \[(.*?)\]', text, re.S)
+        libs = {prop: bp_list(text, prop, variables)
+                for prop in LIBS + ('header_libs',)}
         info = {
             'type': mtype,
             'srcs': srcs,
-            'defaults': (
-                re.findall(r'"([^"]+)"', defaults.group(1)) if defaults else []
-            ),
+            **libs,
+            'defaults': bp_list(text, 'defaults', variables),
+            'imports': bp_list(text, 'imports', variables),
+            'langs': bp_list(text, 'langs', variables),
             'vendor': bool(re.search(
                 r'^\s*(vendor|proprietary|soc_specific): true,?$', text, re.M)),
             'vendor_available': 'vendor_available: true' in text,
@@ -123,6 +212,115 @@ def prop_flag(modules, name, prop, seen=None):
 def vendor_flag(modules, name, seen=None):
     """Is a module vendor specific, directly or through its defaults chain?"""
     return prop_flag(modules, name, 'vendor', seen)
+
+
+def lib_versions(modules, lib, cache=None, stack=None):
+    """What declaring one library pulls in, its own frozen version included."""
+    for pattern in (VERSIONED, SOURCE):
+        found = pattern.match(lib)
+        if not found:
+            continue
+        iface = found.group('iface')
+        reach = {(iface, found.group('lang')): {found.group('version')}}
+        # A versioned name is the generated library of `iface`, and whatever
+        # that interface imports is baked into every version of it, so the walk
+        # has to continue through the base module as well.
+        base = modules.get(iface)
+        if base and base['type'] == 'aidl_interface':
+            for key, versions in aidl_versions(modules, iface, cache, stack).items():
+                reach.setdefault(key, set()).update(versions)
+        return reach
+    return aidl_versions(modules, lib, cache, stack)
+
+
+def imported_versions(info):
+    """An `imports: ["myiface-V2"]` entry, expanded over the backend list.
+
+    A versioned import carries no backend, so it lands on every backend the
+    interface is generated for; the interface's own `langs:` narrows that.
+    """
+    if info['type'] != 'aidl_interface':
+        return
+    for entry in info['imports']:
+        found = re.match(r'^(?P<iface>.+)-V(?P<version>\d+)$', entry)
+        if not found:
+            continue
+        for lang in info['langs'] or LANGS:
+            yield found.group('iface'), lang, found.group('version')
+
+
+def aidl_versions(modules, name, cache=None, stack=None):
+    """Every frozen AIDL interface version a module can reach, per backend.
+
+    Soong stores the version of an interface under `interface-backend`, so
+    myiface-V1-cpp beside myiface-V2-ndk is legal and myiface-V1-ndk beside
+    myiface-V2-ndk is not. Every dependency edge carries the version, and two
+    of them are easy to miss: an `imports` entry on an aidl_interface and a
+    `:module` reference in srcs.
+    """
+    cache = {} if cache is None else cache
+    stack = set() if stack is None else stack
+    if name in cache:
+        return cache[name]
+    if name in stack or name not in modules:
+        return {}
+    stack.add(name)
+    found = {}
+    info = modules[name]
+    for iface, lang, version in imported_versions(info):
+        found.setdefault((iface, lang), set()).add(version)
+    for dep in ([l for prop in LIBS for l in info[prop]] + info['defaults']
+                + [s[1:] for s in info['srcs'] if s.startswith(':')]):
+        for key, versions in lib_versions(modules, dep, cache, stack).items():
+            found.setdefault(key, set()).update(versions)
+    stack.discard(name)
+    cache[name] = found
+    return found
+
+
+TEST_TYPES = ('cc_test_library', 'android_test', 'cc_benchmark', 'cc_test')
+MERGED_PROPS = ('shared_libs', 'static_libs', 'whole_static_libs', 'defaults',
+                'srcs')
+
+
+def prebuilt_union(ours, theirs):
+    """What Soong checks when a prebuilt merges into the module of its name."""
+    merged = dict(ours)
+    for prop in MERGED_PROPS:
+        merged[prop] = list(dict.fromkeys(ours[prop] + theirs[prop]))
+    return merged
+
+
+def check_p14(device_mods, vendor_mods, aosp_mods):
+    """The aidl_interface version rule, as system/tools/aidl enforces it."""
+    if not aosp_mods:
+        note('P14', 'needs --aosp: which version a platform library links is '
+                    'only knowable from the tree that builds it')
+        return
+    merged = {**aosp_mods, **device_mods, **vendor_mods}
+    collisions = set()
+    for name in set(device_mods) | set(vendor_mods):
+        if name in aosp_mods:
+            collisions.add(name)
+            merged[name] = prebuilt_union(merged[name], aosp_mods[name])
+    cache = {}
+    for name in sorted(set(vendor_mods) | set(device_mods)):
+        if merged[name]['type'] in TEST_TYPES:
+            continue
+        reached = aidl_versions(merged, name, cache)
+        for (iface, lang), versions in sorted(reached.items()):
+            if len(versions) < 2:
+                continue
+            direct = []
+            for lib in merged[name]['shared_libs'] + merged[name]['whole_static_libs']:
+                here = lib_versions(merged, lib, cache).get((iface, lang), set())
+                if here:
+                    direct.append(f'{lib}=V{"/V".join(sorted(here, key=int))}')
+            note_merge = (f', merging with the platform module of the same name'
+                          if name in collisions else '')
+            fail('P14', f'"{name}" reaches {iface} ({lang}) at '
+                        f'V{" and V".join(sorted(versions, key=int))} at once, '
+                        f'through {", ".join(direct) or "its own libs"}{note_merge}')
 
 
 def aosp_counterpart(name, aosp_mods):
@@ -204,10 +402,14 @@ def vendor_path(repo, blob):
 
 
 def main():
+    global DEVICE, VENDOR
     ap = argparse.ArgumentParser()
     ap.add_argument('--aosp', action='append', default=[])
     ap.add_argument('--stock', default='/tmp/sysmnt')
+    ap.add_argument('--device', default=DEVICE, help='override, for older revisions')
+    ap.add_argument('--vendor', default=VENDOR, help='override, for older revisions')
     args = ap.parse_args()
+    DEVICE, VENDOR = args.device, args.vendor
 
     dev_bp = os.path.join(DEVICE, 'Android.bp')
     ven_bp = os.path.join(VENDOR, 'Android.bp')
@@ -367,6 +569,8 @@ def main():
             fail('P12', f'{label} Android.bp: {n} prebuilt modules still carry '
                         f'prefer: true, which makes each one claim the AOSP '
                         f'module of the same name; run setup-makefiles.py')
+
+    check_p14(device_mods, vendor_mods, aosp_mods)
 
     for check, message in findings:
         print(f'{check}: {message}')
