@@ -33,10 +33,7 @@ lib_fixups: lib_fixups_user_type = {
         lambda lib, partition: 'lib_android_keymaster_keymint_utils_vendor',
     'audioclient-types-aidl-cpp':
         lambda lib, partition: 'audioclient-types-aidl-cpp_vendor',
-    # The bluetooth audio stack and the wifi binaries keep the stock copies: the
-    # platform builds modules of the same names at V5, V3 and V5, and its chain
-    # is not in the product, so the rename clears the merge without moving the
-    # device onto a version its own bluetooth stack does not speak
+    # the stock bluetooth audio and wifi copies, renamed off the platform names
     'android.hardware.bluetooth.audio-impl':
         lambda lib, partition: 'android.hardware.bluetooth.audio-impl_vendor',
     'libbluetooth_audio_session':

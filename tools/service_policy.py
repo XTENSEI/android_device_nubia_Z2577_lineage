@@ -1,17 +1,10 @@
 #!/usr/bin/env python3
 """Decide what policy each shipped init rc service needs.
 
-For every service in the rc files we ship, resolve its exec path against the
-platform and tree file contexts, then ask three questions:
-
-  label  does the exec path already get a usable label
-  type   does the platform already declare that exec type
-  attr   does the platform declare the hal attribute the domain would serve
-
-The platform list comes first and the tree list last, because the build
-concatenates them in that order and the last match wins. `system/sepolicy/vendor`
-is part of every device build, so a domain the platform declares can be reused
-for an OEM binary just by labelling the path.
+For every service in the rc files, resolve its exec path against the platform
+and tree file contexts and report the label, the exec type and the hal
+attribute. The tree list is last because the build concatenates it last and the
+last match wins.
 """
 
 import os

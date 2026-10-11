@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-"""Everything the build would reject, checked before it runs.
-
-The three VPS build cycles so far each found one error at a time. This runs the
-same class of check over the whole tree at once, offline:
+"""Everything a build would reject, checked offline before it runs.
 
   P1  module names legal for Soong
   P2  duplicate module names, within a file and between the two bp files
@@ -15,18 +12,18 @@ same class of check over the whole tree at once, offline:
   P9  every $(DEVICE_PATH)/... reference in the makefiles exists
   P10 copy-file destination collisions
   P11 prebuilts whose name AOSP also uses, which the platform now provides
-  P13 a shared prebuilt whose AOSP namesake is static only, which Soong
-      cannot resolve and which has to be renamed
   P12 prebuilt prefer flags, which regeneration has to drop
-  P14 frozen AIDL versions our prebuilts can reach, the platform ones included
+  P13 a shared prebuilt whose AOSP namesake is static only
+  P14 frozen AIDL versions a module can reach, the platform ones included
 
-Usage: preflight.py [--aosp /tmp/aosp ...] [--stock /tmp/sysmnt]
+Usage: preflight.py [--aosp <tree> ...] [--stock <mount>] [--selftest]
 """
 
 import argparse
 import os
 import re
 import sys
+import tempfile
 from collections import defaultdict
 
 DEVICE = '/home/andrei/Downloads/Trees/device_nubia_Z2577'
@@ -81,11 +78,9 @@ def split_elements(text):
 
 
 def resolve_value(expr, variables):
-    """The string a Blueprint expression evaluates to, or None if it cannot.
+    """The string a Blueprint expression evaluates to, or None.
 
-    Read character by character rather than splitting on `+`: the operator is
-    the separator, so a path that contains one (`libc++_shared`) would be torn
-    in half and dropped.
+    Read character by character: splitting on `+` tears a path that contains one.
     """
     parts, i = [], 0
     while i < len(expr):
@@ -120,12 +115,7 @@ def bp_variables(text):
 
 
 def bp_list(text, prop, variables):
-    """The strings in a `prop: [...]` list, with variables resolved.
-
-    A list element is an expression, not always a quoted name: the AIDL
-    interface files spell the current version as `latest_foo + "-ndk"`, so a
-    checker that reads the quotes alone sees neither the name nor the version.
-    """
+    """The strings in a `prop: [...]` list, variables and concatenations resolved."""
     found = re.search(prop + r':\s*\[(.*?)\]', text, re.S)
     if not found:
         return []
@@ -222,9 +212,7 @@ def lib_versions(modules, lib, cache=None, stack=None):
             continue
         iface = found.group('iface')
         reach = {(iface, found.group('lang')): {found.group('version')}}
-        # A versioned name is the generated library of `iface`, and whatever
-        # that interface imports is baked into every version of it, so the walk
-        # has to continue through the base module as well.
+        # the interface's own imports are baked into every version of it
         base = modules.get(iface)
         if base and base['type'] == 'aidl_interface':
             for key, versions in aidl_versions(modules, iface, cache, stack).items():
@@ -234,11 +222,7 @@ def lib_versions(modules, lib, cache=None, stack=None):
 
 
 def imported_versions(info):
-    """An `imports: ["myiface-V2"]` entry, expanded over the backend list.
-
-    A versioned import carries no backend, so it lands on every backend the
-    interface is generated for; the interface's own `langs:` narrows that.
-    """
+    """A versioned `imports` entry, expanded over the backends it applies to."""
     if info['type'] != 'aidl_interface':
         return
     for entry in info['imports']:
@@ -250,13 +234,11 @@ def imported_versions(info):
 
 
 def aidl_versions(modules, name, cache=None, stack=None):
-    """Every frozen AIDL interface version a module can reach, per backend.
+    """Every frozen AIDL version a module can reach, keyed interface and backend.
 
-    Soong stores the version of an interface under `interface-backend`, so
-    myiface-V1-cpp beside myiface-V2-ndk is legal and myiface-V1-ndk beside
-    myiface-V2-ndk is not. Every dependency edge carries the version, and two
-    of them are easy to miss: an `imports` entry on an aidl_interface and a
-    `:module` reference in srcs.
+    Soong stores the version under `interface-backend`, so V1-cpp beside V2-ndk
+    is legal and V1-ndk beside V2-ndk is not. The libs, the defaults chain, an
+    `imports` entry and a `srcs: [":module"]` reference all carry it.
     """
     cache = {} if cache is None else cache
     stack = set() if stack is None else stack
@@ -408,7 +390,10 @@ def main():
     ap.add_argument('--stock', default='/tmp/sysmnt')
     ap.add_argument('--device', default=DEVICE, help='override, for older revisions')
     ap.add_argument('--vendor', default=VENDOR, help='override, for older revisions')
+    ap.add_argument('--selftest', action='store_true')
     args = ap.parse_args()
+    if args.selftest:
+        return selftest()
     DEVICE, VENDOR = args.device, args.vendor
 
     dev_bp = os.path.join(DEVICE, 'Android.bp')
@@ -578,6 +563,121 @@ def main():
         print(f'{check}: note: {message}')
     print(f'\n{len(findings)} findings, {len(notes)} notes')
     return 1 if findings else 0
+
+
+FAIL1 = """
+cc_library {
+    name: "foo",
+    shared_libs: ["myiface-V2-ndk", "bar"],
+}
+
+cc_library {
+    name: "bar",
+    shared_libs: ["myiface-V1-ndk"],
+}
+"""
+
+FAIL2 = """
+aidl_interface {
+    name: "myiface",
+    srcs: ["IFoo.aidl"],
+    versions: ["1"],
+}
+
+aidl_interface {
+    name: "myiface2",
+    srcs: ["IBar.aidl"],
+    imports: ["myiface-V2"],
+}
+
+cc_library {
+    name: "foobar",
+    shared_libs: ["myiface-V1-ndk", "myiface2-V1-ndk"],
+}
+"""
+
+FAIL3 = """
+aidl_interface {
+    name: "myiface",
+    srcs: ["IFoo.aidl"],
+    versions: ["1"],
+}
+
+aidl_interface {
+    name: "myiface2",
+    srcs: ["IBar.aidl"],
+    imports: ["myiface-V2"],
+}
+
+cc_library {
+    name: "foobar",
+    srcs: [":myiface-V1-ndk-source"],
+    shared_libs: ["myiface2-V1-ndk"],
+}
+"""
+
+PASS4 = """
+aidl_interface {
+    name: "myiface",
+    srcs: ["IFoo.aidl"],
+    versions: ["1"],
+}
+
+cc_library {
+    name: "foobar",
+    shared_libs: ["myiface-V1-cpp", "myiface-V1-ndk"],
+}
+"""
+
+PASS5 = """
+aidl_interface {
+    name: "myiface",
+    srcs: ["IFoo.aidl"],
+    versions: ["1"],
+}
+
+aidl_interface {
+    name: "myiface2",
+    srcs: ["IBar.aidl"],
+    imports: ["myiface-V2"],
+}
+
+cc_library {
+    name: "foobar",
+    srcs: [":myiface-V2-ndk-source"],
+    shared_libs: ["myiface2-V1-ndk"],
+}
+"""
+
+CASES = (
+    ('indirect dependency', FAIL1, 'foo', 1),
+    ('versioned import', FAIL2, 'foobar', 1),
+    ('srcs module reference', FAIL3, 'foobar', 1),
+    ('same version, two backends', PASS4, None, 0),
+    ('import and srcs agree', PASS5, None, 0),
+)
+
+
+def selftest():
+    """The P14 rule against the fixtures system/tools/aidl tests it with."""
+    bad = 0
+    for label, source, module, count in CASES:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, 'Android.bp')
+            with open(path, 'w') as handle:
+                handle.write(source)
+            mods = parse_bp(path, quiet=True)
+        findings.clear()
+        notes.clear()
+        check_p14(mods, {}, mods)
+        found = [message for check, message in findings if check == 'P14']
+        ok = len(found) == count and (not module or all(
+            f'"{module}"' in message and 'myiface (ndk)' in message
+            for message in found))
+        print(f'{"ok  " if ok else "FAIL"} {label}: {len(found)} finding(s)')
+        bad += 0 if ok else 1
+    print(f'{len(CASES) - bad}/{len(CASES)} cases as upstream behaves')
+    return 1 if bad else 0
 
 
 if __name__ == '__main__':

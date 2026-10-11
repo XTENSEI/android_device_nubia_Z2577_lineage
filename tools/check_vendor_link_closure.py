@@ -1,14 +1,9 @@
 #!/usr/bin/env python3
 """Is every library the vendor blobs need still satisfied after the removals?
 
-Eighteen prebuilts came out of the vendor repo because Soong refused to let them
-replace an AOSP module of the same name. This checks the consequence: for every
-DT_NEEDED edge of every ELF we still ship, is the target either
-
-  shipped   a file in the vendor repo, so it lands in the vendor image, or
-  platform  not in the vendor repo but present in the stock system image, so the
-            platform build should supply it, or
-  MISSING   in neither place, which is the only case that can break at runtime.
+For every DT_NEEDED edge of every ELF we ship: shipped means a file in the
+vendor repo, platform means present in the stock system image, MISSING means
+neither, which is the only case that breaks at runtime.
 
 Usage: check_vendor_link_closure.py [--needed /path/to/needed.tsv]
 """

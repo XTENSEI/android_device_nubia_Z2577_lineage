@@ -1,15 +1,9 @@
 #!/usr/bin/env python3
 """Check the tree sepolicy against itself and against the platform.
 
-Three things have to hold before this can compile:
-
-  unique    no type is declared twice, here or by the platform
-  resolved  every name a rule or a label mentions exists
-  syntax    the lines are shaped like policy
-
-The platform namespace is plat_pub_versioned.cil, which is the compiled public
-policy the build hands to vendor policy, plus the plat_vendor sources that are
-compiled into vendor policy alongside ours.
+Unique types, every name a rule or a label mentions resolved, lines shaped like
+policy. The platform namespace is plat_pub_versioned.cil plus the plat_vendor
+sources compiled into vendor policy alongside ours.
 """
 
 import os

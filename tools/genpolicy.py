@@ -1,16 +1,9 @@
 #!/usr/bin/env python3
 """Generate the vendor sepolicy the OEM init rc services need.
 
-The rules come from the stock vendor_sepolicy.cil and odm_sepolicy.cil, which
-hold the policy the device shipped with. They are ported with one rename: the
-trailing _NN_NN the versioning applies to public platform names is dropped,
-because the build re-adds it from PLATFORM_SEPOLICY_VERSION.
-
-A name a rule references is usable if the platform declares it or the tree
-declares it. Everything else the rules need is declared here too, and its
-labels are taken from the stock contexts files.
-
-Usage: genpolicy.py [--write]
+Rules come from the stock vendor_sepolicy.cil and odm_sepolicy.cil with the
+trailing _NN_NN dropped, because the build re-adds it from
+PLATFORM_SEPOLICY_VERSION. Usage: genpolicy.py [--write]
 """
 
 import os

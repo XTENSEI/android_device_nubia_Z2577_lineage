@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # Enumerate the prebuilts whose name the platform takes, one Soong replay per name.
-# Nothing compiles, the generated files are restored on exit, findings in scratch/.
 
 from __future__ import annotations
 
@@ -484,12 +483,12 @@ def main() -> int:
         patchable += sorted((top / 'device/nubia/Z2577').glob('**/Android.bp'))
         patchable = [path for path in patchable if path.exists()]
 
-        scratch = top / 'out/shadow-sweep'
+        work = top / 'out/shadow-sweep'
         if args.in_place:
             soong_out, out_dir = 'out/soong', 'out'
         else:
-            (scratch / 'soong').mkdir(parents=True, exist_ok=True)
-            (scratch / 'out').mkdir(parents=True, exist_ok=True)
+            (work / 'soong').mkdir(parents=True, exist_ok=True)
+            (work / 'out').mkdir(parents=True, exist_ok=True)
             soong_out, out_dir = 'out/shadow-sweep/soong', 'out/shadow-sweep/out'
         ninja = f'{out_dir}/build.{target}.ninja'
 

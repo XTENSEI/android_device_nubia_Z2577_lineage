@@ -6,7 +6,7 @@
 # Regenerate the vendor makefiles, then drop the prebuilt prefer flags. A
 # prebuilt that claims an AOSP module of the same name on another partition is
 # what Soong rejects, and where the platform builds a vendor variant that copy
-# is the right one anyway. scratch/preflight.py checks the result.
+# is the right one anyway. tools/preflight.py checks the result.
 #
 
 import pathlib

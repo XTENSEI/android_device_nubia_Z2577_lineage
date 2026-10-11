@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 """Parenthesis aware reader for the stock CIL policy.
 
-CIL is a flat list of s-expressions, one per line, but permissions and
-attributes are lists too, so a naive split on spaces reads `read`, `open`
-and `file` as type names. Everything here goes through one splitter that
-knows how deep it is.
+Permissions and attributes are lists too, so every read goes through one
+splitter that knows how deep it is.
 """
 
 import re
