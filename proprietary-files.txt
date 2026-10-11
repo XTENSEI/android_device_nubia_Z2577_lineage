@@ -26,7 +26,7 @@ vendor/etc/usb_audio_policy_configuration.xml
 vendor/lib/android.hardware.audio.effect@7.0.so
 vendor/lib/android.hardware.audio@7.0.so
 vendor/lib/android.hardware.audio@7.1.so
-vendor/lib/android.hardware.bluetooth.audio-impl.so
+vendor/lib/android.hardware.bluetooth.audio-impl.so;MODULE=android.hardware.bluetooth.audio-impl_vendor
 vendor/lib/android.hardware.bluetooth.audio@2.0.so
 vendor/lib/android.hardware.bluetooth.audio@2.1.so
 vendor/lib/android.media.audio.common.types-V1-cpp.so
@@ -44,8 +44,8 @@ vendor/lib/hw/awinic.audio.effect.so;FIX_SONAME
 vendor/lib/libarcsoft_high_dynamic_range_unisoc.so
 vendor/lib/libaudioclient_aidl_conversion.so
 vendor/lib/libaudiofoundation.so
-vendor/lib/libbluetooth_audio_session.so
-vendor/lib/libbluetooth_audio_session_aidl.so
+vendor/lib/libbluetooth_audio_session.so;MODULE=libbluetooth_audio_session_vendor
+vendor/lib/libbluetooth_audio_session_aidl.so;MODULE=libbluetooth_audio_session_aidl_vendor
 vendor/lib/libcodec2_unisoc_mp3dec.so
 vendor/lib/libcodec2_unisoc_mp3dec_L1.so
 vendor/lib/libcodec2_unisoc_mp3dec_L2.so
@@ -96,7 +96,7 @@ vendor/lib/soundfx/libvisualizer.so
 vendor/lib64/android.hardware.audio.effect@7.0.so
 vendor/lib64/android.hardware.audio@7.0.so
 vendor/lib64/android.hardware.audio@7.1.so
-vendor/lib64/android.hardware.bluetooth.audio-impl.so
+vendor/lib64/android.hardware.bluetooth.audio-impl.so;MODULE=android.hardware.bluetooth.audio-impl_vendor
 vendor/lib64/android.hardware.bluetooth.audio@2.0.so
 vendor/lib64/android.hardware.bluetooth.audio@2.1.so
 vendor/lib64/android.media.audio.common.types-V1-cpp.so
@@ -114,8 +114,8 @@ vendor/lib64/lib_android_keymaster_keymint_utils.so;MODULE=lib_android_keymaster
 vendor/lib64/libarcsoft_high_dynamic_range_unisoc.so
 vendor/lib64/libaudioclient_aidl_conversion.so
 vendor/lib64/libaudiofoundation.so
-vendor/lib64/libbluetooth_audio_session.so
-vendor/lib64/libbluetooth_audio_session_aidl.so
+vendor/lib64/libbluetooth_audio_session.so;MODULE=libbluetooth_audio_session_vendor
+vendor/lib64/libbluetooth_audio_session_aidl.so;MODULE=libbluetooth_audio_session_aidl_vendor
 vendor/lib64/libkeymint.so;MODULE=libkeymint_vendor
 vendor/lib64/libomx_MF2SF_sw_sprd.so
 vendor/lib64/libomx_av1dec_sw_sprd.so
@@ -1080,8 +1080,8 @@ vendor/lib64/vendor.aac.hardware.richtap.vibrator-V1-ndk.so
 
 # Wi-Fi
 vendor/bin/hw/android.hardware.wifi@1.0-service
-vendor/bin/hw/hostapd
-vendor/bin/hw/wpa_supplicant
+vendor/bin/hw/hostapd;MODULE=hostapd_vendor
+vendor/bin/hw/wpa_supplicant;MODULE=wpa_supplicant_vendor
 vendor/lib/hw/liblowi_wifihal.so
 vendor/lib/hw/libwifi-hal-unisoc.so
 vendor/lib/liblwpAdapter.so
