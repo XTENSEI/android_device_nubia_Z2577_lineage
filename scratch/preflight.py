@@ -34,8 +34,13 @@ VENDOR = '/home/andrei/Downloads/Trees/vendor_nubia_Z2577_lineage'
 
 LEGAL_NAME = re.compile(r'^[A-Za-z0-9_.@+-]+$')
 MODULE_OPEN = re.compile(r'^([a-z_0-9]+) \{$')
+BACKENDS = 'ndk|cpp|java|rust|ndk_platform'
 VERSIONED = re.compile(r'^(?P<iface>.+?)-V(?P<version>\d+)'
-                       r'-(?:ndk|cpp|java|rust|ndk_platform)$')
+                       r'-(?P<lang>' + BACKENDS + r')$')
+# the `:module` reference a srcs entry can carry, the -source copy of a backend
+SOURCE = re.compile(r'^(?P<iface>.+?)-V(?P<version>\d+)'
+                    r'-(?P<lang>' + BACKENDS + r')-source$')
+LANGS = tuple(BACKENDS.split('|'))
 LIBS = ('shared_libs', 'static_libs', 'whole_static_libs')
 SRC_PROP = re.compile(r'^\s*srcs?: (\[(.*?)\]|"([^"]+)"),?$', re.M | re.S)
 
@@ -102,6 +107,14 @@ def parse_bp(path, quiet=False):
             'defaults': (
                 re.findall(r'"([^"]+)"', defaults.group(1)) if defaults else []
             ),
+            'imports': (
+                re.findall(r'"([^"]+)"', imp.group(1))
+                if (imp := re.search(r'imports: \[(.*?)\]', text, re.S)) else []
+            ),
+            'langs': (
+                re.findall(r'"([^"]+)"', lng.group(1))
+                if (lng := re.search(r'langs: \[(.*?)\]', text, re.S)) else []
+            ),
             'vendor': bool(re.search(
                 r'^\s*(vendor|proprietary|soc_specific): true,?$', text, re.M)),
             'vendor_available': 'vendor_available: true' in text,
@@ -138,17 +151,47 @@ def vendor_flag(modules, name, seen=None):
 
 def lib_versions(modules, lib, cache=None, stack=None):
     """What declaring one library pulls in, its own frozen version included."""
-    found = VERSIONED.match(lib)
-    if found:
-        return {found.group('iface'): {found.group('version')}}
+    for pattern in (VERSIONED, SOURCE):
+        found = pattern.match(lib)
+        if not found:
+            continue
+        iface = found.group('iface')
+        reach = {(iface, found.group('lang')): {found.group('version')}}
+        # A versioned name is the generated library of `iface`, and whatever
+        # that interface imports is baked into every version of it, so the walk
+        # has to continue through the base module as well.
+        base = modules.get(iface)
+        if base and base['type'] == 'aidl_interface':
+            for key, versions in aidl_versions(modules, iface, cache, stack).items():
+                reach.setdefault(key, set()).update(versions)
+        return reach
     return aidl_versions(modules, lib, cache, stack)
 
 
-def aidl_versions(modules, name, cache=None, stack=None):
-    """Every frozen AIDL interface version reachable from a module.
+def imported_versions(info):
+    """An `imports: ["myiface-V2"]` entry, expanded over the backend list.
 
-    Soong rejects a module that reaches two versions of one interface, however
-    many hops away the second one sits, so this walks libraries and defaults.
+    A versioned import carries no backend, so it lands on every backend the
+    interface is generated for; the interface's own `langs:` narrows that.
+    """
+    if info['type'] != 'aidl_interface':
+        return
+    for entry in info['imports']:
+        found = re.match(r'^(?P<iface>.+)-V(?P<version>\d+)$', entry)
+        if not found:
+            continue
+        for lang in info['langs'] or LANGS:
+            yield found.group('iface'), lang, found.group('version')
+
+
+def aidl_versions(modules, name, cache=None, stack=None):
+    """Every frozen AIDL interface version a module can reach, per backend.
+
+    Soong stores the version of an interface under `interface-backend`, so
+    myiface-V1-cpp beside myiface-V2-ndk is legal and myiface-V1-ndk beside
+    myiface-V2-ndk is not. Every dependency edge carries the version, and two
+    of them are easy to miss: an `imports` entry on an aidl_interface and a
+    `:module` reference in srcs.
     """
     cache = {} if cache is None else cache
     stack = set() if stack is None else stack
@@ -159,12 +202,43 @@ def aidl_versions(modules, name, cache=None, stack=None):
     stack.add(name)
     found = {}
     info = modules[name]
-    for lib in [l for prop in LIBS for l in info[prop]] + info['defaults']:
-        for iface, versions in lib_versions(modules, lib, cache, stack).items():
-            found.setdefault(iface, set()).update(versions)
+    for iface, lang, version in imported_versions(info):
+        found.setdefault((iface, lang), set()).add(version)
+    for dep in ([l for prop in LIBS for l in info[prop]] + info['defaults']
+                + [s[1:] for s in info['srcs'] if s.startswith(':')]):
+        for key, versions in lib_versions(modules, dep, cache, stack).items():
+            found.setdefault(key, set()).update(versions)
     stack.discard(name)
     cache[name] = found
     return found
+
+
+TEST_TYPES = ('cc_test_library', 'android_test', 'cc_benchmark', 'cc_test')
+
+
+def check_p14(device_mods, vendor_mods, aosp_mods):
+    """The aidl_interface version rule, as system/tools/aidl enforces it."""
+    if not aosp_mods:
+        note('P14', 'needs --aosp: which version a platform library links is '
+                    'only knowable from the tree that builds it')
+        return
+    merged = {**aosp_mods, **device_mods, **vendor_mods}
+    cache = {}
+    for name in sorted(set(vendor_mods) | set(device_mods)):
+        if merged[name]['type'] in TEST_TYPES:
+            continue
+        reached = aidl_versions(merged, name, cache)
+        for (iface, lang), versions in sorted(reached.items()):
+            if len(versions) < 2:
+                continue
+            direct = []
+            for lib in merged[name]['shared_libs'] + merged[name]['whole_static_libs']:
+                here = lib_versions(merged, lib, cache).get((iface, lang), set())
+                if here:
+                    direct.append(f'{lib}=V{"/V".join(sorted(here, key=int))}')
+            fail('P14', f'"{name}" reaches {iface} ({lang}) at '
+                        f'V{" and V".join(sorted(versions, key=int))} at once, '
+                        f'through {", ".join(direct) or "its own libs"}')
 
 
 def aosp_counterpart(name, aosp_mods):
@@ -414,26 +488,7 @@ def main():
                         f'prefer: true, which makes each one claim the AOSP '
                         f'module of the same name; run setup-makefiles.py')
 
-    # P14, the AIDL interface versions each module can reach. The newer version
-    # arrives through a platform library as often as through one of ours.
-    if not aosp_mods:
-        note('P14', 'needs --aosp: which version a platform library links is '
-                    'only knowable from the tree that builds it')
-    else:
-        merged = {**aosp_mods, **device_mods, **vendor_mods}
-        cache = {}
-        for name in sorted(set(vendor_mods) | set(device_mods)):
-            for iface, versions in sorted(aidl_versions(merged, name, cache).items()):
-                if len(versions) < 2:
-                    continue
-                direct = []
-                for lib in merged[name]['shared_libs'] + merged[name]['whole_static_libs']:
-                    here = lib_versions(merged, lib, cache).get(iface, set())
-                    if here:
-                        direct.append(f'{lib}=V{"/V".join(sorted(here, key=int))}')
-                fail('P14', f'"{name}" reaches {iface} at '
-                            f'V{" and V".join(sorted(versions, key=int))} at once, '
-                            f'through {", ".join(direct) or "its own libs"}')
+    check_p14(device_mods, vendor_mods, aosp_mods)
 
     for check, message in findings:
         print(f'{check}: {message}')
