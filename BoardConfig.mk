@@ -217,4 +217,5 @@ ODM_MANIFEST_SKUS += singlesim wifionly
 ODM_MANIFEST_SINGLESIM_FILES := $(DEVICE_PATH)/configs/vintf/odm/manifest_singlesim.xml
 ODM_MANIFEST_WIFIONLY_FILES := $(DEVICE_PATH)/configs/vintf/odm/manifest_wifionly.xml
 
-# TODO(dtb name): the stock dtb lives in vendor_boot.img, the dtb partition is empty
+# The dtb partition is all zero in the stock backup, so the dtb travels in
+# vendor_boot: prebuilts/dtb.img feeds --dtb
