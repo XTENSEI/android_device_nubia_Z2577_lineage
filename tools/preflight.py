@@ -16,7 +16,7 @@
   P13 a shared prebuilt whose AOSP namesake is static only
   P14 frozen AIDL versions a module can reach, the platform ones included
 
-Usage: preflight.py [--aosp <tree> ...] [--stock <mount>] [--selftest]
+Usage: preflight.py [--aosp <tree>]... [--stock <mount>] [--selftest]
 """
 
 import argparse
