@@ -81,16 +81,29 @@ def split_elements(text):
 
 
 def resolve_value(expr, variables):
-    """The string a Blueprint expression evaluates to, or None if it cannot."""
-    parts = []
-    for part in expr.split('+'):
-        part = part.strip()
-        if part.startswith('"') and part.endswith('"') and len(part) > 1:
-            parts.append(part[1:-1])
-        elif part in variables:
-            parts.append(variables[part])
+    """The string a Blueprint expression evaluates to, or None if it cannot.
+
+    Read character by character rather than splitting on `+`: the operator is
+    the separator, so a path that contains one (`libc++_shared`) would be torn
+    in half and dropped.
+    """
+    parts, i = [], 0
+    while i < len(expr):
+        char = expr[i]
+        if char.isspace() or char == '+':
+            i += 1
+        elif char == '"':
+            end = expr.find('"', i + 1)
+            if end < 0:
+                return None
+            parts.append(expr[i + 1:end])
+            i = end + 1
         else:
-            return None
+            word = re.match(r'[A-Za-z_][A-Za-z0-9_]*', expr[i:])
+            if not word or word.group(0) not in variables:
+                return None
+            parts.append(variables[word.group(0)])
+            i += len(word.group(0))
     return ''.join(parts)
 
 
