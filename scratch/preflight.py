@@ -61,9 +61,71 @@ def read(path):
         return f.read()
 
 
+ASSIGN = re.compile(r'^([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+?)\s*$', re.M)
+COMMENT = re.compile(r'//[^\n]*')
+
+
+def split_elements(text):
+    """Split a Blueprint list body on the commas outside quotes."""
+    out, current, quoted = [], '', False
+    for char in text:
+        if char == '"':
+            quoted = not quoted
+        if char == ',' and not quoted:
+            out.append(current)
+            current = ''
+        else:
+            current += char
+    out.append(current)
+    return [element.strip() for element in out if element.strip()]
+
+
+def resolve_value(expr, variables):
+    """The string a Blueprint expression evaluates to, or None if it cannot."""
+    parts = []
+    for part in expr.split('+'):
+        part = part.strip()
+        if part.startswith('"') and part.endswith('"') and len(part) > 1:
+            parts.append(part[1:-1])
+        elif part in variables:
+            parts.append(variables[part])
+        else:
+            return None
+    return ''.join(parts)
+
+
+def bp_variables(text):
+    """Top level `name = "value"` assignments, concatenations resolved."""
+    raw = dict(ASSIGN.findall(COMMENT.sub('', text)))
+    resolved = {}
+    for _ in range(3):
+        for name, value in raw.items():
+            got = resolve_value(value, resolved)
+            if got is not None:
+                resolved[name] = got
+    return resolved
+
+
+def bp_list(text, prop, variables):
+    """The strings in a `prop: [...]` list, with variables resolved.
+
+    A list element is an expression, not always a quoted name: the AIDL
+    interface files spell the current version as `latest_foo + "-ndk"`, so a
+    checker that reads the quotes alone sees neither the name nor the version.
+    """
+    found = re.search(prop + r':\s*\[(.*?)\]', text, re.S)
+    if not found:
+        return []
+    body = COMMENT.sub('', found.group(1))
+    return [value for value in
+            (resolve_value(element, variables) for element in split_elements(body))
+            if value]
+
+
 def parse_bp(path, quiet=False):
     """Return {module_name: {type, srcs, defaults, vendor, ...}}."""
     modules = {}
+    variables = bp_variables(read(path))
     lines = read(path).splitlines()
     i = 0
     while i < len(lines):
@@ -90,31 +152,21 @@ def parse_bp(path, quiet=False):
         for array, single in re.findall(
                 r'^\s*(?:srcs?|jars): (?:\[(.*?)\]|"([^"]+)")', text, re.M | re.S):
             if array:
-                srcs += re.findall(r'"([^"]+)"', array)
+                srcs += [value for value in
+                         (resolve_value(element, variables)
+                          for element in split_elements(COMMENT.sub('', array)))
+                         if value]
             else:
                 srcs.append(single)
-        defaults = re.search(r'defaults: \[(.*?)\]', text, re.S)
-        libs = {}
-        for prop in LIBS + ('header_libs',):
-            prop_found = re.search(prop + r': \[(.*?)\]', text, re.S)
-            libs[prop] = (
-                re.findall(r'"([^"]+)"', prop_found.group(1)) if prop_found else []
-            )
+        libs = {prop: bp_list(text, prop, variables)
+                for prop in LIBS + ('header_libs',)}
         info = {
             'type': mtype,
             'srcs': srcs,
             **libs,
-            'defaults': (
-                re.findall(r'"([^"]+)"', defaults.group(1)) if defaults else []
-            ),
-            'imports': (
-                re.findall(r'"([^"]+)"', imp.group(1))
-                if (imp := re.search(r'imports: \[(.*?)\]', text, re.S)) else []
-            ),
-            'langs': (
-                re.findall(r'"([^"]+)"', lng.group(1))
-                if (lng := re.search(r'langs: \[(.*?)\]', text, re.S)) else []
-            ),
+            'defaults': bp_list(text, 'defaults', variables),
+            'imports': bp_list(text, 'imports', variables),
+            'langs': bp_list(text, 'langs', variables),
             'vendor': bool(re.search(
                 r'^\s*(vendor|proprietary|soc_specific): true,?$', text, re.M)),
             'vendor_available': 'vendor_available: true' in text,
@@ -214,6 +266,16 @@ def aidl_versions(modules, name, cache=None, stack=None):
 
 
 TEST_TYPES = ('cc_test_library', 'android_test', 'cc_benchmark', 'cc_test')
+MERGED_PROPS = ('shared_libs', 'static_libs', 'whole_static_libs', 'defaults',
+                'srcs')
+
+
+def prebuilt_union(ours, theirs):
+    """What Soong checks when a prebuilt merges into the module of its name."""
+    merged = dict(ours)
+    for prop in MERGED_PROPS:
+        merged[prop] = list(dict.fromkeys(ours[prop] + theirs[prop]))
+    return merged
 
 
 def check_p14(device_mods, vendor_mods, aosp_mods):
@@ -223,6 +285,11 @@ def check_p14(device_mods, vendor_mods, aosp_mods):
                     'only knowable from the tree that builds it')
         return
     merged = {**aosp_mods, **device_mods, **vendor_mods}
+    collisions = set()
+    for name in set(device_mods) | set(vendor_mods):
+        if name in aosp_mods:
+            collisions.add(name)
+            merged[name] = prebuilt_union(merged[name], aosp_mods[name])
     cache = {}
     for name in sorted(set(vendor_mods) | set(device_mods)):
         if merged[name]['type'] in TEST_TYPES:
@@ -236,9 +303,11 @@ def check_p14(device_mods, vendor_mods, aosp_mods):
                 here = lib_versions(merged, lib, cache).get((iface, lang), set())
                 if here:
                     direct.append(f'{lib}=V{"/V".join(sorted(here, key=int))}')
+            note_merge = (f', merging with the platform module of the same name'
+                          if name in collisions else '')
             fail('P14', f'"{name}" reaches {iface} ({lang}) at '
                         f'V{" and V".join(sorted(versions, key=int))} at once, '
-                        f'through {", ".join(direct) or "its own libs"}')
+                        f'through {", ".join(direct) or "its own libs"}{note_merge}')
 
 
 def aosp_counterpart(name, aosp_mods):
