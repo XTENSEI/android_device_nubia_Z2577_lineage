@@ -33,6 +33,11 @@ lib_fixups: lib_fixups_user_type = {
         lambda lib, partition: 'lib_android_keymaster_keymint_utils_vendor',
     'audioclient-types-aidl-cpp':
         lambda lib, partition: 'audioclient-types-aidl-cpp_vendor',
+    # the audio types the stock blobs link at V1: the platform supplies V4 down
+    # the libstagefright_foundation chain, and one variant may not carry two
+    # versions of the same aidl_interface
+    'android.media.audio.common.types-V1-cpp':
+        lambda lib, partition: 'android.media.audio.common.types-V1-cpp_vendor',
     # the stock bluetooth audio and wifi copies, renamed off the platform names
     'android.hardware.bluetooth.audio-impl':
         lambda lib, partition: 'android.hardware.bluetooth.audio-impl_vendor',
