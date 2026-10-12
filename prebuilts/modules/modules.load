@@ -127,7 +127,6 @@ unisoc_pnp.ko
 unisoc_binder.ko
 sla_core.ko
 kprobe_iomonitor.ko
-ntfs3.ko
 zte_fp.ko
 lcd_state_notify.ko
 zte_tpd.ko
