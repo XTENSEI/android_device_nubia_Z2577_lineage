@@ -62,6 +62,10 @@ BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE := 104857600
 BOARD_BOOT_HEADER_VERSION := 4
 BOARD_KERNEL_PAGESIZE := 4096
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
+
+# init_boot carries its own header version, Soong does not inherit it from the boot one
+BOARD_INIT_BOOT_HEADER_VERSION := 4
+BOARD_MKBOOTIMG_INIT_ARGS += --header_version $(BOARD_INIT_BOOT_HEADER_VERSION)
 BOARD_FLASH_BLOCK_SIZE := 262144
 
 # GKI, the cmdline and the boot config belong in vendor_boot, boot.img is kernel only
