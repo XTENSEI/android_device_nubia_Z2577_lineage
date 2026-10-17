@@ -15,6 +15,7 @@
   P12 prebuilt prefer flags, which regeneration has to drop
   P13 a shared prebuilt whose AOSP namesake is static only
   P14 frozen AIDL versions a module can reach, the platform ones included
+  P15 a name we and the platform both install as an etc module
 
 Usage: preflight.py [--aosp <tree>]... [--stock <mount>] [--selftest]
 """
@@ -322,6 +323,30 @@ def aosp_counterpart(name, aosp_mods):
     return None
 
 
+# The platform module types that install an etc file. The private prebuilt
+# machinery hides a cc_prebuilt_library_shared behind the source module of the
+# same name, and hidl_interface and friends are those sources, but a
+# vintf_fragment is nobody's source: Soong keeps both and writes a make
+# definition for each, and kati stops on the second
+# MODULE.TARGET.ETC.<name> at base_rules.mk:320.
+ETC_INSTALLERS = ('vintf_fragment', 'prebuilt_etc', 'prebuilt_etc_xml',
+                  'prebuilt_firmware', 'prebuilt_usr_share')
+
+
+def check_p15(our_mods, aosp_mods, paths):
+    """Names both trees install, where the platform side is an etc module."""
+    for name in sorted(set(our_mods) & set(aosp_mods)):
+        other = aosp_mods[name]
+        if other['type'] not in ETC_INSTALLERS:
+            continue
+        rel = paths.get(name, '?')
+        rel = rel.split('refs/', 1)[-1].split('/tmp/', 1)[-1]
+        fail('P15', f'module "{name}" is also the AOSP {other["type"]} of the '
+                    f'same name ({rel}); both reach make and the second '
+                    f'MODULE.TARGET.ETC.{name} is rejected there, so install '
+                    f'ours with ;MAKE_COPY_RULE_ONLY instead of a module')
+
+
 def parse_blob_list(path):
     """Blob entries, their SYMLINK targets, and the copy-rule-only ones."""
     files, symlinks, copy_only = {}, {}, set()
@@ -547,6 +572,9 @@ def main():
                         f'({rel}); with no prefer the platform copy is the one '
                         f'used and installed')
 
+    # P15, the same name on both sides where the platform side is an etc module.
+    check_p15({**device_mods, **vendor_mods}, aosp_mods, paths)
+
     # P12, the prefer flags setup-makefiles.py drops after generating
     for label, path in (('device', dev_bp), ('vendor', ven_bp)):
         n = len(re.findall(r'^    prefer: true,$', read(path), re.M))
@@ -649,12 +677,50 @@ cc_library {
 }
 """
 
+P15_OURS = """
+prebuilt_etc_xml {
+    name: "vendor.fragment.xml",
+    src: "proprietary/vendor/etc/vintf/manifest/vendor.fragment.xml",
+    sub_dir: "vintf/manifest",
+}
+"""
+
+P15_CORPUS = """
+vintf_fragment {
+    name: "vendor.fragment.xml",
+    src: "vendor.fragment.xml",
+    soc_specific: true,
+}
+"""
+
+P15_HIDL_OURS = """
+cc_prebuilt_library_shared {
+    name: "android.hardware.wifi@1.0",
+    srcs: ["proprietary/vendor/lib64/android.hardware.wifi@1.0.so"],
+    vendor: true,
+}
+"""
+
+P15_HIDL_CORPUS = """
+hidl_interface {
+    name: "android.hardware.wifi@1.0",
+    srcs: ["IFoo.hal"],
+    vendor_available: true,
+}
+"""
+
 CASES = (
     ('indirect dependency', FAIL1, 'foo', 1),
     ('versioned import', FAIL2, 'foobar', 1),
     ('srcs module reference', FAIL3, 'foobar', 1),
     ('same version, two backends', PASS4, None, 0),
     ('import and srcs agree', PASS5, None, 0),
+)
+
+CASES15 = (
+    ('platform etc module of the same name', P15_OURS, P15_CORPUS, 1),
+    ('platform source module of the same name',
+     P15_HIDL_OURS, P15_HIDL_CORPUS, 0),
 )
 
 
@@ -676,8 +742,28 @@ def selftest():
             for message in found))
         print(f'{"ok  " if ok else "FAIL"} {label}: {len(found)} finding(s)')
         bad += 0 if ok else 1
-    print(f'{len(CASES) - bad}/{len(CASES)} cases as upstream behaves')
-    return 1 if bad else 0
+    print(f'{len(CASES) - bad}/{len(CASES)} P14 cases as upstream behaves')
+
+    bad15 = 0
+    for label, ours, corpus, count in CASES15:
+        with tempfile.TemporaryDirectory() as tmp:
+            ours_path = os.path.join(tmp, 'Android.bp')
+            corpus_path = os.path.join(tmp, 'aosp.bp')
+            for path, text in ((ours_path, ours), (corpus_path, corpus)):
+                with open(path, 'w') as handle:
+                    handle.write(text)
+            our_mods = parse_bp(ours_path, quiet=True)
+            aosp_mods = parse_bp(corpus_path, quiet=True)
+        findings.clear()
+        notes.clear()
+        check_p15(our_mods, aosp_mods, {})
+        found = [message for check, message in findings if check == 'P15']
+        ok = len(found) == count
+        print(f'{"ok  " if ok else "FAIL"} {label}: {len(found)} finding(s)')
+        bad15 += 0 if ok else 1
+    print(f'{len(CASES15) - bad15}/{len(CASES15)} P15 cases')
+
+    return 1 if bad or bad15 else 0
 
 
 if __name__ == '__main__':
