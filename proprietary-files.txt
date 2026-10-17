@@ -30,7 +30,7 @@ vendor/lib/android.hardware.bluetooth.audio-impl.so;MODULE=android.hardware.blue
 vendor/lib/android.hardware.bluetooth.audio@2.0.so
 vendor/lib/android.hardware.bluetooth.audio@2.1.so
 vendor/lib/android.media.audio.common.types-V1-cpp.so;MODULE=android.media.audio.common.types-V1-cpp_vendor
-vendor/lib/audioclient-types-aidl-cpp.so;MODULE=audioclient-types-aidl-cpp_vendor
+# vendor/lib/audioclient-types-aidl-cpp.so;MODULE=audioclient-types-aidl-cpp_vendor
 vendor/lib/btaudio_offload_if.so
 vendor/lib/hw/android.hardware.audio.effect@7.0-impl.so
 vendor/lib/hw/android.hardware.audio@7.1-impl.so
@@ -100,7 +100,7 @@ vendor/lib64/android.hardware.bluetooth.audio-impl.so;MODULE=android.hardware.bl
 vendor/lib64/android.hardware.bluetooth.audio@2.0.so
 vendor/lib64/android.hardware.bluetooth.audio@2.1.so
 vendor/lib64/android.media.audio.common.types-V1-cpp.so;MODULE=android.media.audio.common.types-V1-cpp_vendor
-vendor/lib64/audioclient-types-aidl-cpp.so;MODULE=audioclient-types-aidl-cpp_vendor
+# vendor/lib64/audioclient-types-aidl-cpp.so;MODULE=audioclient-types-aidl-cpp_vendor
 vendor/lib64/btaudio_offload_if.so
 vendor/lib64/hw/android.hardware.audio.effect@7.0-impl.so
 vendor/lib64/hw/android.hardware.audio@7.1-impl.so
@@ -172,13 +172,13 @@ vendor/bin/hw/vendor.sprd.hardware.boot@1.2-service
 vendor/lib/android.hardware.boot@1.0.so
 vendor/lib/android.hardware.boot@1.1.so
 vendor/lib/android.hardware.boot@1.2.so
-vendor/lib/hw/android.hardware.boot@1.0-impl-1.2.so
+# vendor/lib/hw/android.hardware.boot@1.0-impl-1.2.so
 vendor/lib/hw/unisoc.bootctrl.so
 vendor/lib/vendor.sprd.hardware.boot@1.2.so
 vendor/lib64/android.hardware.boot@1.0.so
 vendor/lib64/android.hardware.boot@1.1.so
 vendor/lib64/android.hardware.boot@1.2.so
-vendor/lib64/hw/android.hardware.boot@1.0-impl-1.2.so
+# vendor/lib64/hw/android.hardware.boot@1.0-impl-1.2.so
 vendor/lib64/hw/unisoc.bootctrl.so
 vendor/lib64/vendor.sprd.hardware.boot@1.2.so
 
@@ -4858,7 +4858,7 @@ vendor/bin/swappiness.sh
 vendor/bin/systemDebuggerd
 vendor/bin/tdt
 vendor/bin/toolbox;SYMLINK=vendor/bin/getevent,vendor/bin/getprop,vendor/bin/modprobe,vendor/bin/setprop,vendor/bin/start,vendor/bin/stop
-vendor/bin/toybox_vendor;SYMLINK=vendor/bin/acpi,vendor/bin/base64,vendor/bin/basename,vendor/bin/blockdev,vendor/bin/cal,vendor/bin/cat,vendor/bin/chattr,vendor/bin/chcon,vendor/bin/chgrp,vendor/bin/chmod,vendor/bin/chown,vendor/bin/chroot,vendor/bin/chrt,vendor/bin/cksum,vendor/bin/clear,vendor/bin/cmp,vendor/bin/comm,vendor/bin/cp,vendor/bin/cpio,vendor/bin/cut,vendor/bin/date,vendor/bin/dd,vendor/bin/devmem,vendor/bin/df,vendor/bin/diff,vendor/bin/dirname,vendor/bin/dmesg,vendor/bin/dos2unix,vendor/bin/du,vendor/bin/echo,vendor/bin/egrep,vendor/bin/env,vendor/bin/expand,vendor/bin/expr,vendor/bin/fallocate,vendor/bin/false,vendor/bin/fgrep,vendor/bin/file,vendor/bin/find,vendor/bin/flock,vendor/bin/fmt,vendor/bin/free,vendor/bin/fsync,vendor/bin/getconf,vendor/bin/getenforce,vendor/bin/grep,vendor/bin/groups,vendor/bin/gunzip,vendor/bin/gzip,vendor/bin/head,vendor/bin/hostname,vendor/bin/hwclock,vendor/bin/i2cdetect,vendor/bin/i2cdump,vendor/bin/i2cget,vendor/bin/i2cset,vendor/bin/iconv,vendor/bin/id,vendor/bin/ifconfig,vendor/bin/inotifyd,vendor/bin/insmod,vendor/bin/install,vendor/bin/ionice,vendor/bin/iorenice,vendor/bin/kill,vendor/bin/killall,vendor/bin/ln,vendor/bin/load_policy,vendor/bin/log,vendor/bin/logname,vendor/bin/losetup,vendor/bin/ls,vendor/bin/lsattr,vendor/bin/lsmod,vendor/bin/lsof,vendor/bin/lspci,vendor/bin/lsusb,vendor/bin/md5sum,vendor/bin/microcom,vendor/bin/mkdir,vendor/bin/mkfifo,vendor/bin/mknod,vendor/bin/mkswap,vendor/bin/mktemp,vendor/bin/modinfo,vendor/bin/more,vendor/bin/mount,vendor/bin/mountpoint,vendor/bin/mv,vendor/bin/nc,vendor/bin/netcat,vendor/bin/netstat,vendor/bin/nice,vendor/bin/nl,vendor/bin/nohup,vendor/bin/nproc,vendor/bin/nsenter,vendor/bin/od,vendor/bin/paste,vendor/bin/patch,vendor/bin/pgrep,vendor/bin/pidof,vendor/bin/pkill,vendor/bin/pmap,vendor/bin/printenv,vendor/bin/printf,vendor/bin/ps,vendor/bin/pwd,vendor/bin/readelf,vendor/bin/readlink,vendor/bin/realpath,vendor/bin/renice,vendor/bin/restorecon,vendor/bin/rm,vendor/bin/rmdir,vendor/bin/rmmod,vendor/bin/rtcwake,vendor/bin/runcon,vendor/bin/sed,vendor/bin/sendevent,vendor/bin/seq,vendor/bin/setenforce,vendor/bin/setsid,vendor/bin/sha1sum,vendor/bin/sha224sum,vendor/bin/sha256sum,vendor/bin/sha384sum,vendor/bin/sha512sum,vendor/bin/sleep,vendor/bin/sort,vendor/bin/split,vendor/bin/stat,vendor/bin/strings,vendor/bin/stty,vendor/bin/swapoff,vendor/bin/swapon,vendor/bin/sync,vendor/bin/sysctl,vendor/bin/tac,vendor/bin/tail,vendor/bin/tar,vendor/bin/taskset,vendor/bin/tee,vendor/bin/test,vendor/bin/time,vendor/bin/timeout,vendor/bin/top,vendor/bin/touch,vendor/bin/tr,vendor/bin/true,vendor/bin/truncate,vendor/bin/tty,vendor/bin/uclampset,vendor/bin/ulimit,vendor/bin/umount,vendor/bin/uname,vendor/bin/uniq,vendor/bin/unix2dos,vendor/bin/unlink,vendor/bin/unshare,vendor/bin/uptime,vendor/bin/usleep,vendor/bin/uudecode,vendor/bin/uuencode,vendor/bin/uuidgen,vendor/bin/vmstat,vendor/bin/watch,vendor/bin/wc,vendor/bin/which,vendor/bin/whoami,vendor/bin/xargs,vendor/bin/xxd,vendor/bin/yes,vendor/bin/zcat
+# vendor/bin/toybox_vendor;SYMLINK=vendor/bin/acpi,vendor/bin/base64,vendor/bin/basename,vendor/bin/blockdev,vendor/bin/cal,vendor/bin/cat,vendor/bin/chattr,vendor/bin/chcon,vendor/bin/chgrp,vendor/bin/chmod,vendor/bin/chown,vendor/bin/chroot,vendor/bin/chrt,vendor/bin/cksum,vendor/bin/clear,vendor/bin/cmp,vendor/bin/comm,vendor/bin/cp,vendor/bin/cpio,vendor/bin/cut,vendor/bin/date,vendor/bin/dd,vendor/bin/devmem,vendor/bin/df,vendor/bin/diff,vendor/bin/dirname,vendor/bin/dmesg,vendor/bin/dos2unix,vendor/bin/du,vendor/bin/echo,vendor/bin/egrep,vendor/bin/env,vendor/bin/expand,vendor/bin/expr,vendor/bin/fallocate,vendor/bin/false,vendor/bin/fgrep,vendor/bin/file,vendor/bin/find,vendor/bin/flock,vendor/bin/fmt,vendor/bin/free,vendor/bin/fsync,vendor/bin/getconf,vendor/bin/getenforce,vendor/bin/grep,vendor/bin/groups,vendor/bin/gunzip,vendor/bin/gzip,vendor/bin/head,vendor/bin/hostname,vendor/bin/hwclock,vendor/bin/i2cdetect,vendor/bin/i2cdump,vendor/bin/i2cget,vendor/bin/i2cset,vendor/bin/iconv,vendor/bin/id,vendor/bin/ifconfig,vendor/bin/inotifyd,vendor/bin/insmod,vendor/bin/install,vendor/bin/ionice,vendor/bin/iorenice,vendor/bin/kill,vendor/bin/killall,vendor/bin/ln,vendor/bin/load_policy,vendor/bin/log,vendor/bin/logname,vendor/bin/losetup,vendor/bin/ls,vendor/bin/lsattr,vendor/bin/lsmod,vendor/bin/lsof,vendor/bin/lspci,vendor/bin/lsusb,vendor/bin/md5sum,vendor/bin/microcom,vendor/bin/mkdir,vendor/bin/mkfifo,vendor/bin/mknod,vendor/bin/mkswap,vendor/bin/mktemp,vendor/bin/modinfo,vendor/bin/more,vendor/bin/mount,vendor/bin/mountpoint,vendor/bin/mv,vendor/bin/nc,vendor/bin/netcat,vendor/bin/netstat,vendor/bin/nice,vendor/bin/nl,vendor/bin/nohup,vendor/bin/nproc,vendor/bin/nsenter,vendor/bin/od,vendor/bin/paste,vendor/bin/patch,vendor/bin/pgrep,vendor/bin/pidof,vendor/bin/pkill,vendor/bin/pmap,vendor/bin/printenv,vendor/bin/printf,vendor/bin/ps,vendor/bin/pwd,vendor/bin/readelf,vendor/bin/readlink,vendor/bin/realpath,vendor/bin/renice,vendor/bin/restorecon,vendor/bin/rm,vendor/bin/rmdir,vendor/bin/rmmod,vendor/bin/rtcwake,vendor/bin/runcon,vendor/bin/sed,vendor/bin/sendevent,vendor/bin/seq,vendor/bin/setenforce,vendor/bin/setsid,vendor/bin/sha1sum,vendor/bin/sha224sum,vendor/bin/sha256sum,vendor/bin/sha384sum,vendor/bin/sha512sum,vendor/bin/sleep,vendor/bin/sort,vendor/bin/split,vendor/bin/stat,vendor/bin/strings,vendor/bin/stty,vendor/bin/swapoff,vendor/bin/swapon,vendor/bin/sync,vendor/bin/sysctl,vendor/bin/tac,vendor/bin/tail,vendor/bin/tar,vendor/bin/taskset,vendor/bin/tee,vendor/bin/test,vendor/bin/time,vendor/bin/timeout,vendor/bin/top,vendor/bin/touch,vendor/bin/tr,vendor/bin/true,vendor/bin/truncate,vendor/bin/tty,vendor/bin/uclampset,vendor/bin/ulimit,vendor/bin/umount,vendor/bin/uname,vendor/bin/uniq,vendor/bin/unix2dos,vendor/bin/unlink,vendor/bin/unshare,vendor/bin/uptime,vendor/bin/usleep,vendor/bin/uudecode,vendor/bin/uuencode,vendor/bin/uuidgen,vendor/bin/vmstat,vendor/bin/watch,vendor/bin/wc,vendor/bin/which,vendor/bin/whoami,vendor/bin/xargs,vendor/bin/xxd,vendor/bin/yes,vendor/bin/zcat
 vendor/bin/tp_fw_upgrade
 vendor/bin/trafficshow.sh
 vendor/bin/tsupplicant
@@ -4944,8 +4944,8 @@ vendor/lib/libmotiondetect.so
 vendor/lib/libmpbase.so
 vendor/lib/libmulticam.so
 vendor/lib/libpipelinelog.so
-vendor/lib/libprotobuf-cpp-full-3.9.1.so
-vendor/lib/libprotobuf-cpp-lite-3.9.1.so
+# vendor/lib/libprotobuf-cpp-full-3.9.1.so
+# vendor/lib/libprotobuf-cpp-lite-3.9.1.so
 vendor/lib/libshmemcompat.so
 vendor/lib/libshmemutil.so
 vendor/lib/libskia.so;MODULE=libskia_vendor
@@ -5067,8 +5067,8 @@ vendor/lib64/libmpbase.so
 vendor/lib64/libmulticam.so
 vendor/lib64/libopenshort.so
 vendor/lib64/libpipelinelog.so
-vendor/lib64/libprotobuf-cpp-full-3.9.1.so
-vendor/lib64/libprotobuf-cpp-lite-3.9.1.so
+# vendor/lib64/libprotobuf-cpp-full-3.9.1.so
+# vendor/lib64/libprotobuf-cpp-lite-3.9.1.so
 vendor/lib64/libshmemcompat.so
 vendor/lib64/libshmemutil.so
 vendor/lib64/libskia.so;MODULE=libskia_vendor

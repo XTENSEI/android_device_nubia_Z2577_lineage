@@ -31,8 +31,10 @@ lib_fixups: lib_fixups_user_type = {
     'libkeymint': lambda lib, partition: 'libkeymint_vendor',
     'lib_android_keymaster_keymint_utils':
         lambda lib, partition: 'lib_android_keymaster_keymint_utils_vendor',
-    'audioclient-types-aidl-cpp':
-        lambda lib, partition: 'audioclient-types-aidl-cpp_vendor',
+    # the stock boot service links the stock impl; the platform's
+    # android.hardware.boot@1.2-impl installs the same hw/ file name
+    'android.hardware.boot@1.0-impl-1.2':
+        lambda lib, partition: 'android.hardware.boot@1.2-impl',
     # the audio types the stock blobs link at V1: the platform supplies V4 down
     # the libstagefright_foundation chain, and one variant may not carry two
     # versions of the same aidl_interface
