@@ -4958,7 +4958,7 @@ vendor/lib/libss-base.so
 vendor/lib/libsysoffloadstream.so
 vendor/lib/libtensorflowlite_c.so
 vendor/lib/libtensorflowlite_gpu_jni.so
-vendor/lib/libtensorflowlite_jni.so
+vendor/lib/libtensorflowlite_jni.so;MODULE_SUFFIX=_vendor
 vendor/lib/libtinycompress.so
 vendor/lib/libtinycompress_unisoc.so
 vendor/lib/libtinyxml.so
@@ -5083,7 +5083,7 @@ vendor/lib64/libsysoffloadstream.so
 vendor/lib64/libtensorflowlite_aiengine.so
 vendor/lib64/libtensorflowlite_c.so
 vendor/lib64/libtensorflowlite_gpu_jni.so
-vendor/lib64/libtensorflowlite_jni.so
+vendor/lib64/libtensorflowlite_jni.so;MODULE_SUFFIX=_vendor
 vendor/lib64/libtextclassifier_hash.so
 vendor/lib64/libtinycompress.so
 vendor/lib64/libtinycompress_unisoc.so

@@ -47,6 +47,11 @@ lib_fixups: lib_fixups_user_type = {
         lambda lib, partition: 'android.hardware.graphics.common-V3-ndk_vendor',
     'android.hardware.graphics.allocator-V1-ndk':
         lambda lib, partition: 'android.hardware.graphics.allocator-V1-ndk_vendor',
+    # the platform's libtensorflowlite_jni is sdk_version current with no vendor
+    # variant, so the stock vendor and odm copies each carry their own name
+    'libtensorflowlite_jni':
+        lambda lib, partition: 'libtensorflowlite_jni_odm'
+        if partition == 'odm' else 'libtensorflowlite_jni_vendor',
     # the stock bluetooth audio and wifi copies, renamed off the platform names
     'android.hardware.bluetooth.audio-impl':
         lambda lib, partition: 'android.hardware.bluetooth.audio-impl_vendor',
