@@ -6,7 +6,12 @@ build reports one name per cycle. Soong exports one block per module into
 out/soong/Android-<product>.mk, which holds the whole set, so the whole list of
 duplicates comes out of that one file in a second.
 
-Usage: make_dupes.py <file or dir>... [--ours <path prefix>] [--selftest]
+Usage: make_dupes.py <file or dir>... [--ours <path prefix>] [--tree <root>]
+                     [--selftest]
+
+With --tree the report also says what to do per name: whether the platform
+module's own directory declares a <name>_vendor, which is the copy to take
+instead of the stock one, or that ours needs a name of its own.
 """
 
 import argparse
@@ -54,6 +59,39 @@ def read_blocks(path):
 
 def key(entry):
     return f'MODULE.TARGET.{entry[0]}.{entry[1]}'
+
+
+def declares_vendor(tree, local_path, name):
+    """Does the platform module's own directory declare <name>_vendor?"""
+    if not tree or not local_path:
+        return False
+    for fname in ('Android.bp', 'Android.mk'):
+        path = os.path.join(tree, local_path, fname)
+        if not os.path.exists(path):
+            continue
+        with open(path, errors='ignore') as handle:
+            text = handle.read()
+        for pattern in (rf'name:\s*"{re.escape(name)}_vendor"',
+                        rf'LOCAL_MODULE\s*:=\s*{re.escape(name)}_vendor\b'):
+            if re.search(pattern, text):
+                return True
+    return False
+
+
+def advice(cls, name, platform):
+    """What to do about one duplicate, from the class and the platform side."""
+    if cls == 'SHARED_LIBRARIES':
+        if platform is True:
+            return (f'drop the blob and add {name}_vendor to PRODUCT_PACKAGES')
+        return (f'rename ours with ;MODULE_SUFFIX=_vendor and repoint the '
+                f'dependants in lib_fixups')
+    if cls == 'EXECUTABLES':
+        if platform is True:
+            return f'drop the blob and add {name}_vendor to PRODUCT_PACKAGES'
+        return 'rename ours with ;MODULE=<name>_suffix, stem keeps the file'
+    if cls == 'ETC':
+        return 'install the stock file with ;MAKE_COPY_RULE_ONLY'
+    return 'no rule for this class yet'
 
 
 def scan(paths, ours=None):
@@ -113,6 +151,12 @@ def selftest():
         dupes, total = scan([path])
         mine, _ = scan([path], ours='vendor/nubia/Z2577')
         other, _ = scan([path], ours='nothing/here')
+        platform = os.path.join(tmp, 'external/one-true-awk')
+        os.makedirs(platform)
+        with open(os.path.join(platform, 'Android.bp'), 'w') as handle:
+            handle.write('cc_binary {\n    name: "awk_vendor",\n}\n')
+        with_vendor = declares_vendor(tmp, 'external/one-true-awk', 'awk')
+        without = declares_vendor(tmp, 'external/one-true-awk', 'sqc_daemon')
 
     cases = (
         ('one duplicate among three blocks', len(dupes) == 1 and total == 3),
@@ -124,6 +168,12 @@ def selftest():
          == {'vendor/nubia/Z2577', 'external/one-true-awk'}),
         ('--ours keeps the packages that are ours', len(mine) == 1),
         ('--ours drops the rest', not other),
+        ('a platform _vendor is found in its own directory', with_vendor),
+        ('and only for the name it declares', not without),
+        ('the advice follows the class and the platform side',
+         'PRODUCT_PACKAGES' in advice('EXECUTABLES', 'awk', True)
+         and 'lib_fixups' in advice('SHARED_LIBRARIES', 'libx', False)
+         and 'MAKE_COPY_RULE_ONLY' in advice('ETC', 'x.xml', False)),
     )
     for label, ok in cases:
         print(f'{"ok  " if ok else "FAIL"} {label}')
@@ -136,6 +186,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('paths', nargs='*')
     ap.add_argument('--ours', help='only names one of these packages defines')
+    ap.add_argument('--tree', help='android tree, to read the platform side')
     ap.add_argument('--selftest', action='store_true')
     args = ap.parse_args()
     if args.selftest:
@@ -151,9 +202,16 @@ def main():
 
     dupes, total = scan(paths, args.ours)
     for name in sorted(dupes):
-        print(f'{name} defined {len(dupes[name])} times')
-        for entry in dupes[name]:
+        entries = dupes[name]
+        print(f'{name} defined {len(entries)} times')
+        for entry in entries:
             print(f'    {entry[2] or "?"}')
+        if args.tree:
+            cls, mod = entries[0][0], entries[0][1]
+            other = [e for e in entries
+                     if not (e[2] or '').startswith(args.ours or '\0')]
+            found = any(declares_vendor(args.tree, e[2], mod) for e in other)
+            print(f'    {advice(cls, mod, found)}')
     print(f'\n{len(dupes)} duplicate names in {total} module blocks')
     return 1 if dupes else 0
 
