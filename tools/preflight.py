@@ -174,6 +174,7 @@ def parse_bp(path, quiet=False):
             'vendor': bool(re.search(
                 r'^\s*(vendor|proprietary|soc_specific): true,?$', text, re.M)),
             'vendor_available': 'vendor_available: true' in text,
+            'odm_available': 'odm_available: true' in text,
             'installed_location': (
                 re.search(r'installed_location: "([^"]+)"', text) or [None, None]
             )[1],
@@ -203,6 +204,18 @@ def prop_flag(modules, name, prop, seen=None):
 def vendor_flag(modules, name, seen=None):
     """Is a module vendor specific, directly or through its defaults chain?"""
     return prop_flag(modules, name, 'vendor', seen)
+
+
+def vendor_available(modules, name):
+    """Does the platform build a vendor variant of this module?
+
+    A hidl_interface never writes the flag: its Soong plugin sets it from
+    odm_available, so reading the block alone reports a system only module for
+    an interface that has a vendor copy.
+    """
+    if modules.get(name, {}).get('type') == 'hidl_interface':
+        return not prop_flag(modules, name, 'odm_available')
+    return prop_flag(modules, name, 'vendor_available')
 
 
 def lib_versions(modules, lib, cache=None, stack=None):
@@ -331,6 +344,40 @@ def aosp_counterpart(name, aosp_mods):
 # MODULE.TARGET.ETC.<name> at base_rules.mk:320.
 ETC_INSTALLERS = ('vintf_fragment', 'prebuilt_etc', 'prebuilt_etc_xml',
                   'prebuilt_firmware', 'prebuilt_usr_share')
+
+
+STATIC_ONLY = ('cc_library_static', 'cc_prebuilt_library_static',
+               'cc_library_headers')
+
+
+def check_p11(our_mods, aosp_mods, paths):
+    """Our prebuilt names that the platform also builds.
+
+    Where the platform builds a vendor variant of the same name, Soong hides
+    ours, so only a system only platform module leaves ours as the sole
+    producer of its path, and there the two names still meet in make.
+    """
+    for name in sorted(our_mods):
+        source = aosp_counterpart(name, aosp_mods)
+        if source is None or vendor_flag(aosp_mods, source):
+            continue
+        info = aosp_mods[source]
+        rel = paths[source].split('refs/', 1)[-1].split('/tmp/', 1)[-1]
+        if not vendor_available(aosp_mods, source):
+            note('P11', f'module "{name}" replaces the AOSP module "{source}" '
+                        f'({rel}) which has no vendor variant, so the prebuilt '
+                        f'is the only source and stays')
+        elif (our_mods[name]['type'] == 'cc_prebuilt_library_shared'
+                and info['type'] in STATIC_ONLY):
+            # P13, the platform builds it static only, so ours carries another name.
+            fail('P13', f'module "{name}" is shared while the AOSP module '
+                        f'"{source}" is {info["type"]} only ({rel}); give it '
+                        f'a name of its own with ;MODULE= and repoint its '
+                        f'dependants in extract-files.py lib_fixups')
+        else:
+            note('P11', f'module "{name}" also names an AOSP module "{source}" '
+                        f'({rel}); with no prefer the platform copy is the one '
+                        f'used and installed')
 
 
 def check_p15(our_mods, aosp_mods, paths):
@@ -545,32 +592,8 @@ def main():
             fail('P10', f'destination {dst} written by {len(srcs)} sources: '
                         f'{", ".join(sorted(srcs))}')
 
-    STATIC_ONLY = ('cc_library_static', 'cc_prebuilt_library_static',
-                   'cc_library_headers')
-
     # P11, names AOSP also uses; vendor_available is what gives it a vendor variant.
-    for name in sorted(vendor_mods):
-        source = aosp_counterpart(name, aosp_mods)
-        if source is None or vendor_flag(aosp_mods, source):
-            continue
-        info = aosp_mods[source]
-        rel = paths[source].split('refs/', 1)[-1].split('/tmp/', 1)[-1]
-        # An interface block without the flag generates a system only library, so ours stays.
-        if not prop_flag(aosp_mods, source, 'vendor_available'):
-            note('P11', f'module "{name}" replaces the AOSP module "{source}" '
-                        f'({rel}) which has no vendor variant, so the prebuilt '
-                        f'is the only source and stays')
-        elif (vendor_mods[name]['type'] == 'cc_prebuilt_library_shared'
-                and info['type'] in STATIC_ONLY):
-            # P13, the platform builds it static only, so ours carries another name.
-            fail('P13', f'module "{name}" is shared while the AOSP module '
-                        f'"{source}" is {info["type"]} only ({rel}); give it '
-                        f'a name of its own with ;MODULE= and repoint its '
-                        f'dependants in extract-files.py lib_fixups')
-        else:
-            note('P11', f'module "{name}" also names an AOSP module "{source}" '
-                        f'({rel}); with no prefer the platform copy is the one '
-                        f'used and installed')
+    check_p11(vendor_mods, aosp_mods, paths)
 
     # P15, the same name on both sides where the platform side is an etc module.
     check_p15({**device_mods, **vendor_mods}, aosp_mods, paths)
@@ -709,6 +732,43 @@ hidl_interface {
 }
 """
 
+P11_OURS = """
+cc_prebuilt_library_shared {
+    name: "libsample",
+    srcs: ["proprietary/vendor/lib64/libsample.so"],
+    vendor: true,
+}
+"""
+
+P11_SYSTEM_ONLY = """
+cc_library {
+    name: "libsample",
+    srcs: ["sample.cpp"],
+}
+"""
+
+P11_HIDL = """
+hidl_interface {
+    name: "libsample",
+    srcs: ["ISample.hal"],
+}
+"""
+
+P11_HIDL_ODM = """
+hidl_interface {
+    name: "libsample",
+    srcs: ["ISample.hal"],
+    odm_available: true,
+}
+"""
+
+CASES11 = (
+    ('system only platform module leaves ours as the only source',
+     P11_SYSTEM_ONLY, 1),
+    ('a hidl interface has a vendor variant without saying so', P11_HIDL, 0),
+    ('unless it is odm only', P11_HIDL_ODM, 1),
+)
+
 CASES = (
     ('indirect dependency', FAIL1, 'foo', 1),
     ('versioned import', FAIL2, 'foobar', 1),
@@ -744,6 +804,26 @@ def selftest():
         bad += 0 if ok else 1
     print(f'{len(CASES) - bad}/{len(CASES)} P14 cases as upstream behaves')
 
+    bad11 = 0
+    for label, corpus, count in CASES11:
+        with tempfile.TemporaryDirectory() as tmp:
+            ours_path = os.path.join(tmp, 'Android.bp')
+            corpus_path = os.path.join(tmp, 'aosp.bp')
+            for path, text in ((ours_path, P11_OURS), (corpus_path, corpus)):
+                with open(path, 'w') as handle:
+                    handle.write(text)
+            our_mods = parse_bp(ours_path, quiet=True)
+            aosp_mods = parse_bp(corpus_path, quiet=True)
+        findings.clear()
+        notes.clear()
+        check_p11(our_mods, aosp_mods, {'libsample': corpus_path})
+        found = [message for check, message in notes
+                 if 'no vendor variant' in message]
+        ok = len(found) == count
+        print(f'{"ok  " if ok else "FAIL"} {label}: {len(found)} note(s)')
+        bad11 += 0 if ok else 1
+    print(f'{len(CASES11) - bad11}/{len(CASES11)} P11 cases')
+
     bad15 = 0
     for label, ours, corpus, count in CASES15:
         with tempfile.TemporaryDirectory() as tmp:
@@ -763,7 +843,7 @@ def selftest():
         bad15 += 0 if ok else 1
     print(f'{len(CASES15) - bad15}/{len(CASES15)} P15 cases')
 
-    return 1 if bad or bad15 else 0
+    return 1 if bad or bad11 or bad15 else 0
 
 
 if __name__ == '__main__':
