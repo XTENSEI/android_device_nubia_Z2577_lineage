@@ -61,32 +61,67 @@ def key(entry):
     return f'MODULE.TARGET.{entry[0]}.{entry[1]}'
 
 
-def declares_vendor(tree, local_path, name):
-    """Does the platform module's own directory declare <name>_vendor?"""
+def blocks(path):
+    """(name, body) for every module block in an Android.bp."""
+    lines = open(path, errors='ignore').read().splitlines()
+    out = []
+    i = 0
+    while i < len(lines):
+        if not re.match(r'^[a-z_0-9]+\s*\{\s*$', lines[i]):
+            i += 1
+            continue
+        depth = 1
+        body = []
+        i += 1
+        while i < len(lines) and depth > 0:
+            depth += lines[i].count('{') - lines[i].count('}')
+            body.append(lines[i])
+            i += 1
+        text = '\n'.join(body)
+        found = re.search(r'^\s*name:\s*"([^"]+)"', text, re.M)
+        if found:
+            out.append((found.group(1), text))
+    return out
+
+
+def platform_module(tree, local_path, name):
+    """What the platform's own declaration says: (has _vendor copy, is vendor)."""
+    vendor_copy = False
     if not tree or not local_path:
-        return False
+        return vendor_copy, False
     for fname in ('Android.bp', 'Android.mk'):
         path = os.path.join(tree, local_path, fname)
         if not os.path.exists(path):
             continue
-        with open(path, errors='ignore') as handle:
-            text = handle.read()
-        for pattern in (rf'name:\s*"{re.escape(name)}_vendor"',
-                        rf'LOCAL_MODULE\s*:=\s*{re.escape(name)}_vendor\b'):
-            if re.search(pattern, text):
-                return True
-    return False
+        if fname == 'Android.bp':
+            for other, body in blocks(path):
+                if other == name + '_vendor':
+                    vendor_copy = True
+                if other != name:
+                    continue
+                if (re.search(r'(proprietary|vendor|vendor_available):\s*true',
+                              body)):
+                    return vendor_copy, True
+        else:
+            text = open(path, errors='ignore').read()
+            if re.search(rf'LOCAL_MODULE\s*:=\s*{re.escape(name)}_vendor\b',
+                         text):
+                vendor_copy = True
+    return vendor_copy, False
 
 
-def advice(cls, name, platform):
+def advice(cls, name, vendor_copy, is_vendor):
     """What to do about one duplicate, from the class and the platform side."""
+    if is_vendor:
+        return ('both sides are vendor, so the platform copy wins and ours is '
+                'not installed: nothing to do')
     if cls == 'SHARED_LIBRARIES':
-        if platform is True:
-            return (f'drop the blob and add {name}_vendor to PRODUCT_PACKAGES')
+        if vendor_copy:
+            return f'drop the blob and add {name}_vendor to PRODUCT_PACKAGES'
         return (f'rename ours with ;MODULE_SUFFIX=_vendor and repoint the '
                 f'dependants in lib_fixups')
     if cls == 'EXECUTABLES':
-        if platform is True:
+        if vendor_copy:
             return f'drop the blob and add {name}_vendor to PRODUCT_PACKAGES'
         return 'rename ours with ;MODULE=<name>_suffix, stem keeps the file'
     if cls == 'ETC':
@@ -102,10 +137,17 @@ def scan(paths, ours=None):
         for entry in read_blocks(path):
             total += 1
             seen.setdefault(key(entry), []).append(entry)
-    dupes = {k: v for k, v in seen.items() if len(v) > 1}
+    dupes = {}
+    for name, group in seen.items():
+        # one module written once per arch is not two modules: same class, name
+        # and package, so keep the distinct definers only
+        distinct = sorted({(e[0], e[1], e[2]) for e in group})
+        if len(distinct) > 1:
+            dupes[name] = distinct
     if ours:
         dupes = {k: v for k, v in dupes.items()
-                 if any((e[2] or '').startswith(ours) for e in v)}
+                 if any((e[2] or '').startswith(ours) for e in v)
+                 and any(not (e[2] or '').startswith(ours) for e in v)}
     return dupes, total
 
 
@@ -148,15 +190,28 @@ def selftest():
         path = os.path.join(tmp, 'Android-lineage_Z2577.mk')
         with open(path, 'w') as handle:
             handle.write(SELFTEST)
+        with open(os.path.join(tmp, 'multi.mk'), 'w') as handle:
+            for arch in ('android_arm', 'android_arm64'):
+                handle.write('include $(CLEAR_VARS)\n'
+                             'LOCAL_PATH := vendor/nubia/Z2577\n'
+                             'LOCAL_MODULE := libboth\n'
+                             'LOCAL_MODULE_CLASS := SHARED_LIBRARIES\n'
+                             f'LOCAL_MULTILIB := {arch}\n'
+                             'include $(BUILD_SYSTEM)/soong_cc_rust_prebuilt.mk\n')
         dupes, total = scan([path])
         mine, _ = scan([path], ours='vendor/nubia/Z2577')
         other, _ = scan([path], ours='nothing/here')
         platform = os.path.join(tmp, 'external/one-true-awk')
         os.makedirs(platform)
         with open(os.path.join(platform, 'Android.bp'), 'w') as handle:
-            handle.write('cc_binary {\n    name: "awk_vendor",\n}\n')
-        with_vendor = declares_vendor(tmp, 'external/one-true-awk', 'awk')
-        without = declares_vendor(tmp, 'external/one-true-awk', 'sqc_daemon')
+            handle.write('cc_binary {\n    name: "awk_vendor",\n}\n'
+                         'cc_library {\n    name: "systemonly",\n}\n'
+                         'cc_library_shared {\n    name: "owned",\n'
+                         '    proprietary: true,\n}\n')
+        with_vendor = platform_module(tmp, 'external/one-true-awk', 'awk')
+        without = platform_module(tmp, 'external/one-true-awk', 'sqc_daemon')
+        owned = platform_module(tmp, 'external/one-true-awk', 'owned')
+        multi, _ = scan([os.path.join(tmp, 'multi.mk')])
 
     cases = (
         ('one duplicate among three blocks', len(dupes) == 1 and total == 3),
@@ -168,12 +223,17 @@ def selftest():
          == {'vendor/nubia/Z2577', 'external/one-true-awk'}),
         ('--ours keeps the packages that are ours', len(mine) == 1),
         ('--ours drops the rest', not other),
-        ('a platform _vendor is found in its own directory', with_vendor),
-        ('and only for the name it declares', not without),
+        ('a platform _vendor is found in its own directory',
+         with_vendor == (True, False)),
+        ('and only for the name it declares', without == (False, False)),
+        ('a proprietary module is vendor, so ours is hidden',
+         owned == (False, True)),
         ('the advice follows the class and the platform side',
-         'PRODUCT_PACKAGES' in advice('EXECUTABLES', 'awk', True)
-         and 'lib_fixups' in advice('SHARED_LIBRARIES', 'libx', False)
-         and 'MAKE_COPY_RULE_ONLY' in advice('ETC', 'x.xml', False)),
+         'PRODUCT_PACKAGES' in advice('EXECUTABLES', 'awk', True, False)
+         and 'lib_fixups' in advice('SHARED_LIBRARIES', 'libx', False, False)
+         and 'MAKE_COPY_RULE_ONLY' in advice('ETC', 'x.xml', False, False)
+         and 'nothing to do' in advice('SHARED_LIBRARIES', 'libx', False, True)),
+        ('one module written once per arch is not a duplicate', not multi),
     )
     for label, ok in cases:
         print(f'{"ok  " if ok else "FAIL"} {label}')
@@ -210,8 +270,10 @@ def main():
             cls, mod = entries[0][0], entries[0][1]
             other = [e for e in entries
                      if not (e[2] or '').startswith(args.ours or '\0')]
-            found = any(declares_vendor(args.tree, e[2], mod) for e in other)
-            print(f'    {advice(cls, mod, found)}')
+            named = [platform_module(args.tree, e[2], mod) for e in other]
+            vendor_copy = any(copy for copy, _ in named)
+            is_vendor = any(vendor for _, vendor in named)
+            print(f'    {advice(cls, mod, vendor_copy, is_vendor)}')
     print(f'\n{len(dupes)} duplicate names in {total} module blocks')
     return 1 if dupes else 0
 
