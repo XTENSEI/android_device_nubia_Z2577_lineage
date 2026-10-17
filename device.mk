@@ -77,6 +77,13 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     toybox_vendor
 
+# Vendor tools, the platform builds the same file at the same path
+PRODUCT_PACKAGES += \
+    awk_vendor \
+    dumpsys_vendor \
+    logwrapper_vendor \
+    sh_vendor
+
 # Partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 

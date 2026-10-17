@@ -4829,14 +4829,15 @@ vendor/etc/wifi/vendor_hals/unisoc_wifi_hal_arm64.xml
 vendor/etc/wifi/wpa_supplicant.conf
 vendor/etc/wifi/wpa_supplicant_overlay.conf
 
-# Vendor services
-vendor/bin/awk
+# Vendor services, minus the four tools the platform ships as <tool>_vendor
+# (awk, dumpsys, logwrapper, sh): the platform installs the same paths
+# vendor/bin/awk
 vendor/bin/boringssl_self_test32
 vendor/bin/boringssl_self_test64
 vendor/bin/connmgr
 vendor/bin/cplogctl
 vendor/bin/create_splloader_dual_slot_byname_path.sh
-vendor/bin/dumpsys
+# vendor/bin/dumpsys
 vendor/bin/engpc
 vendor/bin/engpcctl
 vendor/bin/enter_lpm.sh
@@ -4845,13 +4846,13 @@ vendor/bin/hw/unionpnp_service
 vendor/bin/hw/vendor.unisoc.hardware.ai_engine-service
 vendor/bin/hw/vendor.zte.ldd.cmd-service
 vendor/bin/init.insmod.sh
-vendor/bin/logwrapper
+# vendor/bin/logwrapper
 vendor/bin/pm_fullload_recovery.sh
 vendor/bin/pm_fullload_test.sh
 vendor/bin/quit_lpm.sh
 vendor/bin/refnotify
 vendor/bin/set_persist_vendor_stc.sh
-vendor/bin/sh
+# vendor/bin/sh
 vendor/bin/speedrestrictor.sh
 vendor/bin/sqc_daemon
 vendor/bin/start_rkptool.sh
