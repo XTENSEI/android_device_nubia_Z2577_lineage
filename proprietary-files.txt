@@ -4419,8 +4419,9 @@ vendor/etc/vintf/manifest/android.hardware.security.keymint@2.0-unisoc.service.t
 # vendor/etc/vintf/manifest/android.hardware.sensors-multihal.xml
 vendor/etc/vintf/manifest/android.hardware.thermal@2.0-service.xml
 vendor/etc/vintf/manifest/android.hardware.usb-service.unisoc.xml
-vendor/etc/vintf/manifest/android.hardware.wifi.hostapd.xml
-vendor/etc/vintf/manifest/android.hardware.wifi.supplicant.xml
+# the platform declares a module of both these names, so ours ships as a copy rule
+vendor/etc/vintf/manifest/android.hardware.wifi.hostapd.xml;MAKE_COPY_RULE_ONLY
+vendor/etc/vintf/manifest/android.hardware.wifi.supplicant.xml;MAKE_COPY_RULE_ONLY
 vendor/etc/vintf/manifest/android.hardware.wifi@1.0-service.xml
 vendor/etc/vintf/manifest/bluetooth_audio.xml
 vendor/etc/vintf/manifest/cplog_svc-default.xml
