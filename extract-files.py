@@ -55,6 +55,9 @@ lib_fixups: lib_fixups_user_type = {
     # the platform's libvibrator is a system only cc_library, so the stock
     # vendor copy needs a name of its own
     'libvibrator': lambda lib, partition: 'libvibrator_vendor',
+    # the platform's libwifi-hal is the generic implementation, and the stock
+    # service and autotestwifi open the Unisoc one by soname
+    'libwifi-hal': lambda lib, partition: 'libwifi-hal_vendor',
     # the stock bluetooth audio and wifi copies, renamed off the platform names
     'android.hardware.bluetooth.audio-impl':
         lambda lib, partition: 'android.hardware.bluetooth.audio-impl_vendor',

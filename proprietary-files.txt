@@ -1089,7 +1089,7 @@ vendor/bin/hw/wpa_supplicant;MODULE=wpa_supplicant_vendor
 vendor/lib/hw/liblowi_wifihal.so
 vendor/lib/hw/libwifi-hal-unisoc.so
 vendor/lib/liblwpAdapter.so
-vendor/lib/libwifi-hal.so
+vendor/lib/libwifi-hal.so;MODULE_SUFFIX=_vendor
 vendor/lib/libwpa_client.so
 vendor/lib64/android.hardware.wifi@1.0.so
 vendor/lib64/android.hardware.wifi@1.1.so
@@ -1101,7 +1101,7 @@ vendor/lib64/android.hardware.wifi@1.6.so
 vendor/lib64/hw/liblowi_wifihal.so
 vendor/lib64/hw/libwifi-hal-unisoc.so
 vendor/lib64/liblwpAdapter.so
-vendor/lib64/libwifi-hal.so
+vendor/lib64/libwifi-hal.so;MODULE_SUFFIX=_vendor
 vendor/lib64/libwpa_client.so
 
 # Firmware
