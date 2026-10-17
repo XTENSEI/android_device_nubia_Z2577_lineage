@@ -1076,10 +1076,10 @@ vendor/bin/switch_usb_mode.sh
 
 # Vibrator
 vendor/lib/hw/vibrator.default.so
-vendor/lib/libvibrator.so
+vendor/lib/libvibrator.so;MODULE_SUFFIX=_vendor
 vendor/lib64/hw/vibrator.default.so
 vendor/lib64/libaacvibrator.so
-vendor/lib64/libvibrator.so
+vendor/lib64/libvibrator.so;MODULE_SUFFIX=_vendor
 vendor/lib64/vendor.aac.hardware.richtap.vibrator-V1-ndk.so
 
 # Wi-Fi

@@ -52,6 +52,9 @@ lib_fixups: lib_fixups_user_type = {
     'libtensorflowlite_jni':
         lambda lib, partition: 'libtensorflowlite_jni_odm'
         if partition == 'odm' else 'libtensorflowlite_jni_vendor',
+    # the platform's libvibrator is a system only cc_library, so the stock
+    # vendor copy needs a name of its own
+    'libvibrator': lambda lib, partition: 'libvibrator_vendor',
     # the stock bluetooth audio and wifi copies, renamed off the platform names
     'android.hardware.bluetooth.audio-impl':
         lambda lib, partition: 'android.hardware.bluetooth.audio-impl_vendor',
