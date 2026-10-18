@@ -5530,10 +5530,10 @@ odm/logo/timewatermark/time_vert_152x76_ath.rgba
 odm/logo/timewatermark/time_vert_152x76_bth.rgba
 odm/logo/timewatermark/time_vert_152x76_cth.rgba
 odm/logo/timewatermark/time_vert_152x76_dth.rgba
-odm/overlay/DualSimOverlay.apk;MAKE_COPY_RULE_ONLY
-odm/overlay/WifiOnlyOverlay.apk;MAKE_COPY_RULE_ONLY
-odm/overlay/WifiOnlySettingsOverlay.apk;MAKE_COPY_RULE_ONLY
-odm/overlay/unisoc_overlay_core_max_cached_processed_28.apk;MAKE_COPY_RULE_ONLY
+# odm/overlay/DualSimOverlay.apk
+# odm/overlay/WifiOnlyOverlay.apk
+# odm/overlay/WifiOnlySettingsOverlay.apk
+# odm/overlay/unisoc_overlay_core_max_cached_processed_28.apk
 
 # System
 system/bin/ztecharger

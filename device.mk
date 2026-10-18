@@ -85,6 +85,13 @@ PRODUCT_PACKAGES += \
     sh_vendor \
     toolbox_vendor
 
+# The stock ODM overlays, an apk cannot travel in PRODUCT_COPY_FILES
+PRODUCT_PACKAGES += \
+    DualSimOverlay \
+    WifiOnlyOverlay \
+    WifiOnlySettingsOverlay \
+    unisoc_overlay_core_max_cached_processed_28
+
 # Partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 

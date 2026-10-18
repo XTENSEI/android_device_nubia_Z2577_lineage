@@ -11,3 +11,32 @@ install_symlink {
     installed_location: "lib/modules",
     symlink_target: "/vendor_dlkm/lib/modules",
 }
+
+// The stock ODM overlays, an apk cannot travel in PRODUCT_COPY_FILES
+prebuilt_overlay {
+    name: "DualSimOverlay",
+    src: "prebuilts/overlay/DualSimOverlay.apk",
+    filename_from_src: true,
+    device_specific: true,
+}
+
+prebuilt_overlay {
+    name: "WifiOnlyOverlay",
+    src: "prebuilts/overlay/WifiOnlyOverlay.apk",
+    filename_from_src: true,
+    device_specific: true,
+}
+
+prebuilt_overlay {
+    name: "WifiOnlySettingsOverlay",
+    src: "prebuilts/overlay/WifiOnlySettingsOverlay.apk",
+    filename_from_src: true,
+    device_specific: true,
+}
+
+prebuilt_overlay {
+    name: "unisoc_overlay_core_max_cached_processed_28",
+    src: "prebuilts/overlay/unisoc_overlay_core_max_cached_processed_28.apk",
+    filename_from_src: true,
+    device_specific: true,
+}
