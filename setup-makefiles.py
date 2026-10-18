@@ -27,6 +27,13 @@ OVERRIDES = {
     'libwifi-hal_vendor': 'libwifi-hal',
     'wpa_supplicant_vendor': 'wpa_supplicant',
     'hostapd_vendor': 'hostapd',
+    # the platform reaches V7 and V2 of these down libgralloctypes and the mapper
+    'android.hardware.graphics.common-V3-ndk_vendor':
+        'android.hardware.graphics.common-V3-ndk',
+    'android.hardware.graphics.allocator-V1-ndk_vendor':
+        'android.hardware.graphics.allocator-V1-ndk',
+    'android.media.audio.common.types-V1-cpp_vendor':
+        'android.media.audio.common.types-V1-cpp',
     'identity-default.xml_vendor': 'identity-default.xml',
 }
 

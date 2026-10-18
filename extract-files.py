@@ -35,6 +35,18 @@ lib_fixups: lib_fixups_user_type = {
     # android.hardware.boot@1.2-impl installs the same hw/ file name
     'android.hardware.boot@1.0-impl-1.2':
         lambda lib, partition: 'android.hardware.boot@1.2-impl',
+    # the audio types the stock blobs link at V1: the platform supplies V4 down
+    # the libstagefright_foundation chain, and one variant may not carry two
+    # versions of the same aidl_interface
+    'android.media.audio.common.types-V1-cpp':
+        lambda lib, partition: 'android.media.audio.common.types-V1-cpp_vendor',
+    # same rule for the graphics interfaces, where the platform reaches V7 and V2
+    # into the same variants through libgralloctypes and the mapper, and the stock
+    # blobs link V3 and V1
+    'android.hardware.graphics.common-V3-ndk':
+        lambda lib, partition: 'android.hardware.graphics.common-V3-ndk_vendor',
+    'android.hardware.graphics.allocator-V1-ndk':
+        lambda lib, partition: 'android.hardware.graphics.allocator-V1-ndk_vendor',
     # the platform's libtensorflowlite_jni is sdk_version current with no vendor
     # variant, so the stock vendor and odm copies each carry their own name
     'libtensorflowlite_jni':

@@ -31,7 +31,10 @@ vendor/lib/android.hardware.audio@7.1.so
 # vendor/lib/android.hardware.bluetooth.audio-impl.so;MODULE=android.hardware.bluetooth.audio-impl_vendor
 vendor/lib/android.hardware.bluetooth.audio@2.0.so
 vendor/lib/android.hardware.bluetooth.audio@2.1.so
-# vendor/lib/android.media.audio.common.types-V1-cpp.so;MODULE=android.media.audio.common.types-V1-cpp_vendor
+# the platform reaches a newer version of these three interfaces down
+# libgralloctypes, so the stock copy keeps a module of its own and
+# displaces the platform one
+vendor/lib/android.media.audio.common.types-V1-cpp.so;MODULE=android.media.audio.common.types-V1-cpp_vendor
 # vendor/lib/audioclient-types-aidl-cpp.so;MODULE=audioclient-types-aidl-cpp_vendor
 # the stock offload pair is built against the V2 audio interface and the
 # platform bluetooth audio is V5, so the stock stack cannot serve it
@@ -103,7 +106,7 @@ vendor/lib64/android.hardware.audio@7.1.so
 # vendor/lib64/android.hardware.bluetooth.audio-impl.so;MODULE=android.hardware.bluetooth.audio-impl_vendor
 vendor/lib64/android.hardware.bluetooth.audio@2.0.so
 vendor/lib64/android.hardware.bluetooth.audio@2.1.so
-# vendor/lib64/android.media.audio.common.types-V1-cpp.so;MODULE=android.media.audio.common.types-V1-cpp_vendor
+vendor/lib64/android.media.audio.common.types-V1-cpp.so;MODULE=android.media.audio.common.types-V1-cpp_vendor
 # vendor/lib64/audioclient-types-aidl-cpp.so;MODULE=audioclient-types-aidl-cpp_vendor
 # vendor/lib64/btaudio_offload_if.so
 vendor/lib64/hw/android.hardware.audio.effect@7.0-impl.so
@@ -460,8 +463,8 @@ vendor/lib64/mediadrm/libdrmclearkeyplugin.so
 # Display
 vendor/bin/hw/android.hardware.graphics.allocator@4.0-service
 vendor/bin/hw/android.hardware.graphics.composer@2.4-service
-# vendor/lib/android.hardware.graphics.allocator-V1-ndk.so;MODULE=android.hardware.graphics.allocator-V1-ndk_vendor
-# vendor/lib/android.hardware.graphics.common-V3-ndk.so;MODULE=android.hardware.graphics.common-V3-ndk_vendor
+vendor/lib/android.hardware.graphics.allocator-V1-ndk.so;MODULE=android.hardware.graphics.allocator-V1-ndk_vendor
+vendor/lib/android.hardware.graphics.common-V3-ndk.so;MODULE=android.hardware.graphics.common-V3-ndk_vendor
 vendor/lib/android.hidl.allocator@1.0.so
 vendor/lib/arm.graphics-V1-ndk_platform.so
 vendor/lib/arm.graphics-V2-ndk.so
@@ -483,8 +486,8 @@ vendor/lib64/android.hardware.graphics.composer@2.1.so
 vendor/lib64/android.hardware.graphics.composer@2.2.so
 vendor/lib64/android.hardware.graphics.composer@2.3.so
 vendor/lib64/android.hardware.graphics.composer@2.4.so
-# vendor/lib64/android.hardware.graphics.allocator-V1-ndk.so;MODULE=android.hardware.graphics.allocator-V1-ndk_vendor
-# vendor/lib64/android.hardware.graphics.common-V3-ndk.so;MODULE=android.hardware.graphics.common-V3-ndk_vendor
+vendor/lib64/android.hardware.graphics.allocator-V1-ndk.so;MODULE=android.hardware.graphics.allocator-V1-ndk_vendor
+vendor/lib64/android.hardware.graphics.common-V3-ndk.so;MODULE=android.hardware.graphics.common-V3-ndk_vendor
 vendor/lib64/android.hidl.allocator@1.0.so
 vendor/lib64/arm.graphics-V1-ndk.so
 vendor/lib64/arm.graphics-V1-ndk_platform.so
