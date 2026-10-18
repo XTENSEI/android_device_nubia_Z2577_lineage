@@ -565,9 +565,20 @@ def main():
 
     # the AOSP corpus, read once, used by P5 and P11
     aosp_mods, paths = {}, {}
+    # a corpus rooted at the top of the tree contains our two trees, and reading
+    # our own prebuilts back as the platform turns every one of them into a name
+    # collision with itself: P11, P12 and P15 then fire on our own modules
+    ours = {os.path.realpath(DEVICE), os.path.realpath(VENDOR)}
     for root_dir in args.aosp:
         found = 0
+        skipped_ours = False
         for root, dirs, names in os.walk(root_dir):
+            real = os.path.realpath(root)
+            dirs[:] = [name for name in dirs if name != 'out']
+            if any(real == tree or real.startswith(tree + os.sep) for tree in ours):
+                dirs[:] = []
+                skipped_ours = True
+                continue
             if 'Android.bp' not in names:
                 continue
             found += 1
@@ -579,9 +590,12 @@ def main():
         # a corpus root that holds nothing is a wrong path, not a clean result:
         # every AOSP check reads as silent and the run looks like a pass
         if not found:
-            fail('P0', f'no Android.bp under the --aosp root {root_dir} '
-                       f'(absolute path: {os.path.abspath(root_dir)}), so P11, '
-                       f'P12, P14 and P15 say nothing')
+            detail = (f'it holds only the device and vendor trees themselves, so '
+                      f'run it from the top of the tree' if skipped_ours else
+                      f'no Android.bp under it')
+            fail('P0', f'the --aosp root {root_dir} '
+                       f'({os.path.abspath(root_dir)}) gave no declarations: '
+                       f'{detail}, so P11, P12, P14 and P15 say nothing')
 
     # P4, copy sources
     dev_copies = parse_copy_files(dev_mk)
