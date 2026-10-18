@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
-"""Every module name a makefile defines twice.
+"""Every module name a makefile defines twice, and every install path two
+modules write.
 
-kati rejects the second definition of a name (base_rules.mk:320) and stops, so a
-build reports one name per cycle. Soong exports one block per module into
-out/soong/Android-<product>.mk, which holds the whole set, so the whole list of
-duplicates comes out of that one file in a second.
+kati rejects the second definition of a name (base_rules.mk:320) and the second
+recipe for one target, and stops, so a build reports one per cycle. Soong
+exports one block per module into out/soong/Android-<product>.mk and one per
+installed module into out/soong/installs-<product>.mk, which hold the whole set,
+so the whole list comes out of those files in a second.
 
 Usage: make_dupes.py <file or dir>... [--ours <path prefix>] [--tree <root>]
-                     [--selftest]
+                     [--paths] [--selftest]
+
+--paths reads an installs-*.mk and reports two modules writing one file, which
+is the other way kati stops: a rename keeps the name apart and still leaves both
+recipes on one target. It is the default for a file named installs-*.mk.
 
 With --tree the report also says what to do per name: whether the platform
 module's own directory declares a <name>_vendor, which is the copy to take
@@ -151,11 +157,79 @@ def scan(paths, ours=None):
     return dupes, total
 
 
-def expand(args):
+INSTALL_VARS = {
+    'LOCAL_MODULE': VARS['LOCAL_MODULE'],
+    'LOCAL_MODULE_CLASS': VARS['LOCAL_MODULE_CLASS'],
+    'LOCAL_MODULE_PATH': re.compile(r'^\s*LOCAL_MODULE_PATH\s*:=\s*(\S+)\s*$'),
+    'LOCAL_INSTALLED_MODULE_STEM':
+        re.compile(r'^\s*LOCAL_INSTALLED_MODULE_STEM\s*:=\s*(\S+)\s*$'),
+    'LOCAL_MODULE_SUFFIX':
+        re.compile(r'^\s*LOCAL_MODULE_SUFFIX\s*:=\s*(\S+)\s*$'),
+}
+PRODUCT_OUT = re.compile(r'^out/target/product/[^/]+/')
+
+
+def read_install_blocks(path):
+    """(installed path, class, name) for every block in an installs makefile."""
+    out = []
+    current = {}
+    with open(path, errors='ignore') as handle:
+        for line in handle:
+            if BLOCK_START.match(line):
+                current = {}
+                continue
+            if BLOCK_END.match(line):
+                entries = install_entry(current)
+                if entries:
+                    out.append(entries)
+                current = {}
+                continue
+            for var, pattern in INSTALL_VARS.items():
+                found = pattern.match(line)
+                if found:
+                    current[var] = found.group(1)
+    return out
+
+
+def install_entry(block):
+    """One block to (path, class, name), or None when it installs no file."""
+    name = block.get('LOCAL_MODULE', '')
+    where = block.get('LOCAL_MODULE_PATH', '')
+    if not name or not where or '$' in name or '$' in where:
+        return None
+    stem = block.get('LOCAL_INSTALLED_MODULE_STEM')
+    if not stem:
+        stem = name + block.get('LOCAL_MODULE_SUFFIX', '')
+    if '$' in stem:
+        return None
+    target = PRODUCT_OUT.sub('', where).rstrip('/') + '/' + stem
+    return target, block.get('LOCAL_MODULE_CLASS', 'UNKNOWN'), name
+
+
+def scan_paths(paths, ours=None):
+    """Install paths more than one module writes, and how many were read."""
+    seen = {}
+    total = 0
+    for path in paths:
+        for entry in read_install_blocks(path):
+            total += 1
+            seen.setdefault(entry[0], set()).add((entry[1], entry[2]))
+    dupes = {}
+    for target, group in seen.items():
+        # one module writes one path from every arch variant it has
+        if len({name for _, name in group}) > 1:
+            dupes[target] = sorted(group)
+    if ours:
+        dupes = {k: v for k, v in dupes.items() if len(v) == 2}
+    return dupes, total
+
+
+def expand(args, installs=False):
     paths = []
     for arg in args:
         if os.path.isdir(arg):
-            paths.extend(sorted(glob.glob(os.path.join(arg, 'Android-*.mk'))))
+            pattern = 'installs-*.mk' if installs else 'Android-*.mk'
+            paths.extend(sorted(glob.glob(os.path.join(arg, pattern))))
         else:
             paths.append(arg)
     return paths
@@ -179,6 +253,47 @@ include $(CLEAR_VARS)
 LOCAL_PATH := vendor/nubia/Z2577
 LOCAL_MODULE := sqc_daemon
 LOCAL_MODULE_CLASS := EXECUTABLES
+include $(BUILD_SYSTEM)/soong_cc_rust_prebuilt.mk
+"""
+
+
+INSTALLS_SELFTEST = """
+include $(CLEAR_VARS)
+LOCAL_PATH := device/nubia/Z2577
+LOCAL_MODULE := android.hardware.wifi.hostapd.xml_vendor
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_PATH := out/target/product/Z2577/vendor/etc/vintf/manifest
+LOCAL_INSTALLED_MODULE_STEM := android.hardware.wifi.hostapd.xml
+include $(BUILD_SYSTEM)/soong_etx_xml.mk
+
+include $(CLEAR_VARS)
+LOCAL_PATH := external/wpa_supplicant_8/hostapd
+LOCAL_MODULE := android.hardware.wifi.hostapd.xml
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_PATH := out/target/product/Z2577/vendor/etc/vintf/manifest
+LOCAL_INSTALLED_MODULE_STEM := android.hardware.wifi.hostapd.xml
+include $(BUILD_SYSTEM)/soong_etx_xml.mk
+
+include $(CLEAR_VARS)
+LOCAL_PATH := vendor/nubia/Z2577
+LOCAL_MODULE := ai_engine-default.xml
+LOCAL_MODULE_PATH := out/target/product/Z2577/vendor/etc/vintf/manifest
+include $(BUILD_SYSTEM)/soong_etx_xml.mk
+
+include $(CLEAR_VARS)
+LOCAL_PATH := vendor/nubia/Z2577
+LOCAL_MODULE := libboth
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_MODULE_PATH := out/target/product/Z2577/vendor/lib64
+LOCAL_MODULE_SUFFIX := .so
+include $(BUILD_SYSTEM)/soong_cc_rust_prebuilt.mk
+
+include $(CLEAR_VARS)
+LOCAL_PATH := vendor/nubia/Z2577
+LOCAL_MODULE := libboth
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_MODULE_PATH := out/target/product/Z2577/vendor/lib64
+LOCAL_MODULE_SUFFIX := .so
 include $(BUILD_SYSTEM)/soong_cc_rust_prebuilt.mk
 """
 
@@ -212,7 +327,14 @@ def selftest():
         without = platform_module(tmp, 'external/one-true-awk', 'sqc_daemon')
         owned = platform_module(tmp, 'external/one-true-awk', 'owned')
         multi, _ = scan([os.path.join(tmp, 'multi.mk')])
+        installs_path = os.path.join(tmp, 'installs-lineage_Z2577.mk')
+        with open(installs_path, 'w') as handle:
+            handle.write(INSTALLS_SELFTEST)
+        by_path, read = scan_paths([installs_path])
+        alone, _ = scan_paths([installs_path], ours='vendor/nubia/Z2577')
+        chosen = expand([installs_path])
 
+    fragment = 'vendor/etc/vintf/manifest/android.hardware.wifi.hostapd.xml'
     cases = (
         ('one duplicate among three blocks', len(dupes) == 1 and total == 3),
         ('keyed by class and name',
@@ -234,6 +356,18 @@ def selftest():
          and 'MAKE_COPY_RULE_ONLY' in advice('ETC', 'x.xml', False, False)
          and 'nothing to do' in advice('SHARED_LIBRARIES', 'libx', False, True)),
         ('one module written once per arch is not a duplicate', not multi),
+        ('one install path written by two modules is found',
+         list(by_path) == [fragment] and read == 5),
+        ('both producers are named with their class',
+         by_path.get(fragment) == [
+             ('ETC', 'android.hardware.wifi.hostapd.xml'),
+             ('ETC', 'android.hardware.wifi.hostapd.xml_vendor')]),
+        ('a path one module writes is not reported',
+         len(by_path) == 1),
+        ('--ours keeps the path ours takes part in',
+         list(alone) == [fragment]),
+        ('an installs file is read without being told',
+         chosen == [installs_path]),
     )
     for label, ok in cases:
         print(f'{"ok  " if ok else "FAIL"} {label}')
@@ -247,10 +381,16 @@ def main():
     ap.add_argument('paths', nargs='*')
     ap.add_argument('--ours', help='only names one of these packages defines')
     ap.add_argument('--tree', help='android tree, to read the platform side')
+    ap.add_argument('--paths', action='store_true',
+                    help='read an installs-*.mk: one file written twice')
     ap.add_argument('--selftest', action='store_true')
     args = ap.parse_args()
     if args.selftest:
         return selftest()
+
+    if args.paths or any(os.path.basename(p).startswith('installs-')
+                         for p in args.paths):
+        return report_paths(args)
 
     paths = expand(args.paths)
     if not paths:
@@ -275,6 +415,26 @@ def main():
             is_vendor = any(vendor for _, vendor in named)
             print(f'    {advice(cls, mod, vendor_copy, is_vendor)}')
     print(f'\n{len(dupes)} duplicate names in {total} module blocks')
+    return 1 if dupes else 0
+
+
+def report_paths(args):
+    """The other kati stop: one installed file, two modules writing it."""
+    paths = expand(args.paths, installs=True)
+    if not paths:
+        print('no installs makefile given', file=sys.stderr)
+        return 2
+    missing = [p for p in paths if not os.path.exists(p)]
+    if missing:
+        print(f'no such file: {missing[0]}', file=sys.stderr)
+        return 2
+
+    dupes, total = scan_paths(paths, args.ours)
+    for target in sorted(dupes):
+        print(f'{target} written by {len(dupes[target])} modules')
+        for cls, name in dupes[target]:
+            print(f'    {name} ({cls})')
+    print(f'\n{len(dupes)} install paths written twice in {total} modules')
     return 1 if dupes else 0
 
 
