@@ -12,9 +12,10 @@
   P9  every $(DEVICE_PATH)/... reference in the makefiles exists
   P10 copy-file destination collisions
   P11 prebuilts whose name AOSP also uses, which the platform now provides
-  P12 prebuilt prefer flags, which regeneration has to drop
+  P12 a prebuilt prefer flag outside the displacement table
   P13 a shared prebuilt whose AOSP namesake is static only
   P14 frozen AIDL versions a module can reach, the platform ones included
+  P16 an AIDL version driven apart by taking the platform module's place
   P15 a name we and the platform both install as an etc module
 
 Usage: preflight.py [--aosp <tree>]... [--stock <mount>] [--selftest]
@@ -173,6 +174,7 @@ def parse_bp(path, quiet=False):
             'langs': bp_list(text, 'langs', variables),
             'vendor': bool(re.search(
                 r'^\s*(vendor|proprietary|soc_specific): true,?$', text, re.M)),
+            'prefer': bool(re.search(r'^\s*prefer: true,?$', text, re.M)),
             'vendor_available': 'vendor_available: true' in text,
             'odm_available': 'odm_available: true' in text,
             'installed_location': (
@@ -295,9 +297,17 @@ def check_p14(device_mods, vendor_mods, aosp_mods):
         return
     merged = {**aosp_mods, **device_mods, **vendor_mods}
     collisions = set()
+    displaced = {}
     for name in set(device_mods) | set(vendor_mods):
         if name in aosp_mods:
             collisions.add(name)
+            ours = merged[name]
+            # prefer disables the source module of that name, so the two dep
+            # graphs never meet: only the platform modules that link the name
+            # are left holding the older version ours carries
+            if ours['type'].startswith('cc_prebuilt') and ours['prefer']:
+                displaced[name] = aosp_mods[name]['type']
+                continue
             merged[name] = prebuilt_union(merged[name], aosp_mods[name])
     cache = {}
     for name in sorted(set(vendor_mods) | set(device_mods)):
@@ -317,6 +327,15 @@ def check_p14(device_mods, vendor_mods, aosp_mods):
             fail('P14', f'"{name}" reaches {iface} ({lang}) at '
                         f'V{" and V".join(sorted(versions, key=int))} at once, '
                         f'through {", ".join(direct) or "its own libs"}{note_merge}')
+    for name, platform_type in sorted(displaced.items()):
+        callers = sorted(
+            other for other, info in aosp_mods.items()
+            if name in info['shared_libs'] + info['static_libs']
+            + info['whole_static_libs'])
+        note('P14', f'prefer takes the place of the platform {platform_type} '
+                    f'"{name}", so the platform modules that link it build against '
+                    f'the version this prebuilt carries: '
+                    f'{", ".join(callers) or "none in the corpus"}')
 
 
 def aosp_counterpart(name, aosp_mods):
@@ -348,6 +367,17 @@ ETC_INSTALLERS = ('vintf_fragment', 'prebuilt_etc', 'prebuilt_etc_xml',
 
 STATIC_ONLY = ('cc_library_static', 'cc_prebuilt_library_static',
                'cc_library_headers')
+
+
+def displacement_table():
+    """The module names setup-makefiles.py gives prefer to, on purpose."""
+    path = os.path.join(DEVICE, 'setup-makefiles.py')
+    if not os.path.exists(path):
+        return set()
+    body = re.search(r'^DISPLACE = \((.*?)^\)', read(path), re.M | re.S)
+    if not body:
+        return set()
+    return set(re.findall(r"'([^']+)'", body.group(1)))
 
 
 def check_p11(our_mods, aosp_mods, paths):
@@ -598,13 +628,20 @@ def main():
     # P15, the same name on both sides where the platform side is an etc module.
     check_p15({**device_mods, **vendor_mods}, aosp_mods, paths)
 
-    # P12, the prefer flags setup-makefiles.py drops after generating
-    for label, path in (('device', dev_bp), ('vendor', ven_bp)):
-        n = len(re.findall(r'^    prefer: true,$', read(path), re.M))
-        if n:
-            fail('P12', f'{label} Android.bp: {n} prebuilt modules still carry '
-                        f'prefer: true, which makes each one claim the AOSP '
-                        f'module of the same name; run setup-makefiles.py')
+    # P12, the prefer flags setup-makefiles.py puts back, and only those
+    allowed = displacement_table()
+    for label, mods in (('device', device_mods), ('vendor', vendor_mods)):
+        for name in sorted(mods):
+            if not mods[name]['prefer']:
+                continue
+            if name in allowed:
+                note('P12', f'{label} module "{name}" prefers over the AOSP module '
+                            f'of that name, taking its install rules with it')
+            else:
+                fail('P12', f'{label} module "{name}" carries prefer: true but is '
+                            f'not in the displacement table in '
+                            f'setup-makefiles.py, so it claims an AOSP module by '
+                            f'accident')
 
     check_p14(device_mods, vendor_mods, aosp_mods)
 

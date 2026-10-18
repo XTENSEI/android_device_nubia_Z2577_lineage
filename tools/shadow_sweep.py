@@ -535,8 +535,10 @@ def main() -> int:
                         argv[argv.index('-o') + 1] = f'out/soong/build.{target}.ninja'
                         continue
                     if 'partition is different' in output:
-                        log('a prebuilt claims a platform module on another partition: '
-                            'check that setup-makefiles.py dropped the prefer flags')
+                        log('a prebuilt prefers over a platform module on another '
+                            'partition: prefer only pairs on one partition, so either '
+                            'the prebuilt moves to that partition or the platform '
+                            'module keeps the name')
                     ours = defined_modules(top)
                     stuck = unmodelled(output)
                     for line_text, root, module in stuck:

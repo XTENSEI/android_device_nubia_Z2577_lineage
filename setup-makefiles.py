@@ -3,11 +3,12 @@
 # SPDX-FileCopyrightText: The Z2577 Project
 # SPDX-License-Identifier: Apache-2.0
 #
-# Regenerate the vendor makefiles, then two fixes the generator has no flag for.
-# A prebuilt that claims an AOSP module of the same name on another partition is
-# what Soong rejects, so the prefer flags go. Where the stock copy has to win its
-# path, the prebuilt displaces the platform module with overrides instead of
-# installing beside it. tools/preflight.py and tools/make_dupes.py check both.
+# Regenerate the vendor makefiles, then drop the generator's prefer flags and put
+# them back only where a stock prebuilt has to displace the platform module of the
+# same name. Only a cc prebuilt can do that: android/prebuilt.go is what makes
+# prefer hide the source module, and prebuilt_etc is not built on it, so an etc
+# path with two writers has to lose one of them at the blob list instead.
+# tools/preflight.py and tools/make_dupes.py check the result.
 #
 
 import pathlib
@@ -16,31 +17,19 @@ import subprocess
 
 HERE = pathlib.Path(__file__).resolve().parent
 VENDOR_BP = HERE / '../../../vendor/nubia/Z2577/Android.bp'
-VENDOR_MK = HERE / '../../../vendor/nubia/Z2577/Z2577-vendor.mk'
 PREFER = re.compile(r'^    prefer: true,\n', re.M)
 
-# our module, then the platform module it has to displace
-OVERRIDES = {
-    'libkeymint_vendor': 'libkeymint',
-    'lib_android_keymaster_keymint_utils_vendor':
-        'lib_android_keymaster_keymint_utils',
-    'libwifi-hal_vendor': 'libwifi-hal',
-    'wpa_supplicant_vendor': 'wpa_supplicant',
-    'hostapd_vendor': 'hostapd',
-    # the platform reaches V7 and V2 of these down libgralloctypes and the mapper
-    'android.hardware.graphics.common-V3-ndk_vendor':
-        'android.hardware.graphics.common-V3-ndk',
-    'android.hardware.graphics.allocator-V1-ndk_vendor':
-        'android.hardware.graphics.allocator-V1-ndk',
-    'android.media.audio.common.types-V1-cpp_vendor':
-        'android.media.audio.common.types-V1-cpp',
-    'identity-default.xml_vendor': 'identity-default.xml',
-}
-
-# an etc name cannot carry ;MODULE=, so the rename happens here instead
-RENAMES = {
-    'identity-default.xml': 'identity-default.xml_vendor',
-}
+# prebuilts that keep the platform module name and take the platform's place
+DISPLACE = (
+    'libkeymint',
+    'lib_android_keymaster_keymint_utils',
+    'libwifi-hal',
+    'android.hardware.graphics.common-V3-ndk',
+    'android.hardware.graphics.allocator-V1-ndk',
+    'android.media.audio.common.types-V1-cpp',
+    'wpa_supplicant',
+    'hostapd',
+)
 
 
 def block_bounds(lines, name):
@@ -54,23 +43,14 @@ def block_bounds(lines, name):
     return None, None
 
 
-def add_overrides(lines, ours, platform):
-    """Put overrides on our block, once."""
-    name_line, end = block_bounds(lines, ours)
+def add_prefer(lines, name):
+    """Give one prebuilt the prefer flag, once."""
+    name_line, end = block_bounds(lines, name)
     if name_line is None:
-        raise SystemExit(f'no module named {ours} in {VENDOR_BP}')
-    if any('overrides:' in line for line in lines[name_line:end]):
+        raise SystemExit(f'no module named {name} in {VENDOR_BP}')
+    if any('prefer:' in line for line in lines[name_line:end]):
         return False
-    lines.insert(name_line + 1, f'    overrides: ["{platform}"],')
-    return True
-
-
-def rename(lines, old, new):
-    """Rename one etc module to a name of its own."""
-    name_line, _ = block_bounds(lines, old)
-    if name_line is None:
-        raise SystemExit(f'no module named {old} in {VENDOR_BP}')
-    lines[name_line] = f'    name: "{new}",'
+    lines.insert(name_line + 1, '    prefer: true,')
     return True
 
 
@@ -83,22 +63,10 @@ bp = VENDOR_BP.resolve()
 text, count = PREFER.subn('', bp.read_text())
 
 lines = text.splitlines()
-renamed = 0
-for old, new in RENAMES.items():
-    rename(lines, old, new)
-    renamed += 1
-overridden = 0
-for ours, platform in OVERRIDES.items():
-    overridden += add_overrides(lines, ours, platform)
+preferred = sum(add_prefer(lines, name) for name in DISPLACE)
 bp.write_text('\n'.join(lines) + '\n')
-
-mk = VENDOR_MK.resolve()
-mk_text = mk.read_text()
-for old, new in RENAMES.items():
-    mk_text = mk_text.replace(f'    {old} \\\n', f'    {new} \\\n')
-mk.write_text(mk_text)
 
 if count:
     print(f'dropped {count} prefer: true lines from {bp}')
-if renamed or overridden:
-    print(f'{renamed} renamed, {overridden} overrides in {bp}')
+if preferred:
+    print(f'{preferred} prefer flags put back in {bp}')
