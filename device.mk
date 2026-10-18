@@ -82,7 +82,8 @@ PRODUCT_PACKAGES += \
     awk_vendor \
     dumpsys_vendor \
     logwrapper_vendor \
-    sh_vendor
+    sh_vendor \
+    toolbox_vendor
 
 # Partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
