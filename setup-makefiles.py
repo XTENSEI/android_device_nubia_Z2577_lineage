@@ -36,10 +36,21 @@ DISPLACE = (
 # the other way: the V3 soname is what the blobs load, and the camera and codec2
 # blobs keep the platform library installed. So the helper edge is dropped here
 # and the blobs resolve it at runtime, where there is one copy anyway.
+# The same shape one step over: the armnn GPU service links libGLES_mali, which
+# carries allocator V1, and libui, which the platform builds against V2. Both
+# libraries stay on the image, libui through sixty-six modules and libGLES_mali
+# through three, so the helper edge goes the same way.
+# `libnativewindow` carries both of them: graphics common at its newest frozen
+# version and allocator V2, so it is the second edge to go on the same four
+# modules. It stays installed through the camera and codec2 stacks.
 DROP_SHARED = {
-    'android.hardware.graphics.mapper@4.0-impl-arm': ('libgralloctypes',),
-    'android.hardware.graphics.allocator@4.0-impl-arm': ('libgralloctypes',),
-    'libGLES_mali': ('libgralloctypes',),
+    'android.hardware.graphics.mapper@4.0-impl-arm':
+        ('libgralloctypes', 'libnativewindow'),
+    'android.hardware.graphics.allocator@4.0-impl-arm':
+        ('libgralloctypes', 'libnativewindow'),
+    'libGLES_mali': ('libgralloctypes', 'libnativewindow'),
+    'android.hardware.neuralnetworks@aidl-service-armnn-gpu':
+        ('libui', 'libnativewindow'),
 }
 
 
