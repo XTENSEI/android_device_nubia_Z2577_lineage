@@ -40,6 +40,11 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.security.keymint-service
 
+# Wi-Fi daemons, the stock copies are AIDL V1 and the platform talks V5 and V3
+PRODUCT_PACKAGES += \
+    hostapd \
+    wpa_supplicant
+
 # OTA
 PRODUCT_PACKAGES += \
     update_engine \

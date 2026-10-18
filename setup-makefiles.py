@@ -11,7 +11,9 @@
 # where the platform module declares vendor or proprietary: it builds the source
 # as system there, and checkInvariantsForSourceAndPrebuilt makes a mismatch a
 # fatal "partition is different" rather than a duplicate path. A
-# vendor_available platform module owns its vendor path and the blob goes.
+# vendor_available platform module owns its vendor path and the blob goes. Nor can a
+# module whose source links another interface version displace: the prebuilt's deps
+# join the source's, one graph reaches both versions, and the version check stops.
 # tools/preflight.py and tools/make_dupes.py check the result.
 #
 
@@ -26,8 +28,6 @@ PREFER = re.compile(r'^    prefer: true,\n', re.M)
 # prebuilts that keep the platform module name and take the platform's place
 DISPLACE = (
     'libwifi-hal',
-    'wpa_supplicant',
-    'hostapd',
 )
 
 

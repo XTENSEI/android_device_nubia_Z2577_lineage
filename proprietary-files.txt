@@ -1097,8 +1097,9 @@ vendor/lib64/vendor.aac.hardware.richtap.vibrator-V1-ndk.so
 
 # Wi-Fi
 vendor/bin/hw/android.hardware.wifi@1.0-service
-vendor/bin/hw/hostapd
-vendor/bin/hw/wpa_supplicant
+# the stock daemons are AIDL V1 and the platform talks supplicant V5 and hostapd V3
+# vendor/bin/hw/hostapd
+# vendor/bin/hw/wpa_supplicant
 vendor/lib/hw/liblowi_wifihal.so
 vendor/lib/hw/libwifi-hal-unisoc.so
 vendor/lib/liblwpAdapter.so
@@ -4339,7 +4340,8 @@ vendor/etc/init/android.hardware.neuralnetworks@aidl-service-armnn-gpu.rc
 # vendor/etc/init/android.hardware.security.keymint@2.0-unisoc.service.trusty.rc
 # vendor/etc/init/android.hardware.sensors-service-multihal.rc
 vendor/etc/init/android.hardware.usb-service.unisoc.rc
-vendor/etc/init/android.hardware.wifi.hostapd-service.rc
+# the platform's hostapd ships the same service in hostapd.android.rc
+# vendor/etc/init/android.hardware.wifi.hostapd-service.rc
 vendor/etc/init/android.hardware.wifi.supplicant-service.rc
 vendor/etc/init/android.hardware.wifi@1.0-service.rc
 vendor/etc/init/autotest.rc
