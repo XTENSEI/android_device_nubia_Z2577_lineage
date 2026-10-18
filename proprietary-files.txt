@@ -49,8 +49,9 @@ vendor/lib/hw/audio.r_submix.default.so
 vendor/lib/hw/audio.usb.default.so
 vendor/lib/hw/awinic.audio.effect.so;FIX_SONAME
 vendor/lib/libarcsoft_high_dynamic_range_unisoc.so
-vendor/lib/libaudioclient_aidl_conversion.so
-vendor/lib/libaudiofoundation.so
+# it reaches audio types V1 and V4 at once through the platform helper, which the platform build cannot
+# vendor/lib/libaudioclient_aidl_conversion.so
+# vendor/lib/libaudiofoundation.so
 # vendor/lib/libbluetooth_audio_session.so;MODULE=libbluetooth_audio_session_vendor
 # vendor/lib/libbluetooth_audio_session_aidl.so;MODULE=libbluetooth_audio_session_aidl_vendor
 vendor/lib/libcodec2_unisoc_mp3dec.so
@@ -121,8 +122,9 @@ vendor/lib64/hw/awinic.audio.effect.so;FIX_SONAME
 # a vendor_available source cannot be displaced, and its vendor variant installs this path
 # vendor/lib64/lib_android_keymaster_keymint_utils.so
 vendor/lib64/libarcsoft_high_dynamic_range_unisoc.so
-vendor/lib64/libaudioclient_aidl_conversion.so
-vendor/lib64/libaudiofoundation.so
+# it reaches audio types V1 and V4 at once through the platform helper, which the platform build cannot
+# vendor/lib64/libaudioclient_aidl_conversion.so
+# vendor/lib64/libaudiofoundation.so
 # vendor/lib64/libbluetooth_audio_session.so;MODULE=libbluetooth_audio_session_vendor
 # vendor/lib64/libbluetooth_audio_session_aidl.so;MODULE=libbluetooth_audio_session_aidl_vendor
 # vendor/lib64/libkeymint.so
