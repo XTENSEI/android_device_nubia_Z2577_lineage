@@ -28,8 +28,17 @@ import sys
 import tempfile
 from collections import defaultdict
 
-DEVICE = '/home/andrei/Downloads/Trees/device_nubia_Z2577'
-VENDOR = '/home/andrei/Downloads/Trees/vendor_nubia_Z2577_lineage'
+# Where the two trees are is not a question the script should have to be told:
+# it lives in <tree>/tools, and in a real checkout the vendor tree sits at
+# <top>/vendor/nubia/Z2577. Keep the old absolute paths as a fallback for the
+# detached layout this was developed in.
+HERE = os.path.dirname(os.path.realpath(__file__))
+DEVICE = os.path.dirname(HERE)
+VENDOR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(DEVICE))),
+    'vendor', 'nubia', 'Z2577')
+if not os.path.isdir(VENDOR):
+    VENDOR = '/home/andrei/Downloads/Trees/vendor_nubia_Z2577_lineage'
 
 LEGAL_NAME = re.compile(r'^[A-Za-z0-9_.@+-]+$')
 MODULE_OPEN = re.compile(r'^([a-z_0-9]+) \{$')
@@ -510,7 +519,11 @@ def vendor_path(repo, blob):
 def main():
     global DEVICE, VENDOR
     ap = argparse.ArgumentParser()
-    ap.add_argument('--aosp', action='append', default=[])
+    # a bare --aosp is the tree you are standing in, so an unset $TOP still runs
+    ap.add_argument('--aosp', action='append', default=[], nargs='?', const='.',
+                    metavar='TREE',
+                    help='a platform tree to read declarations from; repeat it, '
+                         'and give it no value for the current directory')
     ap.add_argument('--stock', default='/tmp/sysmnt')
     ap.add_argument('--device', default=DEVICE, help='override, for older revisions')
     ap.add_argument('--vendor', default=VENDOR, help='override, for older revisions')
@@ -518,6 +531,13 @@ def main():
     args = ap.parse_args()
     if args.selftest:
         return selftest()
+    if not os.path.isfile(os.path.join(DEVICE, 'Android.bp')):
+        print(f'no device tree at {DEVICE}: run this from the tree, or pass '
+              f'--device', file=sys.stderr)
+        return 2
+    if not os.path.isfile(os.path.join(args.vendor, 'Android.bp')):
+        print(f'no vendor tree at {args.vendor}: pass --vendor', file=sys.stderr)
+        return 2
     DEVICE, VENDOR = args.device, args.vendor
 
     dev_bp = os.path.join(DEVICE, 'Android.bp')
@@ -546,14 +566,22 @@ def main():
     # the AOSP corpus, read once, used by P5 and P11
     aosp_mods, paths = {}, {}
     for root_dir in args.aosp:
+        found = 0
         for root, dirs, names in os.walk(root_dir):
             if 'Android.bp' not in names:
                 continue
+            found += 1
             path = os.path.join(root, 'Android.bp')
             for name, info in parse_bp(path, quiet=True).items():
                 if name not in aosp_mods:
                     aosp_mods[name] = info
                     paths[name] = path
+        # a corpus root that holds nothing is a wrong path, not a clean result:
+        # every AOSP check reads as silent and the run looks like a pass
+        if not found:
+            fail('P0', f'no Android.bp under the --aosp root {root_dir} '
+                       f'(absolute path: {os.path.abspath(root_dir)}), so P11, '
+                       f'P12, P14 and P15 say nothing')
 
     # P4, copy sources
     dev_copies = parse_copy_files(dev_mk)
@@ -693,7 +721,13 @@ def main():
         print(f'{check}: {message}')
     for check, message in notes:
         print(f'{check}: note: {message}')
-    print(f'\n{len(findings)} findings, {len(notes)} notes')
+    if args.aosp:
+        roots = ', '.join(os.path.abspath(root) for root in args.aosp)
+        print(f'\ncorpus: {len(aosp_mods)} modules from {roots}')
+    else:
+        print('\ncorpus: none (--aosp was not given), so P11, P12, P14 and P15 '
+              'report themselves as unrun')
+    print(f'{len(findings)} findings, {len(notes)} notes')
     return 1 if findings else 0
 
 
