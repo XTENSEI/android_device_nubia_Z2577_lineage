@@ -4841,7 +4841,7 @@ vendor/bin/create_splloader_dual_slot_byname_path.sh
 vendor/bin/engpc
 vendor/bin/engpcctl
 vendor/bin/enter_lpm.sh
-vendor/bin/hw/android.hardware.rebootescrow-service.default
+vendor/bin/hw/android.hardware.rebootescrow-service.default;MODULE=android.hardware.rebootescrow-service.default_vendor
 vendor/bin/hw/unionpnp_service
 vendor/bin/hw/vendor.unisoc.hardware.ai_engine-service
 vendor/bin/hw/vendor.zte.ldd.cmd-service
