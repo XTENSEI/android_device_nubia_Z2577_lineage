@@ -634,14 +634,36 @@ def main():
         for name in sorted(mods):
             if not mods[name]['prefer']:
                 continue
-            if name in allowed:
-                note('P12', f'{label} module "{name}" prefers over the AOSP module '
-                            f'of that name, taking its install rules with it')
-            else:
+            if name not in allowed:
                 fail('P12', f'{label} module "{name}" carries prefer: true but is '
                             f'not in the displacement table in '
                             f'setup-makefiles.py, so it claims an AOSP module by '
                             f'accident')
+            elif not aosp_mods:
+                note('P12', f'{label} module "{name}" prefers over the AOSP module '
+                            f'of that name, taking its install rules with it')
+            else:
+                source = aosp_counterpart(name, aosp_mods)
+                # android/prebuilt.go pairs the two on one partition and turns a
+                # mismatch into a fatal error, so a platform module that is only
+                # vendor_available builds its source as system and keeps the path
+                if source is None:
+                    note('P12', f'{label} module "{name}" prefers over the AOSP '
+                                f'module of that name, which is not in the corpus '
+                                f'here, so its partition is unverified')
+                elif not vendor_flag(aosp_mods, source):
+                    rel = paths[source].split('refs/', 1)[-1].split('/tmp/', 1)[-1]
+                    fail('P12', f'{label} module "{name}" prefers over the AOSP '
+                                f'module "{source}" ({rel}), which is not '
+                                f'vendor or proprietary: Soong builds its source '
+                                f'on the system partition and '
+                                f'checkInvariantsForSourceAndPrebuilt aborts on '
+                                f'the mismatch, so the blob belongs in the dropped '
+                                f'column instead')
+                else:
+                    note('P12', f'{label} module "{name}" prefers over the AOSP '
+                                f'vendor module "{source}", taking its install '
+                                f'rules with it')
 
     check_p14(device_mods, vendor_mods, aosp_mods)
 

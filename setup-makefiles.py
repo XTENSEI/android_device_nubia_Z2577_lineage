@@ -7,7 +7,11 @@
 # them back only where a stock prebuilt has to displace the platform module of the
 # same name. Only a cc prebuilt can do that: android/prebuilt.go is what makes
 # prefer hide the source module, and prebuilt_etc is not built on it, so an etc
-# path with two writers has to lose one of them at the blob list instead.
+# path with two writers has to lose one of them at the blob list instead. And only
+# where the platform module declares vendor or proprietary: it builds the source
+# as system there, and checkInvariantsForSourceAndPrebuilt makes a mismatch a
+# fatal "partition is different" rather than a duplicate path. A
+# vendor_available platform module owns its vendor path and the blob goes.
 # tools/preflight.py and tools/make_dupes.py check the result.
 #
 
@@ -21,12 +25,7 @@ PREFER = re.compile(r'^    prefer: true,\n', re.M)
 
 # prebuilts that keep the platform module name and take the platform's place
 DISPLACE = (
-    'libkeymint',
-    'lib_android_keymaster_keymint_utils',
     'libwifi-hal',
-    'android.hardware.graphics.common-V3-ndk',
-    'android.hardware.graphics.allocator-V1-ndk',
-    'android.media.audio.common.types-V1-cpp',
     'wpa_supplicant',
     'hostapd',
 )

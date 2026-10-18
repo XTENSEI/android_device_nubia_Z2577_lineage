@@ -25,9 +25,9 @@ namespace_imports = [
 # libskia: the platform builds it static and core only, so a vendor shared copy
 # needs a name of its own and the dependants are repointed here
 #
-# Every library that keeps the platform module name is absent from this table on
-# purpose: the vendor prebuilt of that name displaces the platform module, so a
-# repointed dependant would point at nothing.
+# A library we keep under the platform module name is absent from this table on
+# purpose: the blobs that need it link whatever answers that name, our displacing
+# prebuilt or the platform's own copy.
 lib_fixups: lib_fixups_user_type = {
     **lib_fixups,
     'libdav1d': lambda lib, partition: 'libdav1d_vendor',

@@ -36,6 +36,10 @@ PRODUCT_PACKAGES += \
     android.hardware.sensors-service.multihal \
     rkp_factory_extraction_tool
 
+# KeyMint, the stock service is AIDL V2 and the platform talks V4
+PRODUCT_PACKAGES += \
+    android.hardware.security.keymint-service
+
 # OTA
 PRODUCT_PACKAGES += \
     update_engine \

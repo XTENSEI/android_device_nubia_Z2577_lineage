@@ -34,7 +34,7 @@ vendor/lib/android.hardware.bluetooth.audio@2.1.so
 # the platform reaches a newer version of these three interfaces down
 # libgralloctypes, so the stock copy keeps a module of its own and
 # displaces the platform one
-vendor/lib/android.media.audio.common.types-V1-cpp.so
+# vendor/lib/android.media.audio.common.types-V1-cpp.so
 # vendor/lib/audioclient-types-aidl-cpp.so;MODULE=audioclient-types-aidl-cpp_vendor
 # the stock offload pair is built against the V2 audio interface and the
 # platform bluetooth audio is V5, so the stock stack cannot serve it
@@ -106,7 +106,8 @@ vendor/lib64/android.hardware.audio@7.1.so
 # vendor/lib64/android.hardware.bluetooth.audio-impl.so;MODULE=android.hardware.bluetooth.audio-impl_vendor
 vendor/lib64/android.hardware.bluetooth.audio@2.0.so
 vendor/lib64/android.hardware.bluetooth.audio@2.1.so
-vendor/lib64/android.media.audio.common.types-V1-cpp.so
+# a vendor_available source cannot be displaced, and its vendor variant installs this path
+# vendor/lib64/android.media.audio.common.types-V1-cpp.so
 # vendor/lib64/audioclient-types-aidl-cpp.so;MODULE=audioclient-types-aidl-cpp_vendor
 # vendor/lib64/btaudio_offload_if.so
 vendor/lib64/hw/android.hardware.audio.effect@7.0-impl.so
@@ -117,13 +118,14 @@ vendor/lib64/hw/audio.primary.default.so
 vendor/lib64/hw/audio.r_submix.default.so
 vendor/lib64/hw/audio.usb.default.so
 vendor/lib64/hw/awinic.audio.effect.so;FIX_SONAME
-vendor/lib64/lib_android_keymaster_keymint_utils.so
+# a vendor_available source cannot be displaced, and its vendor variant installs this path
+# vendor/lib64/lib_android_keymaster_keymint_utils.so
 vendor/lib64/libarcsoft_high_dynamic_range_unisoc.so
 vendor/lib64/libaudioclient_aidl_conversion.so
 vendor/lib64/libaudiofoundation.so
 # vendor/lib64/libbluetooth_audio_session.so;MODULE=libbluetooth_audio_session_vendor
 # vendor/lib64/libbluetooth_audio_session_aidl.so;MODULE=libbluetooth_audio_session_aidl_vendor
-vendor/lib64/libkeymint.so
+# vendor/lib64/libkeymint.so
 vendor/lib64/libomx_MF2SF_sw_sprd.so
 vendor/lib64/libomx_av1dec_sw_sprd.so
 vendor/lib64/libomx_avcdec_hw_sprd.so
@@ -463,8 +465,9 @@ vendor/lib64/mediadrm/libdrmclearkeyplugin.so
 # Display
 vendor/bin/hw/android.hardware.graphics.allocator@4.0-service
 vendor/bin/hw/android.hardware.graphics.composer@2.4-service
-vendor/lib/android.hardware.graphics.allocator-V1-ndk.so
-vendor/lib/android.hardware.graphics.common-V3-ndk.so
+# a vendor_available source cannot be displaced, and its vendor variant installs this path
+# vendor/lib/android.hardware.graphics.allocator-V1-ndk.so
+# vendor/lib/android.hardware.graphics.common-V3-ndk.so
 vendor/lib/android.hidl.allocator@1.0.so
 vendor/lib/arm.graphics-V1-ndk_platform.so
 vendor/lib/arm.graphics-V2-ndk.so
@@ -486,8 +489,9 @@ vendor/lib64/android.hardware.graphics.composer@2.1.so
 vendor/lib64/android.hardware.graphics.composer@2.2.so
 vendor/lib64/android.hardware.graphics.composer@2.3.so
 vendor/lib64/android.hardware.graphics.composer@2.4.so
-vendor/lib64/android.hardware.graphics.allocator-V1-ndk.so
-vendor/lib64/android.hardware.graphics.common-V3-ndk.so
+# a vendor_available source cannot be displaced, and its vendor variant installs this path
+# vendor/lib64/android.hardware.graphics.allocator-V1-ndk.so
+# vendor/lib64/android.hardware.graphics.common-V3-ndk.so
 vendor/lib64/android.hidl.allocator@1.0.so
 vendor/lib64/arm.graphics-V1-ndk.so
 vendor/lib64/arm.graphics-V1-ndk_platform.so
@@ -551,7 +555,7 @@ vendor/lib64/hw/local_time.default.so
 vendor/lib64/libeic_trusty.so
 
 # Keymint
-vendor/bin/hw/android.hardware.security.keymint@2.0-unisoc.service.trusty
+# vendor/bin/hw/android.hardware.security.keymint@2.0-unisoc.service.trusty
 
 # Media
 vendor/bin/hw/android.hardware.media.c2@1.1-unisoc-service
@@ -4329,7 +4333,8 @@ vendor/etc/init/android.hardware.graphics.composer@2.4-service.rc
 vendor/etc/init/android.hardware.media.c2@1.1-unisoc-service.rc
 vendor/etc/init/android.hardware.media.omx@1.0-service.rc
 vendor/etc/init/android.hardware.neuralnetworks@aidl-service-armnn-gpu.rc
-vendor/etc/init/android.hardware.security.keymint@2.0-unisoc.service.trusty.rc
+# the platform talks keymint V4 and this service is AIDL V2, so the platform serves it
+# vendor/etc/init/android.hardware.security.keymint@2.0-unisoc.service.trusty.rc
 # vendor/etc/init/android.hardware.sensors-service-multihal.rc
 vendor/etc/init/android.hardware.usb-service.unisoc.rc
 vendor/etc/init/android.hardware.wifi.hostapd-service.rc
@@ -4425,7 +4430,7 @@ vendor/etc/vintf/manifest/android.hardware.camera.provider@2.7-service.xml
 # vendor/etc/vintf/manifest/android.hardware.drm-service.clearkey.xml
 vendor/etc/vintf/manifest/android.hardware.gatekeeper@1.0-service.trusty.xml
 # vendor/etc/vintf/manifest/android.hardware.health-service.example.xml
-vendor/etc/vintf/manifest/android.hardware.security.keymint@2.0-unisoc.service.trusty.xml
+# vendor/etc/vintf/manifest/android.hardware.security.keymint@2.0-unisoc.service.trusty.xml
 # vendor/etc/vintf/manifest/android.hardware.sensors-multihal.xml
 # vendor/etc/vintf/manifest/android.hardware.thermal@2.0-service.xml
 vendor/etc/vintf/manifest/android.hardware.usb-service.unisoc.xml
