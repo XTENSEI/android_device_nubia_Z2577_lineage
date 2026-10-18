@@ -9,9 +9,9 @@ installed module into out/soong/installs-<product>.mk, which hold the whole set,
 so the whole list comes out of those files in a second.
 
 Usage: make_dupes.py <file or dir>... [--ours <path prefix>] [--tree <root>]
-                     [--paths] [--selftest]
+                     [--installs] [--selftest]
 
---paths reads an installs-*.mk and reports two modules writing one file, which
+--installs reads an installs-*.mk and reports two modules writing one file, which
 is the other way kati stops: a rename keeps the name apart and still leaves both
 recipes on one target. It is the default for a file named installs-*.mk.
 
@@ -157,70 +157,73 @@ def scan(paths, ours=None):
     return dupes, total
 
 
-INSTALL_VARS = {
-    'LOCAL_MODULE': VARS['LOCAL_MODULE'],
-    'LOCAL_MODULE_CLASS': VARS['LOCAL_MODULE_CLASS'],
-    'LOCAL_MODULE_PATH': re.compile(r'^\s*LOCAL_MODULE_PATH\s*:=\s*(\S+)\s*$'),
-    'LOCAL_INSTALLED_MODULE_STEM':
-        re.compile(r'^\s*LOCAL_INSTALLED_MODULE_STEM\s*:=\s*(\S+)\s*$'),
-    'LOCAL_MODULE_SUFFIX':
-        re.compile(r'^\s*LOCAL_MODULE_SUFFIX\s*:=\s*(\S+)\s*$'),
-}
+# Soong writes one `to: from` rule per install, and one $(eval) per vintf
+# fragment, which is the shape a vintf_fragment takes (makevars.go writeInstalls)
+INSTALL_RULE = re.compile(r'^(\S+):\s+(\S+)')
+VINTF_INSTALL = re.compile(
+    r'^\$\(eval \$\(call copy-vintf-manifest-checked,\s*(.+?),\s*(.+?)\)\)')
+INTERMEDIATES = 'out/soong/.intermediates/'
+VARIANT = re.compile(r'^(android|linux|darwin|windows)')
 PRODUCT_OUT = re.compile(r'^out/target/product/[^/]+/')
 
 
-def read_install_blocks(path):
-    """(installed path, class, name) for every block in an installs makefile."""
+def installed(target):
+    """The path inside the product tree, however the rule writes it."""
+    target = target.replace('$(PRODUCT_OUT)/', '')
+    if target.startswith('/'):
+        at = target.find('out/target/product/')
+        if at >= 0:
+            target = target[at:]
+    return PRODUCT_OUT.sub('', target)
+
+
+def producer(source):
+    """(package, module) behind a Soong output path, or the path itself."""
+    if not source.startswith(INTERMEDIATES):
+        return source, ''
+    parts = source[len(INTERMEDIATES):].split('/')
+    if len(parts) < 3:
+        return source, ''
+    if VARIANT.match(parts[-2]):
+        return '/'.join(parts[:-3]), parts[-3]
+    return '/'.join(parts[:-2]), parts[-2]
+
+
+def read_install_rules(path):
+    """(installed path, source) for every rule in an installs makefile."""
     out = []
-    current = {}
     with open(path, errors='ignore') as handle:
         for line in handle:
-            if BLOCK_START.match(line):
-                current = {}
+            line = line.strip()
+            if not line or line.startswith('#'):
                 continue
-            if BLOCK_END.match(line):
-                entries = install_entry(current)
-                if entries:
-                    out.append(entries)
-                current = {}
+            found = VINTF_INSTALL.match(line)
+            if found:
+                out.append((installed(found.group(2)), found.group(1)))
                 continue
-            for var, pattern in INSTALL_VARS.items():
-                found = pattern.match(line)
-                if found:
-                    current[var] = found.group(1)
+            found = INSTALL_RULE.match(line)
+            if not found or found.group(1).startswith('.'):
+                continue
+            if 'out/' not in found.group(1):
+                continue
+            out.append((installed(found.group(1)), found.group(2)))
     return out
 
 
-def install_entry(block):
-    """One block to (path, class, name), or None when it installs no file."""
-    name = block.get('LOCAL_MODULE', '')
-    where = block.get('LOCAL_MODULE_PATH', '')
-    if not name or not where or '$' in name or '$' in where:
-        return None
-    stem = block.get('LOCAL_INSTALLED_MODULE_STEM')
-    if not stem:
-        stem = name + block.get('LOCAL_MODULE_SUFFIX', '')
-    if '$' in stem:
-        return None
-    target = PRODUCT_OUT.sub('', where).rstrip('/') + '/' + stem
-    return target, block.get('LOCAL_MODULE_CLASS', 'UNKNOWN'), name
-
-
 def scan_paths(paths, ours=None):
-    """Install paths more than one module writes, and how many were read."""
+    """Install paths more than one rule writes, and how many were read."""
     seen = {}
     total = 0
     for path in paths:
-        for entry in read_install_blocks(path):
+        for target, source in read_install_rules(path):
             total += 1
-            seen.setdefault(entry[0], set()).add((entry[1], entry[2]))
-    dupes = {}
-    for target, group in seen.items():
-        # one module writes one path from every arch variant it has
-        if len({name for _, name in group}) > 1:
-            dupes[target] = sorted(group)
+            seen.setdefault(target, set()).add(producer(source))
+    dupes = {target: sorted(group) for target, group in seen.items()
+             if len(group) > 1}
     if ours:
-        dupes = {k: v for k, v in dupes.items() if len(v) == 2}
+        dupes = {k: v for k, v in dupes.items()
+                 if any(p == ours for p, _ in v)
+                 and any(p != ours for p, _ in v)}
     return dupes, total
 
 
@@ -257,44 +260,38 @@ include $(BUILD_SYSTEM)/soong_cc_rust_prebuilt.mk
 """
 
 
-INSTALLS_SELFTEST = """
-include $(CLEAR_VARS)
-LOCAL_PATH := device/nubia/Z2577
-LOCAL_MODULE := android.hardware.wifi.hostapd.xml_vendor
-LOCAL_MODULE_CLASS := ETC
-LOCAL_MODULE_PATH := out/target/product/Z2577/vendor/etc/vintf/manifest
-LOCAL_INSTALLED_MODULE_STEM := android.hardware.wifi.hostapd.xml
-include $(BUILD_SYSTEM)/soong_etx_xml.mk
+INSTALLS_SELFTEST = """# Autogenerated file
 
-include $(CLEAR_VARS)
-LOCAL_PATH := external/wpa_supplicant_8/hostapd
-LOCAL_MODULE := android.hardware.wifi.hostapd.xml
-LOCAL_MODULE_CLASS := ETC
-LOCAL_MODULE_PATH := out/target/product/Z2577/vendor/etc/vintf/manifest
-LOCAL_INSTALLED_MODULE_STEM := android.hardware.wifi.hostapd.xml
-include $(BUILD_SYSTEM)/soong_etx_xml.mk
+# Values written by Soong to generate install rules that can be amended by Kati.
 
-include $(CLEAR_VARS)
-LOCAL_PATH := vendor/nubia/Z2577
-LOCAL_MODULE := ai_engine-default.xml
-LOCAL_MODULE_PATH := out/target/product/Z2577/vendor/etc/vintf/manifest
-include $(BUILD_SYSTEM)/soong_etx_xml.mk
+EXTRA_INSTALL_ZIPS :=
+.PHONY: droid
 
-include $(CLEAR_VARS)
-LOCAL_PATH := vendor/nubia/Z2577
-LOCAL_MODULE := libboth
-LOCAL_MODULE_CLASS := SHARED_LIBRARIES
-LOCAL_MODULE_PATH := out/target/product/Z2577/vendor/lib64
-LOCAL_MODULE_SUFFIX := .so
-include $(BUILD_SYSTEM)/soong_cc_rust_prebuilt.mk
+out/target/product/Z2577/vendor/etc/vintf/manifest/android.hardware.wifi.hostapd.xml: out/soong/.intermediates/device/nubia/Z2577/android.hardware.wifi.hostapd.xml_vendor/android_common/android.hardware.wifi.hostapd.xml
+	@echo "Install: $@"
+	rm -f $@ && cp -f -d $< $@
 
-include $(CLEAR_VARS)
-LOCAL_PATH := vendor/nubia/Z2577
-LOCAL_MODULE := libboth
-LOCAL_MODULE_CLASS := SHARED_LIBRARIES
-LOCAL_MODULE_PATH := out/target/product/Z2577/vendor/lib64
-LOCAL_MODULE_SUFFIX := .so
-include $(BUILD_SYSTEM)/soong_cc_rust_prebuilt.mk
+$(eval $(call copy-vintf-manifest-checked, out/soong/.intermediates/external/wpa_supplicant_8/hostapd/android.hardware.wifi.hostapd.xml/android_common/android.hardware.wifi.hostapd.xml, out/target/product/Z2577/vendor/etc/vintf/manifest/android.hardware.wifi.hostapd.xml))
+
+out/target/product/Z2577/vendor/etc/vintf/manifest/android.hardware.wifi.supplicant.xml: out/soong/.intermediates/device/nubia/Z2577/android.hardware.wifi.supplicant.xml_vendor/android_common/android.hardware.wifi.supplicant.xml
+	@echo "Install: $@"
+	rm -f $@ && cp -f -d $< $@
+
+$(eval $(call copy-vintf-manifest-checked, out/soong/.intermediates/external/wpa_supplicant_8/wpa_supplicant/aidl/vendor/android.hardware.wifi.supplicant.xml/android_common/android.hardware.wifi.supplicant.xml, out/target/product/Z2577/vendor/etc/vintf/manifest/android.hardware.wifi.supplicant.xml))
+
+out/target/product/Z2577/vendor/etc/vintf/manifest/ai_engine-default.xml: out/soong/.intermediates/vendor/nubia/Z2577/ai_engine-default.xml/android_common/ai_engine-default.xml
+	@echo "Install: $@"
+	rm -f $@ && cp -f -d $< $@
+
+out/target/product/Z2577/vendor/lib64/libboth.so: out/soong/.intermediates/vendor/nubia/Z2577/libboth/android_arm64_armv8-a_shared/libboth.so
+	@echo "Install: $@"
+	rm -f $@ && cp -f -d $< $@
+
+out/target/product/Z2577/vendor/lib/libboth.so: out/soong/.intermediates/vendor/nubia/Z2577/libboth/android_arm_armv8-a_shared/libboth.so
+	@echo "Install: $@"
+	rm -f $@ && cp -f -d $< $@
+
+.KATI_READONLY := EXTRA_INSTALL_ZIPS
 """
 
 
@@ -331,10 +328,12 @@ def selftest():
         with open(installs_path, 'w') as handle:
             handle.write(INSTALLS_SELFTEST)
         by_path, read = scan_paths([installs_path])
-        alone, _ = scan_paths([installs_path], ours='vendor/nubia/Z2577')
+        alone, _ = scan_paths([installs_path], ours='device/nubia/Z2577')
         chosen = expand([installs_path])
 
-    fragment = 'vendor/etc/vintf/manifest/android.hardware.wifi.hostapd.xml'
+    manifest = 'vendor/etc/vintf/manifest/'
+    fragment = manifest + 'android.hardware.wifi.hostapd.xml'
+    supplicant = manifest + 'android.hardware.wifi.supplicant.xml'
     cases = (
         ('one duplicate among three blocks', len(dupes) == 1 and total == 3),
         ('keyed by class and name',
@@ -356,16 +355,24 @@ def selftest():
          and 'MAKE_COPY_RULE_ONLY' in advice('ETC', 'x.xml', False, False)
          and 'nothing to do' in advice('SHARED_LIBRARIES', 'libx', False, True)),
         ('one module written once per arch is not a duplicate', not multi),
-        ('one install path written by two modules is found',
-         list(by_path) == [fragment] and read == 5),
-        ('both producers are named with their class',
+        ('one install path written by two rules is found',
+         list(by_path) == [fragment, supplicant] and read == 7),
+        ('both producers are named, package and module',
          by_path.get(fragment) == [
-             ('ETC', 'android.hardware.wifi.hostapd.xml'),
-             ('ETC', 'android.hardware.wifi.hostapd.xml_vendor')]),
+             ('device/nubia/Z2577', 'android.hardware.wifi.hostapd.xml_vendor'),
+             ('external/wpa_supplicant_8/hostapd',
+              'android.hardware.wifi.hostapd.xml')]),
+        ('a vintf install counts as a rule of its own',
+         ('external/wpa_supplicant_8/wpa_supplicant/aidl/vendor',
+          'android.hardware.wifi.supplicant.xml')
+         in by_path.get(supplicant, [])),
         ('a path one module writes is not reported',
-         len(by_path) == 1),
-        ('--ours keeps the path ours takes part in',
-         list(alone) == [fragment]),
+         manifest + 'ai_engine-default.xml' not in by_path),
+        ('two arches of one module are two files, not a duplicate',
+         'vendor/lib64/libboth.so' not in by_path
+         and 'vendor/lib/libboth.so' not in by_path),
+        ('--ours keeps the paths ours takes part in',
+         list(alone) == [fragment, supplicant]),
         ('an installs file is read without being told',
          chosen == [installs_path]),
     )
@@ -381,15 +388,15 @@ def main():
     ap.add_argument('paths', nargs='*')
     ap.add_argument('--ours', help='only names one of these packages defines')
     ap.add_argument('--tree', help='android tree, to read the platform side')
-    ap.add_argument('--paths', action='store_true',
+    ap.add_argument('--installs', action='store_true',
                     help='read an installs-*.mk: one file written twice')
     ap.add_argument('--selftest', action='store_true')
     args = ap.parse_args()
     if args.selftest:
         return selftest()
 
-    if args.paths or any(os.path.basename(p).startswith('installs-')
-                         for p in args.paths):
+    if args.installs or any(os.path.basename(p).startswith('installs-')
+                            for p in args.paths):
         return report_paths(args)
 
     paths = expand(args.paths)
@@ -431,10 +438,10 @@ def report_paths(args):
 
     dupes, total = scan_paths(paths, args.ours)
     for target in sorted(dupes):
-        print(f'{target} written by {len(dupes[target])} modules')
-        for cls, name in dupes[target]:
-            print(f'    {name} ({cls})')
-    print(f'\n{len(dupes)} install paths written twice in {total} modules')
+        print(f'{target} written by {len(dupes[target])} rules')
+        for package, module in dupes[target]:
+            print(f'    {module or package} ({package})')
+    print(f'\n{len(dupes)} install paths written twice in {total} rules')
     return 1 if dupes else 0
 
 
