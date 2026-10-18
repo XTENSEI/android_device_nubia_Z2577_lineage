@@ -39,6 +39,10 @@ VERSIONED = re.compile(r'^(?P<iface>.+?)-V(?P<version>\d+)'
 # the `:module` reference a srcs entry can carry, the -source copy of a backend
 SOURCE = re.compile(r'^(?P<iface>.+?)-V(?P<version>\d+)'
                     r'-(?P<lang>' + BACKENDS + r')-source$')
+# the unversioned backend library an aidl_interface generates, which is the
+# development version and distinct from every frozen one
+UNVERSIONED = re.compile(r'^(?P<iface>.+?)-(?P<lang>' + BACKENDS + r')$')
+DEV = 'dev'
 LANGS = tuple(BACKENDS.split('|'))
 LIBS = ('shared_libs', 'static_libs', 'whole_static_libs')
 SRC_PROP = re.compile(r'^\s*srcs?: (\[(.*?)\]|"([^"]+)"),?$', re.M | re.S)
@@ -234,7 +238,24 @@ def lib_versions(modules, lib, cache=None, stack=None):
             for key, versions in aidl_versions(modules, iface, cache, stack).items():
                 reach.setdefault(key, set()).update(versions)
         return reach
+    found = UNVERSIONED.match(lib)
+    if found:
+        iface = found.group('iface')
+        base = modules.get(iface)
+        if base and base['type'] == 'aidl_interface':
+            # the development version, which Soong counts beside the frozen ones,
+            # and the imports the interface pins, which is where the second
+            # version of a neighbour arrived from in the audio chain
+            reach = {(iface, found.group('lang')): {DEV}}
+            for key, versions in aidl_versions(modules, iface, cache, stack).items():
+                reach.setdefault(key, set()).update(versions)
+            return reach
     return aidl_versions(modules, lib, cache, stack)
+
+
+def version_key(version):
+    """Frozen versions in order, the development marker last."""
+    return (0, int(version)) if version.isdigit() else (1, 0)
 
 
 def imported_versions(info):
@@ -321,12 +342,13 @@ def check_p14(device_mods, vendor_mods, aosp_mods):
             for lib in merged[name]['shared_libs'] + merged[name]['whole_static_libs']:
                 here = lib_versions(merged, lib, cache).get((iface, lang), set())
                 if here:
-                    direct.append(f'{lib}=V{"/V".join(sorted(here, key=int))}')
+                    direct.append(f'{lib}=V{"/V".join(sorted(here, key=version_key))}')
             note_merge = (f', merging with the platform module of the same name'
                           if name in collisions else '')
             fail('P14', f'"{name}" reaches {iface} ({lang}) at '
-                        f'V{" and V".join(sorted(versions, key=int))} at once, '
-                        f'through {", ".join(direct) or "its own libs"}{note_merge}')
+                        f'V{" and V".join(sorted(versions, key=version_key))} at '
+                        f'once, through {", ".join(direct) or "its own libs"}'
+                        f'{note_merge}')
     for name, platform_type in sorted(displaced.items()):
         callers = sorted(
             other for other, info in aosp_mods.items()
@@ -759,6 +781,25 @@ cc_library {
 }
 """
 
+FAIL6 = """
+aidl_interface {
+    name: "myiface",
+    srcs: ["IFoo.aidl"],
+    versions: ["1", "4"],
+}
+
+aidl_interface {
+    name: "myiface2",
+    srcs: ["IBar.aidl"],
+    imports: ["myiface-V4"],
+}
+
+cc_library {
+    name: "foobar",
+    shared_libs: ["myiface-V1-ndk", "myiface2-ndk"],
+}
+"""
+
 P15_OURS = """
 prebuilt_etc_xml {
     name: "vendor.fragment.xml",
@@ -834,6 +875,7 @@ CASES = (
     ('srcs module reference', FAIL3, 'foobar', 1),
     ('same version, two backends', PASS4, None, 0),
     ('import and srcs agree', PASS5, None, 0),
+    ('an unversioned backend beside a frozen one', FAIL6, 'foobar', 1),
 )
 
 CASES15 = (
