@@ -40,3 +40,28 @@ prebuilt_overlay {
     filename_from_src: true,
     device_specific: true,
 }
+
+// The stock VINTF fragments, the names the platform also declares are taken
+prebuilt_etc_xml {
+    name: "android.hardware.wifi.hostapd.xml_vendor",
+    src: "configs/vintf/android.hardware.wifi.hostapd.xml",
+    filename_from_src: true,
+    sub_dir: "vintf/manifest",
+    soc_specific: true,
+}
+
+prebuilt_etc_xml {
+    name: "android.hardware.wifi.supplicant.xml_vendor",
+    src: "configs/vintf/android.hardware.wifi.supplicant.xml",
+    filename_from_src: true,
+    sub_dir: "vintf/manifest",
+    soc_specific: true,
+}
+
+prebuilt_etc_xml {
+    name: "rebootescrow-default.xml_vendor",
+    src: "configs/vintf/rebootescrow-default.xml",
+    filename_from_src: true,
+    sub_dir: "vintf/manifest",
+    soc_specific: true,
+}
