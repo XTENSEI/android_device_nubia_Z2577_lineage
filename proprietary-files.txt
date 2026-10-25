@@ -4529,7 +4529,8 @@ vendor/etc/sensors/hals.conf
 # Vendor configs
 vendor/etc/BBAT.conf
 vendor/etc/FD_tunning_param.xml
-vendor/etc/NOTICE.xml.gz
+# the build generates NOTICE.xml.gz for every partition and owns the install path
+# vendor/etc/NOTICE.xml.gz
 vendor/etc/analyzer.py
 vendor/etc/blackAppList.xml
 vendor/etc/config.xml
@@ -5136,7 +5137,7 @@ vendor/lib64/vendor.zte.ldd.cmd-V2-ndk.so
 vendor/lib64/vendor.zte.subsys-V1-ndk.so
 
 # ODM
-odm/etc/NOTICE.xml.gz
+# odm/etc/NOTICE.xml.gz
 odm/etc/ScanStruct/SPRD_TAG_AE_RESULT_INFO.txt
 odm/etc/ScanStruct/SPRD_TAG_AWB_CALC_INFO.txt
 odm/etc/ScanStruct/SPRD_TAG_CAP_AE_PARAMS.txt
