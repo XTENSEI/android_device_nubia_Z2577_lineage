@@ -73,6 +73,9 @@ BOARD_USES_GENERIC_KERNEL_IMAGE := true
 BOARD_KERNEL_CMDLINE := console=ttyS1,115200n8 bootconfig
 BOARD_BOOTCONFIG := androidboot.hardware=ums9230_6h10
 
+# The stock vendor ramdisk is lz4 legacy
+BOARD_RAMDISK_USE_LZ4 := true
+
 # The stock vendor_boot header addresses, the mkbootimg defaults differ on the ramdisk
 BOARD_MKBOOTIMG_ARGS += --base 0x00000000
 BOARD_MKBOOTIMG_ARGS += --kernel_offset 0x00008000
