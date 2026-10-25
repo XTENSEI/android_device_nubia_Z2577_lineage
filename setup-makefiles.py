@@ -43,12 +43,21 @@ DISPLACE = (
 # `libnativewindow` carries both of them: graphics common at its newest frozen
 # version and allocator V2, so it is the second edge to go on the same four
 # modules. It stays installed through the camera and codec2 stacks.
+# The graphics common version one: the armnn service links the neuralnetworks V4
+# NDK, which the platform builds against graphics common V7, and libGLES_mali,
+# which declares V3. The interface edge is the service's own and cannot go, so
+# the V3 declaration goes from libGLES_mali, which is the only module that
+# carries it into another graph. The soname stays what the drivers load and the
+# mapper and allocator impls keep V3 installed.
 DROP_SHARED = {
     'android.hardware.graphics.mapper@4.0-impl-arm':
         ('libgralloctypes', 'libnativewindow'),
     'android.hardware.graphics.allocator@4.0-impl-arm':
         ('libgralloctypes', 'libnativewindow'),
-    'libGLES_mali': ('libgralloctypes', 'libnativewindow'),
+    'libGLES_mali': (
+        'libgralloctypes', 'libnativewindow',
+        'android.hardware.graphics.common-V3-ndk',
+    ),
     'android.hardware.neuralnetworks@aidl-service-armnn-gpu':
         ('libui', 'libnativewindow'),
 }
