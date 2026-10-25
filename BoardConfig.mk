@@ -215,6 +215,9 @@ TARGET_SCREEN_HEIGHT := 1640
 TARGET_SCREEN_WIDTH := 720
 TARGET_SCREEN_DENSITY := 320
 
+# Wi-Fi, the platform hostapd is not built until a driver is set
+BOARD_HOSTAPD_DRIVER := NL80211
+
 # Properties
 TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
 TARGET_ODM_PROP += $(DEVICE_PATH)/odm.prop
