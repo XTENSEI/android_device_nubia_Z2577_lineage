@@ -103,8 +103,6 @@ PRODUCT_PACKAGES += \
 
 # Stock VINTF fragments, the platform refuses this metadata in a copy rule
 PRODUCT_PACKAGES += \
-    android.hardware.wifi.hostapd.xml_vendor \
-    android.hardware.wifi.supplicant.xml_vendor \
     rebootescrow-default.xml_vendor
 
 # Partitions
