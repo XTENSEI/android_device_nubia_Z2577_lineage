@@ -67,3 +67,6 @@ type vendor_whale2_afbc_prop, property_type;
 type vendor_wifi_prop, property_type;
 type vendor_wifi_version, property_type;
 type vendor_ylog_lite_prop, property_type;
+type net_eth0_prop, property_type;
+type system_uniwifi_prop, property_type;
+type unipnp_prop, property_type;
