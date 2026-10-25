@@ -35,6 +35,5 @@ android.hardware.neuralnetworks.IDevice/unisoc-npu  u:object_r:hal_neuralnetwork
 vendor.sprd.hardware.trusty.ITrustyClientProvider/default u:object_r:hal_trustyclientaidl_service:s0
 vendor.sprd.hardware.hdcp.IHDCP/default  u:object_r:hal_hdcp_service:s0
 vendor.tms.tmsnfc_aidl.ITmsNfc/default      u:object_r:tmsnfc_aidl_service:s0
-vendorconfig                              u:object_r:vendorconfig_service:s0
 vendor.goodix.hardware.biometrics.fingerprint.IGoodixFingerprintDaemon/default  u:object_r:goodix_aidl_service:s0
 vendor.nxp.nxpnfc_aidl.INxpNfc/default                          u:object_r:nxpnfc_hal_aidl_service:s0
