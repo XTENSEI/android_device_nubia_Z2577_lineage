@@ -132,7 +132,6 @@ vendor.flag.engpc.restart               u:object_r:vendor_engpc_prop:s0
 persist.vendor.gnss.tool.test           u:object_r:vendor_engpc_prop:s0
 vendor.flag.sys.5gusb.config            u:object_r:vendor_engpc_prop:s0
 ro.vendor.minui.hwrotation  u:object_r:vendor_hwrotation_prop:s0
-vendor.sprd.storageproxyd.                    u:object_r:vendor_storageproxyd_default_prop:s0
 persist.vendor.thermal. u:object_r:vendor_thermald_prop:s0
 persist.vendor.bsservice. u:object_r:vendor_thermald_prop:s0
 vendor.thermal. u:object_r:vendor_thermald_prop:s0
