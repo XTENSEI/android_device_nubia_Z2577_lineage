@@ -15,6 +15,12 @@ Usage: make_dupes.py <file or dir>... [--ours <path prefix>] [--tree <root>]
 is the other way kati stops: a rename keeps the name apart and still leaves both
 recipes on one target. It is the default for a file named installs-*.mk.
 
+--copies takes our own makefiles as well, because the stock side of that stop is
+usually a PRODUCT_COPY_FILES rule and a copy rule never appears in the installs
+file. It reads every pair in them, maps the partition macros onto the paths
+the installs file uses, and reports the ones the platform also writes, naming
+the module behind each so it can be packaged in place of the blob.
+
 With --tree the report also says what to do per name: whether the platform
 module's own directory declares a <name>_vendor, which is the copy to take
 instead of the stock one, or that ours needs a name of its own.
@@ -210,6 +216,67 @@ def read_install_rules(path):
     return out
 
 
+# A stock blob reaches the image through a copy rule, and a copy rule lives in
+# kati's half of the build: the ingest file only carries Soong's installs, so a
+# path with one rule there and one copy rule here looks unique to --installs.
+# Our makefiles are the other half, and the macros have to be resolved the way
+# kati resolves them before the two can be compared.
+COPY_PARTITIONS = (
+    ('$(TARGET_COPY_OUT_SYSTEM_EXT)', 'system_ext'),
+    ('$(TARGET_COPY_OUT_VENDOR_DLKM)', 'vendor_dlkm'),
+    ('$(TARGET_COPY_OUT_SYSTEM_DLKM)', 'system_dlkm'),
+    ('$(TARGET_COPY_OUT_VENDOR)', 'vendor'),
+    ('$(TARGET_COPY_OUT_PRODUCT)', 'product'),
+    ('$(TARGET_COPY_OUT_ODM)', 'odm'),
+    ('$(TARGET_COPY_OUT_SYSTEM)', 'system'),
+)
+
+
+def read_copy_files(paths):
+    """(source, destination) for every PRODUCT_COPY_FILES pair in makefiles."""
+    out = []
+    for path in paths:
+        text = open(path, errors='ignore').read().replace('\\\n', ' ')
+        for line in text.splitlines():
+            if not re.match(r'\s*PRODUCT_COPY_FILES[A-Za-z_]*\s*[:+]?=', line):
+                continue
+            body = line.split('=', 1)[1]
+            for pair in body.split():
+                source, _, destination = pair.partition(':')
+                if not destination:
+                    continue
+                out.append((source, destination))
+    return out
+
+
+def copy_path(destination, product):
+    """The installed path of a copy rule, as the installs file writes it."""
+    for macro, name in COPY_PARTITIONS:
+        destination = destination.replace(macro, name)
+    destination = destination.replace('$(PRODUCT_OUT)/', '')
+    if destination.startswith('/'):
+        at = destination.find('out/target/product/')
+        if at >= 0:
+            destination = destination[at:]
+    destination = destination.replace(f'out/target/product/{product}/', '')
+    return destination
+
+
+def scan_copies(installs, copies, product, ours=None):
+    """Copy rules writing a path the installs file already writes."""
+    written = {}
+    for target, source in read_install_rules(installs):
+        written.setdefault(target, set()).add(producer(source))
+    hits = {}
+    for source, destination in copies:
+        if ours and not source.startswith(ours):
+            continue
+        target = copy_path(destination, product)
+        if target in written:
+            hits[target] = (source, sorted(written[target]))
+    return hits
+
+
 def scan_paths(paths, ours=None):
     """Install paths more than one rule writes, and how many were read."""
     seen = {}
@@ -295,6 +362,20 @@ out/target/product/Z2577/vendor/lib/libboth.so: out/soong/.intermediates/vendor/
 """
 
 
+COPIES_SELFTEST = """PRODUCT_COPY_FILES += \\
+    vendor/nubia/Z2577/proprietary/vendor/etc/mkshrc:$(TARGET_COPY_OUT_VENDOR)/etc/mkshrc \\
+    vendor/nubia/Z2577/proprietary/vendor/etc/other:$(TARGET_COPY_OUT_VENDOR)/etc/other \\
+    another/repo/proprietary/vendor/etc/third:$(TARGET_COPY_OUT_VENDOR)/etc/mkshrc
+
+PRODUCT_COPY_FILES_EXTRA := another/repo/thing:$(TARGET_COPY_OUT_ODM)/etc/thing
+"""
+
+COPY_INSTALLS = """out/target/product/lineage_Z2577/vendor/etc/mkshrc: out/soong/.intermediates/external/mksh/mkshrc_vendor/android_vendor_arm64_armv8-a/mkshrc
+
+out/target/product/lineage_Z2577/odm/etc/thing: out/soong/.intermediates/another/repo/thing_odm/android_odm_arm64_armv8-a/thing
+"""
+
+
 def selftest():
     """The shape of the eleventh cycle: the stock awk against the platform's."""
     bad = 0
@@ -330,6 +411,15 @@ def selftest():
         by_path, read = scan_paths([installs_path])
         alone, _ = scan_paths([installs_path], ours='device/nubia/Z2577')
         chosen = expand([installs_path])
+        copies_path = os.path.join(tmp, 'copies.mk')
+        with open(copies_path, 'w') as handle:
+            handle.write(COPIES_SELFTEST)
+        copy_installs = os.path.join(tmp, 'installs-copies.mk')
+        with open(copy_installs, 'w') as handle:
+            handle.write(COPY_INSTALLS)
+        pairs = read_copy_files([copies_path])
+        hits = scan_copies(copy_installs, pairs, 'lineage_Z2577',
+                           ours='vendor/nubia/Z2577')
 
     manifest = 'vendor/etc/vintf/manifest/'
     fragment = manifest + 'android.hardware.wifi.hostapd.xml'
@@ -375,6 +465,20 @@ def selftest():
          list(alone) == [fragment, supplicant]),
         ('an installs file is read without being told',
          chosen == [installs_path]),
+        ('a copy rule the platform also writes is found',
+         list(hits) == ['vendor/etc/mkshrc']),
+        ('the platform module behind it is named',
+         hits['vendor/etc/mkshrc'][1] == [('external/mksh', 'mkshrc_vendor')]),
+        ('a copy rule nothing else writes is left alone',
+         'vendor/etc/other' not in hits),
+        ('another repo writing the same path is not ours',
+         hits['vendor/etc/mkshrc'][0].endswith('proprietary/vendor/etc/mkshrc')),
+        ('every pair is read, continuations and all', len(pairs) == 4),
+        ('the partition macros are resolved before comparing',
+         copy_path('$(TARGET_COPY_OUT_ODM)/etc/thing', 'lineage_Z2577') ==
+         'odm/etc/thing'
+         and copy_path('$(PRODUCT_OUT)/vendor/etc/x', 'lineage_Z2577') ==
+         'vendor/etc/x'),
     )
     for label, ok in cases:
         print(f'{"ok  " if ok else "FAIL"} {label}')
@@ -390,6 +494,8 @@ def main():
     ap.add_argument('--tree', help='android tree, to read the platform side')
     ap.add_argument('--installs', action='store_true',
                     help='read an installs-*.mk: one file written twice')
+    ap.add_argument('--copies', nargs='+',
+                    help='our makefiles, to find copy rules the platform also writes')
     ap.add_argument('--selftest', action='store_true')
     args = ap.parse_args()
     if args.selftest:
@@ -398,6 +504,8 @@ def main():
     if args.installs or any(os.path.basename(p).startswith('installs-')
                             for p in args.paths):
         return report_paths(args)
+    if args.copies:
+        ap.error('--copies needs the installs-*.mk to compare against')
 
     paths = expand(args.paths)
     if not paths:
@@ -442,7 +550,26 @@ def report_paths(args):
         for package, module in dupes[target]:
             print(f'    {module or package} ({package})')
     print(f'\n{len(dupes)} install paths written twice in {total} rules')
-    return 1 if dupes else 0
+
+    copied = 0
+    if args.copies:
+        ours = expand(args.copies)
+        if not ours:
+            print('no makefiles to read for --copies', file=sys.stderr)
+            return 2
+        product = os.path.basename(paths[0])
+        product = product[len('installs-'):-len('.mk')]
+        hits = scan_copies(paths[0], read_copy_files(ours), product, args.ours)
+        for target in sorted(hits):
+            source, producers = hits[target]
+            print(f'{target} written by a copy rule and by the platform')
+            print(f'    ours:    {source}')
+            for package, module in producers:
+                print(f'    {package}: {module or ""}')
+        copied = len(hits)
+        print(f'\n{copied} copy rule paths the platform also writes'
+              f' in {len(ours)} makefiles')
+    return 1 if dupes or copied else 0
 
 
 if __name__ == '__main__':
