@@ -98,6 +98,7 @@ PRODUCT_PACKAGES += \
     awk_vendor \
     dumpsys_vendor \
     logwrapper_vendor \
+    mkshrc_vendor \
     sh_vendor \
     toolbox_vendor
 
