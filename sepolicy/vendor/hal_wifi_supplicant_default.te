@@ -23,4 +23,3 @@ allow hal_wifi_supplicant_default init:unix_stream_socket connectto;
 allow hal_wifi_supplicant_default vendor_wifi_prop:property_service set;
 allow hal_wifi_supplicant_default vendor_wifi_prop:file { read getattr map open };
 allow hal_wifi_supplicant_default vendor_transform_varaint_prop:file { read getattr map open };
-type_transition hal_wifi_supplicant_default wifi_data_file:dir wpa_socket "sockets";
