@@ -5,6 +5,7 @@
   },
   {
     "repository": "XTENSEI/android_device_nubia_Z2577-kernel",
-    "target_path": "kernel/nubia/Z2577"
+    "target_path": "kernel/nubia/Z2577",
+    "branch": "lineage-23.2"
   }
 ]
