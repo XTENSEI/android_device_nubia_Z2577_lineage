@@ -1,7 +1,9 @@
 # Unpinned blobs from P615F02-user 16 BP2A.250605.031.A3 20260522.092043 release-keys
 
 # Audio
-vendor/bin/hw/android.hardware.audio.service;MODULE=android.hardware.audio.service_vendor
+# Audio, the installed service is the one the platform builds and nothing can
+# take that path from it
+# vendor/bin/hw/android.hardware.audio.service;MODULE=android.hardware.audio.service_vendor
 vendor/bin/hw/android.hardware.media.omx@1.0-service;MODULE=android.hardware.media.omx@1.0-service_vendor
 vendor/etc/a2dp_audio_policy_configuration.xml
 vendor/etc/audio_effects.conf
@@ -4324,7 +4326,7 @@ vendor/framework/androidx.camera.extensions.impl.jar
 
 # Init scripts
 vendor/etc/init/ai_engine-default.rc
-vendor/etc/init/android.hardware.audio.service.rc
+# vendor/etc/init/android.hardware.audio.service.rc
 vendor/etc/init/android.hardware.bluetooth@1.1-service.unisoc.rc
 vendor/etc/init/android.hardware.camera.provider@2.7-service_64.rc
 # vendor/etc/init/android.hardware.cas@1.2-service.rc
