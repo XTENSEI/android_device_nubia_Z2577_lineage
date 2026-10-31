@@ -4,7 +4,7 @@
 # Audio, the installed service is the one the platform builds and nothing can
 # take that path from it
 # vendor/bin/hw/android.hardware.audio.service;MODULE=android.hardware.audio.service_vendor
-vendor/bin/hw/android.hardware.media.omx@1.0-service;MODULE=android.hardware.media.omx@1.0-service_vendor
+# vendor/bin/hw/android.hardware.media.omx@1.0-service;MODULE=android.hardware.media.omx@1.0-service_vendor
 vendor/etc/a2dp_audio_policy_configuration.xml
 vendor/etc/audio_effects.conf
 vendor/etc/audio_effects.xml
@@ -469,7 +469,8 @@ vendor/lib64/mediadrm/libdrmclearkeyplugin.so
 
 # Display
 vendor/bin/hw/android.hardware.graphics.allocator@4.0-service
-vendor/bin/hw/android.hardware.graphics.composer@2.4-service;MODULE=android.hardware.graphics.composer@2.4-service_vendor
+# Video, the platform builds the composer and OMX services and owns those paths
+# vendor/bin/hw/android.hardware.graphics.composer@2.4-service;MODULE=android.hardware.graphics.composer@2.4-service_vendor
 # a vendor_available source cannot be displaced, and its vendor variant installs this path
 # vendor/lib/android.hardware.graphics.allocator-V1-ndk.so
 # vendor/lib/android.hardware.graphics.common-V3-ndk.so
@@ -4334,10 +4335,10 @@ vendor/etc/init/android.hardware.camera.provider@2.7-service_64.rc
 vendor/etc/init/android.hardware.drm-service.widevine.rc
 vendor/etc/init/android.hardware.gatekeeper@1.0-service.trusty.rc
 vendor/etc/init/android.hardware.graphics.allocator@4.0-service.rc
-vendor/etc/init/android.hardware.graphics.composer@2.4-service.rc
+# vendor/etc/init/android.hardware.graphics.composer@2.4-service.rc
 # vendor/etc/init/android.hardware.health-service.example.rc
 vendor/etc/init/android.hardware.media.c2@1.1-unisoc-service.rc
-vendor/etc/init/android.hardware.media.omx@1.0-service.rc
+# vendor/etc/init/android.hardware.media.omx@1.0-service.rc
 vendor/etc/init/android.hardware.neuralnetworks@aidl-service-armnn-gpu.rc
 # the platform talks keymint V4 and this service is AIDL V2, so the platform serves it
 # vendor/etc/init/android.hardware.security.keymint@2.0-unisoc.service.trusty.rc

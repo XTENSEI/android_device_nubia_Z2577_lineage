@@ -36,10 +36,12 @@ PRODUCT_PACKAGES += \
     android.hardware.sensors-service.multihal \
     rkp_factory_extraction_tool
 
-# Audio and CAS, the platform builds both and their paths are theirs
+# Audio, CAS, composer and OMX, the platform builds these four services
 PRODUCT_PACKAGES += \
     android.hardware.audio.service \
-    android.hardware.cas@1.2-service
+    android.hardware.cas@1.2-service \
+    android.hardware.graphics.composer@2.4-service \
+    android.hardware.media.omx@1.0-service
 
 # KeyMint, the stock service is AIDL V2 and the platform talks V4
 PRODUCT_PACKAGES += \
