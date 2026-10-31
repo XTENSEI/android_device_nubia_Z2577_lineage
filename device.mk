@@ -74,9 +74,9 @@ PRODUCT_PACKAGES += \
 
 # Kernel modules, the loader config and the boot mode lists
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/prebuilts/modules/init.insmod.cfg:vendor_dlkm/lib/modules/init.insmod.cfg \
-    $(LOCAL_PATH)/prebuilts/modules/modules.load.cali:vendor_dlkm/lib/modules/modules.load.cali \
-    $(LOCAL_PATH)/prebuilts/modules/modules.load.charger:vendor_dlkm/lib/modules/modules.load.charger
+    $(TOP)/kernel/nubia/Z2577/prebuilt/modules/init.insmod.cfg:vendor_dlkm/lib/modules/init.insmod.cfg \
+    $(TOP)/kernel/nubia/Z2577/prebuilt/modules/modules.load.cali:vendor_dlkm/lib/modules/modules.load.cali \
+    $(TOP)/kernel/nubia/Z2577/prebuilt/modules/modules.load.charger:vendor_dlkm/lib/modules/modules.load.charger
 
 # Symlinks declared by hand: the module loader path
 PRODUCT_PACKAGES += \

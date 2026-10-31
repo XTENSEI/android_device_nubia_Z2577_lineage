@@ -5,6 +5,9 @@
 
 DEVICE_PATH := device/nubia/Z2577
 
+# The boot artifacts live in the kernel repo, checked out beside the tree
+KERNEL_PREBUILT := $(TOP)/kernel/nubia/Z2577/prebuilt
+
 # Architecture, arm64 with the stock 32 bit vendor runtime
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
@@ -84,29 +87,29 @@ BOARD_MKBOOTIMG_ARGS += --tags_offset 0x00000100
 BOARD_MKBOOTIMG_ARGS += --dtb_offset 0x01f00000
 
 # Kernel, the stock image ships as a prebuilt
-# prebuilts/kernel and prebuilts/dtb.img come out of the stock boot and vendor_boot
-TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilts/kernel
-TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilts/dtb.img
-BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilts/dtbo.img
+# kernel, dtb.img and dtbo.img come out of the stock boot and vendor_boot
+TARGET_PREBUILT_KERNEL := $(KERNEL_PREBUILT)/kernel
+TARGET_PREBUILT_DTB := $(KERNEL_PREBUILT)/dtb.img
+BOARD_PREBUILT_DTBOIMAGE := $(KERNEL_PREBUILT)/dtbo.img
 BOARD_KERNEL_IMAGE_NAME := Image
 BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
 
 # Kernel modules, the stock vendor_dlkm partition ships as a prebuilt
-BOARD_VENDOR_KERNEL_MODULES := $(wildcard $(DEVICE_PATH)/prebuilts/modules/*.ko)
-BOARD_VENDOR_KERNEL_MODULES_LOAD := $(strip $(shell cat $(DEVICE_PATH)/prebuilts/modules/modules.load))
+BOARD_VENDOR_KERNEL_MODULES := $(wildcard $(KERNEL_PREBUILT)/modules/*.ko)
+BOARD_VENDOR_KERNEL_MODULES_LOAD := $(strip $(shell cat $(KERNEL_PREBUILT)/modules/modules.load))
 BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE := erofs
 TARGET_COPY_OUT_VENDOR_DLKM := vendor_dlkm
 
 # Ramdisk kernel modules, first stage loads these before vendor_dlkm is mounted
-BOARD_VENDOR_RAMDISK_KERNEL_MODULES := $(wildcard $(DEVICE_PATH)/prebuilts/modules_ramdisk/*.ko)
-BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD := $(strip $(shell cat $(DEVICE_PATH)/prebuilts/modules_ramdisk/modules.load))
-BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD := $(strip $(shell cat $(DEVICE_PATH)/prebuilts/modules_ramdisk/modules.load.recovery))
+BOARD_VENDOR_RAMDISK_KERNEL_MODULES := $(wildcard $(KERNEL_PREBUILT)/modules_ramdisk/*.ko)
+BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD := $(strip $(shell cat $(KERNEL_PREBUILT)/modules_ramdisk/modules.load))
+BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD := $(strip $(shell cat $(KERNEL_PREBUILT)/modules_ramdisk/modules.load.recovery))
 
 # System dlkm, the stock GKI modules on their own partition
 BOARD_USES_SYSTEM_DLKMIMAGE := true
 TARGET_COPY_OUT_SYSTEM_DLKM := system_dlkm
-BOARD_SYSTEM_KERNEL_MODULES := $(wildcard $(DEVICE_PATH)/prebuilts/modules_system/*.ko)
-BOARD_SYSTEM_KERNEL_MODULES_LOAD := $(strip $(shell cat $(DEVICE_PATH)/prebuilts/modules_system/modules.load))
+BOARD_SYSTEM_KERNEL_MODULES := $(wildcard $(KERNEL_PREBUILT)/modules_system/*.ko)
+BOARD_SYSTEM_KERNEL_MODULES_LOAD := $(strip $(shell cat $(KERNEL_PREBUILT)/modules_system/modules.load))
 
 # ODM image, its own partition, the odm blobs do not belong in the vendor image
 BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := erofs
@@ -235,4 +238,4 @@ ODM_MANIFEST_SINGLESIM_FILES := $(DEVICE_PATH)/configs/vintf/odm/manifest_single
 ODM_MANIFEST_WIFIONLY_FILES := $(DEVICE_PATH)/configs/vintf/odm/manifest_wifionly.xml
 
 # The dtb partition is all zero in the stock backup, so the dtb travels in
-# vendor_boot: prebuilts/dtb.img feeds --dtb
+# vendor_boot: prebuilt/dtb.img from the kernel repo feeds --dtb
