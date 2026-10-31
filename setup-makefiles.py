@@ -26,13 +26,11 @@ VENDOR_BP = HERE / '../../../vendor/nubia/Z2577/Android.bp'
 PREFER = re.compile(r'^    prefer: true,\n', re.M)
 
 # prebuilts that keep the platform module name and take the platform's place
+# The audio, composer and OMX services cannot go here: the platform builds both
+# architectures of each and the stock blobs are one, so prefer leaves the other
+# source variant installing its rc. Those three carry ;MODULE= in the blob list.
 DISPLACE = (
     'libwifi-hal',
-    # the stock HIDL audio and composer services share their name with the
-    # platform's, and both are the ones this board has to run
-    'android.hardware.audio.service',
-    'android.hardware.graphics.composer@2.4-service',
-    'android.hardware.media.omx@1.0-service',
 )
 
 # A module that links the platform's libgralloctypes reaches the newer graphics
