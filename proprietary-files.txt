@@ -4349,7 +4349,8 @@ vendor/etc/init/android.hardware.usb-service.unisoc.rc
 vendor/etc/init/android.hardware.wifi.supplicant-service.rc
 vendor/etc/init/android.hardware.wifi@1.0-service.rc
 vendor/etc/init/autotest.rc
-vendor/etc/init/boringssl_self_test.rc
+# the platform ships the same rc for the same two binaries
+# vendor/etc/init/boringssl_self_test.rc
 vendor/etc/init/charge.rc
 vendor/etc/init/charged.rc
 vendor/etc/init/connmgr.rc
