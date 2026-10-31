@@ -82,6 +82,10 @@ BOARD_MKBOOTIMG_ARGS += --dtb_offset 0x01f00000
 
 # Kernel, the stock image ships as a prebuilt
 # kernel, dtb.img and dtbo.img come out of the stock boot and vendor_boot
+# The source checkout also sits at kernel/nubia/Z2577, which TARGET_AUTO_KDIR
+# derives from this device path, so an empty value is what keeps the ROM from
+# trying to compile it. Unset, TARGET_KERNEL_SOURCE resolves to that path.
+TARGET_KERNEL_SOURCE :=
 TARGET_PREBUILT_KERNEL := $(KERNEL_PREBUILT)/kernel
 TARGET_PREBUILT_DTB := $(KERNEL_PREBUILT)/dtb.img
 BOARD_PREBUILT_DTBOIMAGE := $(KERNEL_PREBUILT)/dtbo.img
