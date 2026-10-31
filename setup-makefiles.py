@@ -32,6 +32,7 @@ DISPLACE = (
     # platform's, and both are the ones this board has to run
     'android.hardware.audio.service',
     'android.hardware.graphics.composer@2.4-service',
+    'android.hardware.media.omx@1.0-service',
 )
 
 # A module that links the platform's libgralloctypes reaches the newer graphics
