@@ -5,13 +5,6 @@
 
 soong_namespace {}
 
-install_symlink {
-    name: "vendor_lib_modules",
-    soc_specific: true,
-    installed_location: "lib/modules",
-    symlink_target: "/vendor_dlkm/lib/modules",
-}
-
 // The stock ODM overlays, an apk cannot travel in PRODUCT_COPY_FILES
 prebuilt_overlay {
     name: "DualSimOverlay",

@@ -87,10 +87,6 @@ PRODUCT_COPY_FILES += \
     kernel/nubia/Z2577/prebuilt/modules/modules.load.cali:vendor_dlkm/lib/modules/modules.load.cali \
     kernel/nubia/Z2577/prebuilt/modules/modules.load.charger:vendor_dlkm/lib/modules/modules.load.charger
 
-# Symlinks declared by hand: the module loader path
-PRODUCT_PACKAGES += \
-    vendor_lib_modules
-
 # Toybox, the platform builds the binary and its symlink farm
 PRODUCT_PACKAGES += \
     toybox_vendor
