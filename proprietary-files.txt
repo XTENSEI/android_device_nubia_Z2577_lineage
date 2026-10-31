@@ -429,7 +429,8 @@ vendor/lib64/libsprdorb.so
 vendor/lib64/libsprdportraitsceneadapter.so
 
 # CAS
-vendor/bin/hw/android.hardware.cas@1.2-service
+# CAS, the platform builds this name and its fragment is the only cas@1.2 declaration
+# vendor/bin/hw/android.hardware.cas@1.2-service
 vendor/bin/hw/vendor.sprd.hardware.broadcastradio@2.0-service
 vendor/lib/android.hardware.broadcastradio@1.0.so
 vendor/lib/android.hardware.cas.native@1.0.so
@@ -4326,7 +4327,7 @@ vendor/etc/init/ai_engine-default.rc
 vendor/etc/init/android.hardware.audio.service.rc
 vendor/etc/init/android.hardware.bluetooth@1.1-service.unisoc.rc
 vendor/etc/init/android.hardware.camera.provider@2.7-service_64.rc
-vendor/etc/init/android.hardware.cas@1.2-service.rc
+# vendor/etc/init/android.hardware.cas@1.2-service.rc
 # vendor/etc/init/android.hardware.drm-service.clearkey.rc
 vendor/etc/init/android.hardware.drm-service.widevine.rc
 vendor/etc/init/android.hardware.gatekeeper@1.0-service.trusty.rc

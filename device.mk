@@ -36,6 +36,10 @@ PRODUCT_PACKAGES += \
     android.hardware.sensors-service.multihal \
     rkp_factory_extraction_tool
 
+# CAS, the platform service is the one that declares cas@1.2 on the image
+PRODUCT_PACKAGES += \
+    android.hardware.cas@1.2-service
+
 # KeyMint, the stock service is AIDL V2 and the platform talks V4
 PRODUCT_PACKAGES += \
     android.hardware.security.keymint-service

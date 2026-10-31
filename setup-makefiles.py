@@ -28,6 +28,10 @@ PREFER = re.compile(r'^    prefer: true,\n', re.M)
 # prebuilts that keep the platform module name and take the platform's place
 DISPLACE = (
     'libwifi-hal',
+    # the stock HIDL audio and composer services share their name with the
+    # platform's, and both are the ones this board has to run
+    'android.hardware.audio.service',
+    'android.hardware.graphics.composer@2.4-service',
 )
 
 # A module that links the platform's libgralloctypes reaches the newer graphics
