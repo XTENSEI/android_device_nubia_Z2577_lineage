@@ -6,7 +6,7 @@
 DEVICE_PATH := device/nubia/Z2577
 
 # The boot artifacts live in the kernel repo, checked out beside the tree
-KERNEL_PREBUILT := $(TOP)/kernel/nubia/Z2577/prebuilt
+KERNEL_PREBUILT := kernel/nubia/Z2577/prebuilt
 
 # Architecture, arm64 with the stock 32 bit vendor runtime
 TARGET_ARCH := arm64
