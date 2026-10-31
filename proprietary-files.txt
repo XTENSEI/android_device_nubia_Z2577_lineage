@@ -4587,8 +4587,10 @@ vendor/etc/log_settings_lite.xml
 vendor/etc/permissions/android.hardware.bluetooth_le.xml
 vendor/etc/permissions/android.hardware.broadcastradio.xml
 vendor/etc/permissions/android.hardware.fingerprint.xml
-vendor/etc/permissions/android.hardware.hardware_keystore.xml
-vendor/etc/permissions/android.hardware.identity_credential.xml
+# the platform declares the newer version for the service we run
+# vendor/etc/permissions/android.hardware.hardware_keystore.xml
+# the platform declares the newer version
+# vendor/etc/permissions/android.hardware.identity_credential.xml
 vendor/etc/permissions/android.hardware.keystore.app_attest_key.xml
 vendor/etc/permissions/android.hardware.location.gps.xml
 vendor/etc/permissions/android.hardware.opengles.aep.xml

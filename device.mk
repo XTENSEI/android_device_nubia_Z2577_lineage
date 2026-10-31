@@ -44,8 +44,10 @@ PRODUCT_PACKAGES += \
     android.hardware.media.omx@1.0-service
 
 # KeyMint, the stock service is AIDL V2 and the platform talks V4
+# It carries the keystore permissions file, which declares the newer version
 PRODUCT_PACKAGES += \
-    android.hardware.security.keymint-service
+    android.hardware.security.keymint-service \
+    android.hardware.hardware_keystore.xml
 
 # Wi-Fi daemons, the stock copies are AIDL V1 and the platform talks V5 and V3
 PRODUCT_PACKAGES += \
@@ -112,6 +114,10 @@ PRODUCT_PACKAGES += \
 # Stock VINTF fragments, the platform refuses this metadata in a copy rule
 PRODUCT_PACKAGES += \
     rebootescrow-default.xml_vendor
+
+# The identity permissions file, the platform declares the newer version
+PRODUCT_PACKAGES += \
+    android.hardware.identity_credential.xml
 
 # Partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
