@@ -4377,7 +4377,8 @@ vendor/etc/init/hw/init.ums9230_6h10_go.usb.rc
 vendor/etc/init/hw/init.vendor.rc
 vendor/etc/init/hw/init.vendor.usb.rc
 vendor/etc/init/hw/init.zramwb.rc
-vendor/etc/init/identity-default.rc
+# the platform identity module starts its own service at that path
+# vendor/etc/init/identity-default.rc
 vendor/etc/init/init.cc_connect.rc
 vendor/etc/init/init.fingerprint.focaltech_FT9399SD.rc
 vendor/etc/init/init.fingerprint.silead_gsl6195.rc
