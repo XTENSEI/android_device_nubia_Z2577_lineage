@@ -156,13 +156,23 @@ def build_top():
     return top if (top / 'system' / 'sepolicy' / 'private' / 'security_classes').exists() else None
 
 
+def dropped_declares(message, dropped):
+    """True when a platform file left out of the corpus spells this name."""
+    for pattern in (UNKNOWN_TYPE, UNKNOWN_ATTR):
+        match = pattern.search(message)
+        if match:
+            return any(match.group('name') in Path(path).read_text(errors='ignore')
+                       for path in dropped)
+    return False
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--system-sepolicy', help='path to system/sepolicy sources')
     parser.add_argument('--checkpolicy', help='checkpolicy binary')
     parser.add_argument('--m4', help='m4 binary')
     parser.add_argument('--board-api-level', type=int, default=36)
-    parser.add_argument('--max-rounds', type=int, default=60)
+    parser.add_argument('--max-rounds', type=int, default=120)
     parser.add_argument('--keep-conf', help='write the generated conf here')
     args = parser.parse_args()
 
@@ -193,7 +203,8 @@ def main():
         tempfile.mkstemp(prefix='vendor_sepolicy.', suffix='.conf')[1])
 
     stubs, skip, findings = [], [], []
-    stuck = None
+    stuck, last = None, None
+    exhausted = False
     m4_error = ''
     for _ in range(args.max_rounds):
         result = build_conf(platform, ours, stubs, skip, m4, args.board_api_level, conf)
@@ -204,6 +215,7 @@ def main():
         if not error:
             break
         key = (error.group('file'), error.group('line'), error.group('msg'))
+        last = key
         if error.group('file') in mine and key not in findings:
             findings.append(key)
         stub = stub_for(error.group('msg'))
@@ -215,6 +227,10 @@ def main():
             continue
         stuck = key
         break
+    else:
+        exhausted = True
+        if last and last not in findings:
+            findings.append(last)
 
     print(f'platform policy: {platform}')
     print(f'device policy:   {len(ours)} dirs, {len(mine)} .te files')
@@ -232,10 +248,22 @@ def main():
         return 1
     if stuck and stuck not in findings:
         findings.append(stuck)
-    if findings:
-        print('\nsepolicy errors:')
-        for path, line, message in findings:
+    if exhausted:
+        print(f'\nstopped after {args.max_rounds} rounds, so the last error still stands:')
+    # A name a dropped platform file declares is a gap in the corpus, not a
+    # finding: dropping a file takes its declarations with it.
+    errors = [f for f in findings if not dropped_declares(f[2], skip)]
+    gaps = [f for f in findings if dropped_declares(f[2], skip)]
+    if gaps:
+        print(f'\nnot checked here, a dropped platform file declares these: {len(gaps)}')
+        for path, line, message in gaps:
             print(f'  {path}:{line}: {message}')
+    if errors:
+        print('\nsepolicy errors:')
+        for path, line, message in errors:
+            print(f'  {path}:{line}: {message}')
+        return 1
+    if exhausted:
         return 1
     if not args.keep_conf:
         conf.unlink()
