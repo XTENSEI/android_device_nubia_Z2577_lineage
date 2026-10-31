@@ -40,13 +40,7 @@ AB_OTA_PARTITIONS += \
     system_ext \
     vendor \
     vendor_boot \
-    vendor_dlkm \
-    vbmeta \
-    vbmeta_odm \
-    vbmeta_product \
-    vbmeta_system \
-    vbmeta_system_ext \
-    vbmeta_vendor
+    vendor_dlkm
 BOARD_USES_METADATA_PARTITION := true
 
 # Dynamic partitions, values read with lpdump from the stock super.bin
