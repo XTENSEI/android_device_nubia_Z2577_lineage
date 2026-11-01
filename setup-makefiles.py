@@ -22,6 +22,15 @@ DISPLACE = (
     'camera.device@1.0-impl',
 )
 
+ALLOW_UNDEFINED = (
+    'camera.unisoc',
+    'hwcomposer.unisoc',
+    'libDispatchAdap',
+    'libcodec2_unisoc_av1dec',
+    'libcodec2_unisoc_common',
+    'liblwpcommon',
+)
+
 DROP_SHARED = {
     'android.hardware.graphics.mapper@4.0-impl-arm':
         ('libgralloctypes', 'libnativewindow'),
@@ -103,6 +112,17 @@ def add_user_root():
     return patched
 
 
+def add_allow_undefined(lines, name):
+    """Accept a module's undefined symbols instead of resolving them."""
+    name_line, end = block_bounds(lines, name)
+    if name_line is None:
+        raise SystemExit(f'no module named {name} in {VENDOR_BP}')
+    if any('allow_undefined_symbols:' in line for line in lines[name_line:end]):
+        return False
+    lines.insert(name_line + 1, '    allow_undefined_symbols: true,')
+    return True
+
+
 def add_no_check_elf(lines, name):
     """Turn the ELF check off on a module whose shared_libs had entries dropped."""
     name_line, end = block_bounds(lines, name)
@@ -135,6 +155,7 @@ text, count = PREFER.subn('', bp.read_text())
 
 lines = text.splitlines()
 preferred = sum(add_prefer(lines, name) for name in DISPLACE)
+allowed = sum(add_allow_undefined(lines, name) for name in ALLOW_UNDEFINED)
 unchecked = sum(add_no_check_elf(lines, name) for name in DROP_SHARED)
 dropped = sum(
     drop_shared(lines, name, libs) for name, libs in DROP_SHARED.items()
@@ -150,5 +171,7 @@ if dropped:
     print(f'{dropped} shared_libs entries dropped from {bp}')
 if unchecked:
     print(f'{unchecked} ELF checks turned off in {bp}')
+if allowed:
+    print(f'{allowed} modules allowed undefined symbols in {bp}')
 if services:
     print(f'user root added to {services} stock services')
