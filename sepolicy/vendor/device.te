@@ -31,7 +31,7 @@ type spipe_device, dev_type;
 type sprd_img_device, dev_type, mlstrustedobject;
 type sprd_time_sync_device, dev_type;
 type sqc_device, dev_type;
-type systemheap_device, dev_type, mlstrustedobject, domain;
+type systemheap_device, dev_type, mlstrustedobject;
 type ufs_device, dev_type;
 type userlog_device, dev_type;
 type wcn_device, dev_type;
