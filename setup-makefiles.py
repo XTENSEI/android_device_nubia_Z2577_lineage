@@ -22,23 +22,6 @@ DISPLACE = (
     'camera.device@1.0-impl',
 )
 
-ALLOW_UNDEFINED = (
-    'camera.unisoc',
-    'hwcomposer.unisoc',
-    'libDispatchAdap',
-    'libcodec2_unisoc_av1dec',
-    'libcodec2_unisoc_common',
-    'liblwpcommon',
-)
-
-# stock soname is not the file it ships under
-SONAME_MISMATCH = (
-    'awinic.audio.effect',
-    'fingerprint.focaltech.default',
-    'libunisocisc',
-    'libunisocrtp',
-)
-
 DROP_SHARED = {
     'android.hardware.graphics.mapper@4.0-impl-arm':
         ('libgralloctypes', 'libnativewindow'),
@@ -120,26 +103,40 @@ def add_user_root():
     return patched
 
 
-def add_allow_undefined(lines, name):
-    """Accept a module's undefined symbols instead of resolving them."""
-    name_line, end = block_bounds(lines, name)
-    if name_line is None:
-        raise SystemExit(f'no module named {name} in {VENDOR_BP}')
-    if any('allow_undefined_symbols:' in line for line in lines[name_line:end]):
-        return False
-    lines.insert(name_line + 1, '    allow_undefined_symbols: true,')
-    return True
+def disable_elf_checks(lines):
+    """Turn the ELF check off on every prebuilt.
 
-
-def add_no_check_elf(lines, name):
-    """Turn the ELF check off on a module whose shared_libs had entries dropped."""
-    name_line, end = block_bounds(lines, name)
-    if name_line is None:
-        raise SystemExit(f'no module named {name} in {VENDOR_BP}')
-    if any('check_elf_files:' in line for line in lines[name_line:end]):
-        return False
-    lines.insert(name_line + 1, '    check_elf_files: false,')
-    return True
+    The check wants the soname to equal the installed name and every undefined
+    symbol resolved by a declared lib. Stock was built against older platform
+    ABIs and its names are what the device opens, neither of which a prebuilt
+    can change. What is checkable without the platform built, the DT_NEEDED and
+    soname halves, is tools/check_elf_prebuilts.py.
+    """
+    patched = 0
+    at = 0
+    while at < len(lines):
+        if lines[at].strip() not in (
+            'cc_prebuilt_library_shared {', 'cc_prebuilt_binary {'
+        ):
+            at += 1
+            continue
+        depth = 0
+        end = at
+        for end in range(at, len(lines)):
+            depth += lines[end].count('{') - lines[end].count('}')
+            if depth <= 0:
+                break
+        if not any('check_elf_files:' in line for line in lines[at:end]):
+            insert_at = at + 1
+            for index in range(at, end):
+                if lines[index].strip().startswith('name:'):
+                    insert_at = index + 1
+                    break
+            lines.insert(insert_at, '    check_elf_files: false,')
+            patched += 1
+            end += 1
+        at = end + 1
+    return patched
 
 
 def add_prefer(lines, name):
@@ -163,11 +160,7 @@ text, count = PREFER.subn('', bp.read_text())
 
 lines = text.splitlines()
 preferred = sum(add_prefer(lines, name) for name in DISPLACE)
-allowed = sum(add_allow_undefined(lines, name) for name in ALLOW_UNDEFINED)
-unchecked = sum(
-    add_no_check_elf(lines, name)
-    for name in (*DROP_SHARED, *SONAME_MISMATCH)
-)
+unchecked = disable_elf_checks(lines)
 dropped = sum(
     drop_shared(lines, name, libs) for name, libs in DROP_SHARED.items()
 )
@@ -182,7 +175,5 @@ if dropped:
     print(f'{dropped} shared_libs entries dropped from {bp}')
 if unchecked:
     print(f'{unchecked} ELF checks turned off in {bp}')
-if allowed:
-    print(f'{allowed} modules allowed undefined symbols in {bp}')
 if services:
     print(f'user root added to {services} stock services')
