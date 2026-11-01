@@ -108,7 +108,7 @@ PRODUCT_PACKAGES += \
 
 # VINTF
 PRODUCT_PACKAGES += \
-    vendor_compatibility_matrix.xml \
+    Z2577_compatibility_matrix \
     rebootescrow-default.xml_vendor
 
 # Identity
