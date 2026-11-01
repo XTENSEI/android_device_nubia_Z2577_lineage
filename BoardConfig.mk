@@ -213,6 +213,7 @@ PRODUCT_SOONG_NAMESPACES += \
     $(DEVICE_PATH)
 
 # VINTF
+DEVICE_MATRIX_FILE := $(DEVICE_PATH)/configs/vintf/compatibility_matrix.xml
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := $(DEVICE_PATH)/configs/vintf/framework_compatibility_matrix.xml
 ODM_MANIFEST_FILES := $(DEVICE_PATH)/configs/vintf/odm/manifest.xml
 ODM_MANIFEST_SKUS += singlesim wifionly
