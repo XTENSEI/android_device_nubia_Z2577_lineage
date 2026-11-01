@@ -145,6 +145,7 @@
         <interface>
             <name>IExtRadioData</name>
             <instance>slot1</instance>
+            <instance>slot2</instance>
         </interface>
     </hal>
     <hal format="aidl" optional="true">
@@ -153,6 +154,7 @@
         <interface>
             <name>IImsRadio</name>
             <instance>slot1</instance>
+            <instance>slot2</instance>
         </interface>
     </hal>
     <hal format="aidl" optional="true">
@@ -169,6 +171,7 @@
         <interface>
             <name>IExtRadioMessaging</name>
             <instance>slot1</instance>
+            <instance>slot2</instance>
         </interface>
     </hal>
     <hal format="aidl" optional="true">
@@ -177,6 +180,7 @@
         <interface>
             <name>IExtRadioModem</name>
             <instance>slot1</instance>
+            <instance>slot2</instance>
         </interface>
     </hal>
     <hal format="aidl" optional="true">
@@ -185,6 +189,7 @@
         <interface>
             <name>IExtRadioNetwork</name>
             <instance>slot1</instance>
+            <instance>slot2</instance>
         </interface>
     </hal>
     <hal format="aidl" optional="true">
@@ -193,6 +198,7 @@
         <interface>
             <name>IExtRadioSim</name>
             <instance>slot1</instance>
+            <instance>slot2</instance>
         </interface>
     </hal>
     <hal format="aidl" optional="true">
@@ -201,6 +207,7 @@
         <interface>
             <name>IExtRadioVoice</name>
             <instance>slot1</instance>
+            <instance>slot2</instance>
         </interface>
     </hal>
     <sepolicy>
