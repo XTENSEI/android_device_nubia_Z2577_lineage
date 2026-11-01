@@ -114,7 +114,6 @@
 /blackbox(/.*)?      u:object_r:blackbox_file:s0
 /dev/sipc_(.*)?          u:object_r:sipc_debug_device:s0
 /dev/ttyGS[0-9]         u:object_r:serial_device:s0
-/dev/stune(/.*)?                u:object_r:cgroup:s0
 /dev/ttyGF[0-9]*             u:object_r:serial_device:s0
 /dev/hidraw[0-9]*      u:object_r:hidraw_device:s0
 /dev/stty_w[0-9]*       u:object_r:tty_device:s0
