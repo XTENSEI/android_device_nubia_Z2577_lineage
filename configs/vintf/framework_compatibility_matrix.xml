@@ -139,6 +139,70 @@
             <instance>subsys</instance>
         </interface>
     </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.unisoc.hardware.radio.data</name>
+        <version>1</version>
+        <interface>
+            <name>IExtRadioData</name>
+            <instance>slot1</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.unisoc.hardware.radio.ims</name>
+        <version>1</version>
+        <interface>
+            <name>IImsRadio</name>
+            <instance>slot1</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.unisoc.hardware.radio.lite</name>
+        <version>1</version>
+        <interface>
+            <name>ILiteRadio</name>
+            <instance>liteservice2</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.unisoc.hardware.radio.messaging</name>
+        <version>1</version>
+        <interface>
+            <name>IExtRadioMessaging</name>
+            <instance>slot1</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.unisoc.hardware.radio.modem</name>
+        <version>1</version>
+        <interface>
+            <name>IExtRadioModem</name>
+            <instance>slot1</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.unisoc.hardware.radio.network</name>
+        <version>1</version>
+        <interface>
+            <name>IExtRadioNetwork</name>
+            <instance>slot1</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.unisoc.hardware.radio.sim</name>
+        <version>1</version>
+        <interface>
+            <name>IExtRadioSim</name>
+            <instance>slot1</instance>
+        </interface>
+    </hal>
+    <hal format="aidl" optional="true">
+        <name>vendor.unisoc.hardware.radio.voice</name>
+        <version>1</version>
+        <interface>
+            <name>IExtRadioVoice</name>
+            <instance>slot1</instance>
+        </interface>
+    </hal>
     <sepolicy>
         <kernel-sepolicy-version>30</kernel-sepolicy-version>
         <sepolicy-version>29.0</sepolicy-version>
