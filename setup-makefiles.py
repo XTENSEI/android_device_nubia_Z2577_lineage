@@ -9,8 +9,13 @@ import re
 import subprocess
 
 HERE = pathlib.Path(__file__).resolve().parent
-VENDOR_BP = HERE / '../../../vendor/nubia/Z2577/Android.bp'
+VENDOR = HERE / '../../../vendor/nubia/Z2577'
+VENDOR_BP = VENDOR / 'Android.bp'
+BLOB_LIST = HERE / 'proprietary-files.txt'
 PREFER = re.compile(r'^    prefer: true,\n', re.M)
+SERVICE_SECTION = re.compile(r'^(service|on|import|subsys)\b')
+SERVICE_LINE = re.compile(r'^\s*service\s+\S+')
+USER_LINE = re.compile(r'^\s*user\s+')
 
 DISPLACE = (
     'libwifi-hal',
@@ -55,6 +60,48 @@ def drop_shared(lines, name, libs):
     return dropped
 
 
+def add_user_root():
+    """Declare root on every shipped service block that leaves it out."""
+    patched = 0
+    for entry in BLOB_LIST.read_text().splitlines():
+        entry = entry.strip()
+        if not entry or entry.startswith('#'):
+            continue
+        path = entry.split('|')[0].split(';')[0].strip()
+        if not path.endswith('.rc'):
+            continue
+        rc = VENDOR / 'proprietary' / path
+        if not rc.is_file():
+            continue
+        lines = rc.read_text().splitlines(keepends=True)
+        plain = [line.rstrip('\r\n') for line in lines]
+        inserts = []
+        index = 0
+        while index < len(plain):
+            if not SERVICE_LINE.match(plain[index]):
+                index += 1
+                continue
+            end = index + 1
+            while end < len(plain) and not SERVICE_SECTION.match(plain[end].strip()):
+                end += 1
+            block = plain[index:end]
+            if not any(
+                USER_LINE.match(line) for line in block
+                if not line.lstrip().startswith('#')
+            ):
+                command_end = index
+                while command_end < end and plain[command_end].rstrip().endswith('\\'):
+                    command_end += 1
+                inserts.append(command_end)
+            index = end
+        for position in reversed(inserts):
+            lines.insert(position + 1, '    user root\n')
+        if inserts:
+            rc.write_text(''.join(lines))
+            patched += len(inserts)
+    return patched
+
+
 def add_prefer(lines, name):
     """Give one prebuilt the prefer flag, once."""
     name_line, end = block_bounds(lines, name)
@@ -80,6 +127,7 @@ dropped = sum(
     drop_shared(lines, name, libs) for name, libs in DROP_SHARED.items()
 )
 bp.write_text('\n'.join(lines) + '\n')
+services = add_user_root()
 
 if count:
     print(f'dropped {count} prefer: true lines from {bp}')
@@ -87,3 +135,5 @@ if preferred:
     print(f'{preferred} prefer flags put back in {bp}')
 if dropped:
     print(f'{dropped} shared_libs entries dropped from {bp}')
+if services:
+    print(f'user root added to {services} stock services')
