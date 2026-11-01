@@ -1,21 +1,28 @@
 #!/usr/bin/env python3
-"""Replay the DT_NEEDED half of Soong's check_elf_file over every prebuilt.
+"""Replay the mechanical halves of Soong's check_elf_file over every prebuilt.
 
 The symbol half resolves against the export list of every declared lib, and
 those lists only exist once the platform is built, so it is not checkable here.
-The DT_NEEDED half is: the module has to declare the soname of every library it
+The other two are. Every module must declare the soname of every library it
 links, and the soname is the output name of the module behind it, not the module
-name, which is why a declared dep can satisfy a soname it does not equal.
+name, which is why a declared dep can satisfy a soname it does not equal. A
+shared library must also carry the name it installs under. Both run over the
+whole tree whether the module has `check_elf_files: false` or not: the DT_NEEDED
+relation is what keeps a rename honest, and the soname rule is only reported
+where the flag was left on.
 
 Usage: check_elf_prebuilts.py [--bp PATH] [--quiet]
 """
 
+import ast
 import os
 import re
 import subprocess
 import sys
 
 VENDOR_BP = '/home/andrei/Downloads/Trees/vendor_nubia_Z2577_lineage/Android.bp'
+GENERATOR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                         '..', 'setup-makefiles.py')
 
 # check_elf_file never asks about these
 IMMUTABLE = {'libc.so', 'libm.so', 'libdl.so', 'libstdc++.so'}
@@ -111,6 +118,17 @@ def elf_info(path):
     return soname or os.path.basename(path), needed, defined, undefined
 
 
+def trimmed_modules(path):
+    """The modules whose shared_libs the generator deliberately shortens."""
+    if not os.path.exists(path):
+        return set()
+    for node in ast.parse(open(path).read()).body:
+        if isinstance(node, ast.Assign) and any(
+                getattr(t, 'id', None) == 'DROP_SHARED' for t in node.targets):
+            return {key.value for key in getattr(node.value, 'keys', [])}
+    return set()
+
+
 SUFFIXES = ('-vendorcompat', '-vendor', '-odm', '_vendor')
 
 
@@ -158,20 +176,24 @@ def main():
                 jobs.append((kind, name, label, src, stem, libs, no_check, no_syms,
                              soname, needed, defined, undefined))
 
+    trimmed = trimmed_modules(GENERATOR)
     undeclared = []
+    trimmed_hits = []
     mismatched = []
     platform_only = 0
     for (kind, name, label, src, stem, libs, no_check, no_syms,
          soname, needed, defined, undefined) in jobs:
-        if no_check:
-            continue
         installed = (stem + '.so') if stem else os.path.basename(src)
-        if kind == 'cc_prebuilt_library_shared' and soname != installed:
+        if kind == 'cc_prebuilt_library_shared' and not no_check \
+                and soname != installed:
             mismatched.append((name, label, installed, soname))
         missing = [d for d in needed if d not in IMMUTABLE
                    and not any(declares(dep, d) for dep in libs)]
         if missing:
-            undeclared.append((name, label, src, missing))
+            if name in trimmed:
+                trimmed_hits.append((name, label, missing))
+            else:
+                undeclared.append((name, label, src, missing))
 
         declared = {soname for dep in libs
                     for soname in declared_sonames.get(dep, {dep + '.so'})}
@@ -188,6 +210,9 @@ def main():
         print(f'  {name} [{label}]  {src}')
         for soname in missing:
             print(f'    {soname}')
+    print(f'DT_NEEDED dropped by DROP_SHARED: {len(trimmed_hits)}')
+    for name, label, missing in trimmed_hits:
+        print(f'  {name} [{label}]  {", ".join(missing)}')
     print(f'DT_SONAME not the installed name: {len(mismatched)}')
     for name, label, installed, soname in mismatched:
         print(f'  {name} [{label}]  file {installed}  soname {soname}')
