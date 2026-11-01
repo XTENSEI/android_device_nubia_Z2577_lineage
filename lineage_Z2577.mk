@@ -8,6 +8,9 @@ $(call inherit-product, $(LOCAL_PATH)/device.mk)
 
 PRODUCT_SHIPPING_API_LEVEL := 36
 
+# The stock blobs are 4 KB aligned and the kernel uses 4 KB pages
+PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE := false
+
 PRODUCT_BRAND := nubia
 PRODUCT_DEVICE := Z2577
 PRODUCT_MANUFACTURER := nubia
