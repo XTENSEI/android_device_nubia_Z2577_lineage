@@ -103,6 +103,17 @@ def add_user_root():
     return patched
 
 
+def add_no_check_elf(lines, name):
+    """Turn the ELF check off on a module whose shared_libs had entries dropped."""
+    name_line, end = block_bounds(lines, name)
+    if name_line is None:
+        raise SystemExit(f'no module named {name} in {VENDOR_BP}')
+    if any('check_elf_files:' in line for line in lines[name_line:end]):
+        return False
+    lines.insert(name_line + 1, '    check_elf_files: false,')
+    return True
+
+
 def add_prefer(lines, name):
     """Give one prebuilt the prefer flag, once."""
     name_line, end = block_bounds(lines, name)
@@ -124,6 +135,7 @@ text, count = PREFER.subn('', bp.read_text())
 
 lines = text.splitlines()
 preferred = sum(add_prefer(lines, name) for name in DISPLACE)
+unchecked = sum(add_no_check_elf(lines, name) for name in DROP_SHARED)
 dropped = sum(
     drop_shared(lines, name, libs) for name, libs in DROP_SHARED.items()
 )
@@ -136,5 +148,7 @@ if preferred:
     print(f'{preferred} prefer flags put back in {bp}')
 if dropped:
     print(f'{dropped} shared_libs entries dropped from {bp}')
+if unchecked:
+    print(f'{unchecked} ELF checks turned off in {bp}')
 if services:
     print(f'user root added to {services} stock services')
