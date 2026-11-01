@@ -160,7 +160,8 @@ def parse_bp(path, quiet=False):
             if depth > 0:
                 body.append(lines[i])
             i += 1
-        text = '\n'.join(body)
+        text = COMMENT.sub('', '\n'.join(body))
+        text, version_imports = split_frozen_imports(text)
         found = re.search(r'name: "([^"]+)"', text)
         if not found:
             continue
@@ -184,6 +185,7 @@ def parse_bp(path, quiet=False):
             **libs,
             'defaults': bp_list(text, 'defaults', variables),
             'imports': bp_list(text, 'imports', variables),
+            'version_imports': version_imports,
             'langs': bp_list(text, 'langs', variables),
             'vendor': bool(re.search(
                 r'^\s*(vendor|proprietary|soc_specific): true,?$', text, re.M)),
@@ -201,6 +203,70 @@ def parse_bp(path, quiet=False):
             fail('P2', f'{path}: module "{name}" defined twice')
         modules[name] = info
     return modules
+
+
+def split_frozen_imports(text):
+    """Strip the versions_with_info list, returned as {version: imports}.
+
+    getImportsForVersion in system/tools/aidl/build/aidl_interface.go reads
+    the top-level `imports` for the development version and the entry of each
+    frozen version for that version, so the first `imports` list in the block
+    is only ever the development one.
+    """
+    found = re.search(r'versions_with_info:\s*\[', text)
+    if not found:
+        return text, {}
+    start = found.end() - 1
+    depth = 0
+    end = -1
+    for at in range(start, len(text)):
+        if text[at] == '[':
+            depth += 1
+        elif text[at] == ']':
+            depth -= 1
+            if depth == 0:
+                end = at
+                break
+    if end < 0:
+        return text, {}
+    frozen = {}
+    for entry in re.finditer(r'\{([^{}]*)\}', text[start + 1:end]):
+        block = entry.group(1)
+        version = re.search(r'version: "(\d+)"', block)
+        if version:
+            frozen[version.group(1)] = bp_list(block, 'imports', {})
+    return text[:found.start()] + text[end + 1:], frozen
+
+
+def frozen_versions(modules, iface, version, seen=None):
+    """The interfaces one frozen library links through its pinned imports.
+
+    A frozen version takes the imports its versions_with_info entry pins, and
+    the top-level `imports` only when the version has no entry, so the
+    development imports never reach a frozen library.
+    """
+    seen = set() if seen is None else seen
+    if (iface, version) in seen:
+        return {}
+    seen.add((iface, version))
+    base = modules.get(iface)
+    if not base:
+        return {}
+    imports = base['imports']
+    if version in base['version_imports']:
+        imports = base['version_imports'][version]
+    reached = {}
+    for entry in imports:
+        found = re.match(r'^(?P<parent>.+)-V(?P<number>\d+)$', entry)
+        if not found:
+            continue
+        parent, number = found.group('parent'), found.group('number')
+        for lang in base['langs'] or LANGS:
+            reached.setdefault((parent, lang), set()).add(number)
+        for key, versions in frozen_versions(
+                modules, parent, number, seen).items():
+            reached.setdefault(key, set()).update(versions)
+    return reached
 
 
 def prop_flag(modules, name, prop, seen=None):
@@ -241,10 +307,11 @@ def lib_versions(modules, lib, cache=None, stack=None):
             continue
         iface = found.group('iface')
         reach = {(iface, found.group('lang')): {found.group('version')}}
-        # the interface's own imports are baked into every version of it
+        # one frozen version reaches what its versions_with_info entry pins
         base = modules.get(iface)
         if base and base['type'] == 'aidl_interface':
-            for key, versions in aidl_versions(modules, iface, cache, stack).items():
+            for key, versions in frozen_versions(
+                    modules, iface, found.group('version')).items():
                 reach.setdefault(key, set()).update(versions)
         return reach
     found = UNVERSIONED.match(lib)
@@ -848,6 +915,78 @@ cc_library {
 }
 """
 
+PASS7 = """
+aidl_interface {
+    name: "myiface",
+    srcs: ["IParent.aidl"],
+    versions_with_info: [
+        {
+            version: "1",
+            imports: [],
+        },
+        {
+            version: "5",
+            imports: [],
+        },
+    ],
+}
+
+aidl_interface {
+    name: "mychild",
+    srcs: ["IChild.aidl"],
+    imports: ["myiface-V5"],
+    versions_with_info: [
+        {
+            version: "1",
+            imports: ["myiface-V1"],
+        },
+    ],
+}
+
+cc_library {
+    name: "foobar",
+    shared_libs: ["myiface-V1-ndk", "mychild-V1-ndk"],
+}
+"""
+
+FAIL7 = """
+aidl_interface {
+    name: "myiface",
+    srcs: ["IParent.aidl"],
+    versions_with_info: [
+        {
+            version: "1",
+            imports: [],
+        },
+        {
+            version: "5",
+            imports: [],
+        },
+    ],
+}
+
+aidl_interface {
+    name: "mychild",
+    srcs: ["IChild.aidl"],
+    imports: ["myiface-V5"],
+    versions_with_info: [
+        {
+            version: "1",
+            imports: ["myiface-V1"],
+        },
+        {
+            version: "2",
+            imports: ["myiface-V5"],
+        },
+    ],
+}
+
+cc_library {
+    name: "foobar",
+    shared_libs: ["myiface-V1-ndk", "mychild-V2-ndk"],
+}
+"""
+
 P15_OURS = """
 prebuilt_etc_xml {
     name: "vendor.fragment.xml",
@@ -924,6 +1063,10 @@ CASES = (
     ('same version, two backends', PASS4, None, 0),
     ('import and srcs agree', PASS5, None, 0),
     ('an unversioned backend beside a frozen one', FAIL6, 'foobar', 1),
+    ('frozen imports come from their own entry, not the development list',
+     PASS7, None, 0),
+    ('a frozen entry pinned to another version still counts',
+     FAIL7, 'foobar', 1),
 )
 
 CASES15 = (
