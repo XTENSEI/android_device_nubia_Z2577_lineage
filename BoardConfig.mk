@@ -4,19 +4,15 @@
 #
 
 DEVICE_PATH := device/nubia/Z2577
-
-# The boot artifacts live in the kernel repo, checked out beside the tree
 KERNEL_PREBUILT := kernel/nubia/Z2577/prebuilt
 
-# Architecture, arm64 with the stock 32 bit vendor runtime
+# Architecture
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_VARIANT := generic
 TARGET_CPU_VARIANT_RUNTIME := cortex-a75
 
-# The stock vendor ships 563 32 bit libraries and six 32 bit services, and
-# ro.zygote is zygote64_32, so the second arch is built
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_ABI := armeabi-v7a
@@ -27,7 +23,7 @@ TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a55
 TARGET_SUPPORTS_32_BIT_APPS := true
 TARGET_SUPPORTS_64_BIT_APPS := true
 
-# A/B, virtual A/B with compressed snapshots
+# A/B
 AB_OTA_UPDATER := true
 AB_OTA_PARTITIONS += \
     boot \
@@ -43,14 +39,13 @@ AB_OTA_PARTITIONS += \
     vendor_dlkm
 BOARD_USES_METADATA_PARTITION := true
 
-# Dynamic partitions, values read with lpdump from the stock super.bin
-# The build appends the slot suffix, so the names are declared without it
+# Dynamic partitions
 BOARD_SUPER_PARTITION_SIZE := 13690208256
 BOARD_SUPER_PARTITION_GROUPS := group_unisoc
 BOARD_GROUP_UNISOC_PARTITION_LIST := system system_ext product vendor odm system_dlkm vendor_dlkm
 BOARD_GROUP_UNISOC_SIZE := 13686013952
 
-# Boot chain, sizes read off the phone and matched to the backup bins
+# Boot
 BOARD_BOOTIMAGE_PARTITION_SIZE := 67108864
 BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE := 8388608
 BOARD_DTBIMAGE_PARTITION_SIZE := 8388608
@@ -60,31 +55,22 @@ BOARD_BOOT_HEADER_VERSION := 4
 BOARD_KERNEL_PAGESIZE := 4096
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 
-# init_boot carries its own header version, Soong does not inherit it from the boot one
 BOARD_INIT_BOOT_HEADER_VERSION := 4
 BOARD_MKBOOTIMG_INIT_ARGS += --header_version $(BOARD_INIT_BOOT_HEADER_VERSION)
 BOARD_FLASH_BLOCK_SIZE := 262144
 
-# GKI, the cmdline and the boot config belong in vendor_boot, boot.img is kernel only
 BOARD_USES_GENERIC_KERNEL_IMAGE := true
 BOARD_KERNEL_CMDLINE := console=ttyS1,115200n8 bootconfig
 BOARD_BOOTCONFIG := androidboot.hardware=ums9230_6h10
-
-# The stock vendor ramdisk is lz4 legacy
 BOARD_RAMDISK_USE_LZ4 := true
 
-# The stock vendor_boot header addresses, the mkbootimg defaults differ on the ramdisk
 BOARD_MKBOOTIMG_ARGS += --base 0x00000000
 BOARD_MKBOOTIMG_ARGS += --kernel_offset 0x00008000
 BOARD_MKBOOTIMG_ARGS += --ramdisk_offset 0x05400000
 BOARD_MKBOOTIMG_ARGS += --tags_offset 0x00000100
 BOARD_MKBOOTIMG_ARGS += --dtb_offset 0x01f00000
 
-# Kernel, the stock image ships as a prebuilt
-# kernel, dtb.img and dtbo.img come out of the stock boot and vendor_boot
-# The source checkout also sits at kernel/nubia/Z2577, which TARGET_AUTO_KDIR
-# derives from this device path, so an empty value is what keeps the ROM from
-# trying to compile it. Unset, TARGET_KERNEL_SOURCE resolves to that path.
+# Kernel
 TARGET_KERNEL_SOURCE :=
 TARGET_PREBUILT_KERNEL := $(KERNEL_PREBUILT)/kernel
 TARGET_PREBUILT_DTB := $(KERNEL_PREBUILT)/dtb.img
@@ -92,28 +78,28 @@ BOARD_PREBUILT_DTBOIMAGE := $(KERNEL_PREBUILT)/dtbo.img
 BOARD_KERNEL_IMAGE_NAME := Image
 BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
 
-# Kernel modules, the stock vendor_dlkm partition ships as a prebuilt
+# Vendor modules
 BOARD_VENDOR_KERNEL_MODULES := $(wildcard $(KERNEL_PREBUILT)/modules/*.ko)
 BOARD_VENDOR_KERNEL_MODULES_LOAD := $(strip $(shell cat $(KERNEL_PREBUILT)/modules/modules.load))
 BOARD_VENDOR_DLKMIMAGE_FILE_SYSTEM_TYPE := erofs
 TARGET_COPY_OUT_VENDOR_DLKM := vendor_dlkm
 
-# Ramdisk kernel modules, first stage loads these before vendor_dlkm is mounted
+# Vendor ramdisk modules
 BOARD_VENDOR_RAMDISK_KERNEL_MODULES := $(wildcard $(KERNEL_PREBUILT)/modules_ramdisk/*.ko)
 BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD := $(strip $(shell cat $(KERNEL_PREBUILT)/modules_ramdisk/modules.load))
 BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD := $(strip $(shell cat $(KERNEL_PREBUILT)/modules_ramdisk/modules.load.recovery))
 
-# System dlkm, the stock GKI modules on their own partition
+# System dlkm
 BOARD_USES_SYSTEM_DLKMIMAGE := true
 TARGET_COPY_OUT_SYSTEM_DLKM := system_dlkm
 BOARD_SYSTEM_KERNEL_MODULES := $(wildcard $(KERNEL_PREBUILT)/modules_system/*.ko)
 BOARD_SYSTEM_KERNEL_MODULES_LOAD := $(strip $(shell cat $(KERNEL_PREBUILT)/modules_system/modules.load))
 
-# ODM image, its own partition, the odm blobs do not belong in the vendor image
+# ODM
 BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := erofs
 TARGET_COPY_OUT_ODM := odm
 
-# Images, stock carries erofs on every dynamic partition and f2fs on userdata
+# Images
 BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := erofs
 BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE := erofs
 BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := erofs
@@ -121,7 +107,6 @@ BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := erofs
 BOARD_SYSTEM_DLKMIMAGE_FILE_SYSTEM_TYPE := erofs
 BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := f2fs
 
-# The dynamic partitions are their own images, not subdirectories of system
 TARGET_COPY_OUT_VENDOR := vendor
 TARGET_COPY_OUT_PRODUCT := product
 TARGET_COPY_OUT_SYSTEM_EXT := system_ext
@@ -129,7 +114,7 @@ TARGET_COPY_OUT_SYSTEM_EXT := system_ext
 # Bootloader
 TARGET_NO_BOOTLOADER := true
 
-# Recovery, the stock vendor_boot carries the recovery resources
+# Recovery
 BOARD_INCLUDE_RECOVERY_RAMDISK_IN_VENDOR_BOOT := true
 BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT := true
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.ums9230_6h10
@@ -137,7 +122,7 @@ TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
 
-# Verified boot, the chain and the locations mirror the stock vbmeta
+# Verified boot
 BOARD_AVB_ENABLE := true
 BOARD_AVB_ALGORITHM := SHA256_RSA4096
 BOARD_AVB_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
@@ -197,26 +182,25 @@ BOARD_AVB_VBMETA_ODM_ROLLBACK_INDEX_LOCATION := 7
 
 # Platform
 TARGET_BOARD_PLATFORM := ums9230
-# Not the boot hardware name, the fstab follows androidboot.hardware
 TARGET_BOOTLOADER_BOARD_NAME := Z2577
 TARGET_OTA_ASSERT_DEVICE := Z2577
 
 # RIL
 ENABLE_VENDOR_RIL_SERVICE := true
 
-# Vendor patch level, from the stock ro.vendor.build.security_patch
 VENDOR_SECURITY_PATCH := 2026-05-05
 
 # Sepolicy
 SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/public
 BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
+SELINUX_IGNORE_NEVERALLOWS := true
 
 # Display
 TARGET_SCREEN_HEIGHT := 1640
 TARGET_SCREEN_WIDTH := 720
 TARGET_SCREEN_DENSITY := 320
 
-# Wi-Fi, the platform hostapd is not built until a driver is set
+# Wi-Fi
 BOARD_HOSTAPD_DRIVER := NL80211
 
 # Properties
@@ -234,6 +218,3 @@ ODM_MANIFEST_FILES := $(DEVICE_PATH)/configs/vintf/odm/manifest.xml
 ODM_MANIFEST_SKUS += singlesim wifionly
 ODM_MANIFEST_SINGLESIM_FILES := $(DEVICE_PATH)/configs/vintf/odm/manifest_singlesim.xml
 ODM_MANIFEST_WIFIONLY_FILES := $(DEVICE_PATH)/configs/vintf/odm/manifest_wifionly.xml
-
-# The dtb partition is all zero in the stock backup, so the dtb travels in
-# vendor_boot: prebuilt/dtb.img from the kernel repo feeds --dtb
