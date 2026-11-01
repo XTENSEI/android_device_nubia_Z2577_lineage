@@ -107,7 +107,9 @@ PRODUCT_PACKAGES += \
     unisoc_overlay_core_max_cached_processed_28
 
 # VINTF
+PRODUCT_PACKAGES := $(filter-out vendor_compatibility_matrix.xml,$(PRODUCT_PACKAGES))
 PRODUCT_PACKAGES += \
+    Z2577_compatibility_matrix \
     rebootescrow-default.xml_vendor
 
 # Identity

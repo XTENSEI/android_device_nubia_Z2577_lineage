@@ -34,6 +34,15 @@ prebuilt_overlay {
     device_specific: true,
 }
 
+// The stock vendor compatibility matrix, vintf_data installs no file here
+prebuilt_etc_xml {
+    name: "Z2577_compatibility_matrix",
+    src: "configs/vintf/compatibility_matrix.xml",
+    filename: "compatibility_matrix.xml",
+    sub_dir: "vintf",
+    soc_specific: true,
+}
+
 // The stock VINTF fragment the platform does not declare
 prebuilt_etc_xml {
     name: "rebootescrow-default.xml_vendor",
