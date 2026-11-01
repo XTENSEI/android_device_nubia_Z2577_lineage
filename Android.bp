@@ -34,6 +34,15 @@ prebuilt_overlay {
     device_specific: true,
 }
 
+// The vendor compatibility matrix, DEVICE_MATRIX_FILE installs nothing here
+prebuilt_etc_xml {
+    name: "vendor_compatibility_matrix.xml",
+    src: "configs/vintf/compatibility_matrix.xml",
+    filename: "compatibility_matrix.xml",
+    sub_dir: "vintf",
+    soc_specific: true,
+}
+
 // The stock VINTF fragment the platform does not declare
 prebuilt_etc_xml {
     name: "rebootescrow-default.xml_vendor",

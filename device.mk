@@ -106,8 +106,9 @@ PRODUCT_PACKAGES += \
     WifiOnlySettingsOverlay \
     unisoc_overlay_core_max_cached_processed_28
 
-# VINTF fragments
+# VINTF
 PRODUCT_PACKAGES += \
+    vendor_compatibility_matrix.xml \
     rebootescrow-default.xml_vendor
 
 # Identity
