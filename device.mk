@@ -123,3 +123,12 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/etc/fstab.ums9230_6h10:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.ums9230_6h10
+
+# Recovery USB
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    ro.recovery.usb.vid=18D1 \
+    ro.recovery.usb.adb.pid=D001 \
+    ro.recovery.usb.fastboot.pid=4EE0
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/rootdir/etc/init.recovery.ums9230_6h10.rc:$(TARGET_COPY_OUT_RECOVERY)/root/init.recovery.ums9230_6h10.rc

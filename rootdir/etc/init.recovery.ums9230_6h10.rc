@@ -1,0 +1,8 @@
+#
+# SPDX-FileCopyrightText: The Z2577 Project
+# SPDX-License-Identifier: Apache-2.0
+#
+
+on early-init
+    setprop sys.usb.configfs 1
+    setprop sys.usb.controller musb-hdrc.1.auto
