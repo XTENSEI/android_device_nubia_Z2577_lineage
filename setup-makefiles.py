@@ -31,6 +31,14 @@ ALLOW_UNDEFINED = (
     'liblwpcommon',
 )
 
+# stock soname is not the file it ships under
+SONAME_MISMATCH = (
+    'awinic.audio.effect',
+    'fingerprint.focaltech.default',
+    'libunisocisc',
+    'libunisocrtp',
+)
+
 DROP_SHARED = {
     'android.hardware.graphics.mapper@4.0-impl-arm':
         ('libgralloctypes', 'libnativewindow'),
@@ -156,7 +164,10 @@ text, count = PREFER.subn('', bp.read_text())
 lines = text.splitlines()
 preferred = sum(add_prefer(lines, name) for name in DISPLACE)
 allowed = sum(add_allow_undefined(lines, name) for name in ALLOW_UNDEFINED)
-unchecked = sum(add_no_check_elf(lines, name) for name in DROP_SHARED)
+unchecked = sum(
+    add_no_check_elf(lines, name)
+    for name in (*DROP_SHARED, *SONAME_MISMATCH)
+)
 dropped = sum(
     drop_shared(lines, name, libs) for name, libs in DROP_SHARED.items()
 )
