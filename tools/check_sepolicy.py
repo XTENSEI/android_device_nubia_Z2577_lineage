@@ -2,19 +2,9 @@
 # SPDX-FileCopyrightText: The Z2577 Project
 # SPDX-License-Identifier: Apache-2.0
 #
-# Compile the device sepolicy with checkpolicy, the way the build does, so a
-# syntax error costs a second instead of a build cycle.
-#
-# The platform policy sources come from system/sepolicy. checkpolicy resolves
-# identifiers as it parses and stops at the first one it cannot find, and names a
-# policy dir outside this corpus declares are not there, so those names are stubbed
-# and the run goes on. A platform file this checkpolicy rejects outright is dropped
-# from the corpus instead, and reported: the run has to reach the device files.
-#
-# What this covers: m4 expansion and the checkpolicy parse of every .te file in
-# this tree, the two things the build's vendor_sepolicy.cil.raw step does first.
-# What it does not: file_contexts, property_contexts, service_contexts, and
-# neverallow, which the build evaluates per partition with a mask.
+# Compile the device sepolicy with checkpolicy, the way the build does.
+# Names the corpus does not declare are stubbed, files it rejects are dropped
+# and reported. Contexts files and neverallow are out of scope.
 #
 
 import argparse
@@ -29,8 +19,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 POLICY_VERSION = '30'
 
-# system/sepolicy files that precede the .te files, in Soong's own order.
-# build/soong/policy.go, policyConfOrder, "checkpolicy syntax requires it".
+# system/sepolicy files that precede the .te files, in Soong's order
 SKELETON = (
     'flagging/flagging_macros',
     'private/security_classes',

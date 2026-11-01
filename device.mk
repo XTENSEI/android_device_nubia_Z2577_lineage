@@ -6,13 +6,13 @@
 # Inherit some common Lineage stuff
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 
-# Inherit from the Z2577 vendor blobs
+# Vendor blobs
 $(call inherit-product, vendor/nubia/Z2577/Z2577-vendor.mk)
 
 # APEX
 $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 
-# Virtual A/B with compressed snapshots
+# Virtual A/B
 PRODUCT_VIRTUAL_AB_COMPRESSION_METHOD := lz4
 PRODUCT_VIRTUAL_AB_COMPRESSION_FACTOR := 65536
 $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
@@ -25,31 +25,30 @@ PRODUCT_PACKAGES += \
     android.hardware.boot@1.2-impl.recovery \
     android.hardware.boot@1.2-service
 
-# Power stats, the platform builds the service the blob list used to ship
+# Power stats
 PRODUCT_PACKAGES += \
     android.hardware.power.stats-service.example
 
-# DRM, health and sensors, the platform builds what the blob list used to ship
+# DRM, health and sensors
 PRODUCT_PACKAGES += \
     android.hardware.drm-service.clearkey \
     android.hardware.health-service.example \
     android.hardware.sensors-service.multihal \
     rkp_factory_extraction_tool
 
-# Audio, CAS, composer and OMX, the platform builds these four services
+# Audio, CAS, composer and OMX
 PRODUCT_PACKAGES += \
     android.hardware.audio.service \
     android.hardware.cas@1.2-service \
     android.hardware.graphics.composer@2.4-service \
     android.hardware.media.omx@1.0-service
 
-# KeyMint, the stock service is AIDL V2 and the platform talks V4
-# It carries the keystore permissions file, which declares the newer version
+# KeyMint
 PRODUCT_PACKAGES += \
     android.hardware.security.keymint-service \
     android.hardware.hardware_keystore.xml
 
-# Wi-Fi daemons, the stock copies are AIDL V1 and the platform talks V5 and V3
+# Wi-Fi daemons
 PRODUCT_PACKAGES += \
     hostapd \
     wpa_supplicant
@@ -81,17 +80,17 @@ PRODUCT_PACKAGES += \
     android.hardware.fastboot@1.1-impl-mock \
     fastbootd
 
-# Kernel modules, the loader config and the boot mode lists
+# Kernel modules
 PRODUCT_COPY_FILES += \
     kernel/nubia/Z2577/prebuilt/modules/init.insmod.cfg:vendor_dlkm/lib/modules/init.insmod.cfg \
     kernel/nubia/Z2577/prebuilt/modules/modules.load.cali:vendor_dlkm/lib/modules/modules.load.cali \
     kernel/nubia/Z2577/prebuilt/modules/modules.load.charger:vendor_dlkm/lib/modules/modules.load.charger
 
-# Toybox, the platform builds the binary and its symlink farm
+# Toybox
 PRODUCT_PACKAGES += \
     toybox_vendor
 
-# Vendor tools, the platform builds the same file at the same path
+# Vendor tools
 PRODUCT_PACKAGES += \
     awk_vendor \
     dumpsys_vendor \
@@ -100,24 +99,24 @@ PRODUCT_PACKAGES += \
     sh_vendor \
     toolbox_vendor
 
-# The stock ODM overlays, an apk cannot travel in PRODUCT_COPY_FILES
+# ODM overlays
 PRODUCT_PACKAGES += \
     DualSimOverlay \
     WifiOnlyOverlay \
     WifiOnlySettingsOverlay \
     unisoc_overlay_core_max_cached_processed_28
 
-# Stock VINTF fragments, the platform refuses this metadata in a copy rule
+# VINTF fragments
 PRODUCT_PACKAGES += \
     rebootescrow-default.xml_vendor
 
-# The identity permissions file, the platform declares the newer version
+# Identity
 PRODUCT_PACKAGES += \
     android.hardware.identity_credential.xml
 
 # Partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
-# Rootdir, the fstab has to sit in the first stage ramdisk to mount super
+# Rootdir
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/etc/fstab.ums9230_6h10:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.ums9230_6h10
