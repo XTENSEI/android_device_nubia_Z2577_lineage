@@ -155,16 +155,19 @@ def main():
                 soname, needed, defined, undefined = elf_info(path)
                 declared_sonames.setdefault(name, set()).add(soname)
                 exports[soname] = defined
-                jobs.append((name, label, src, stem, libs, no_check, no_syms,
-                             needed, defined, undefined))
+                jobs.append((kind, name, label, src, stem, libs, no_check, no_syms,
+                             soname, needed, defined, undefined))
 
     undeclared = []
-    unresolved = []
+    mismatched = []
     platform_only = 0
-    for (name, label, src, stem, libs, no_check, no_syms,
-         needed, defined, undefined) in jobs:
+    for (kind, name, label, src, stem, libs, no_check, no_syms,
+         soname, needed, defined, undefined) in jobs:
         if no_check:
             continue
+        installed = (stem + '.so') if stem else os.path.basename(src)
+        if kind == 'cc_prebuilt_library_shared' and soname != installed:
+            mismatched.append((name, label, installed, soname))
         missing = [d for d in needed if d not in IMMUTABLE
                    and not any(declares(dep, d) for dep in libs)]
         if missing:
@@ -185,8 +188,11 @@ def main():
         print(f'  {name} [{label}]  {src}')
         for soname in missing:
             print(f'    {soname}')
+    print(f'DT_SONAME not the installed name: {len(mismatched)}')
+    for name, label, installed, soname in mismatched:
+        print(f'  {name} [{label}]  file {installed}  soname {soname}')
     print(f'undefined symbols left to the platform: {platform_only}')
-    return 1 if undeclared else 0
+    return 1 if undeclared or mismatched else 0
 
 
 if __name__ == '__main__':
