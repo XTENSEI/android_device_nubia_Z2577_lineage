@@ -4429,9 +4429,7 @@ vendor/etc/init/zcustom.rc
 vendor/etc/init/zte_ldd_test.rc
 
 # VINTF
-# the build assembles the matrix, and the two stock fragments below are the
-# platform files or declare a version the platform already declares
-# vendor/etc/vintf/compatibility_matrix.xml
+vendor/etc/vintf/compatibility_matrix.xml
 vendor/etc/vintf/manifest.xml
 vendor/etc/vintf/manifest/ai_engine-default.xml
 vendor/etc/vintf/manifest/android.hardware.camera.provider@2.7-service.xml
