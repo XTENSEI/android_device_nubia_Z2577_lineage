@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from cil import inner, load, strip_version  # noqa: E402
 import service_policy as sp  # noqa: E402
 
-TREE = '/home/andrei/Downloads/Trees/device_nubia_Z2577'
+TREE = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 OUT = os.path.join(TREE, 'sepolicy/vendor')
 AOSP = '/home/andrei/romtools/WORK/aosp_sepolicy'
 SV = '/home/andrei/romtools/WORK/rom/src/stock/vendor/etc/selinux'
