@@ -19,6 +19,7 @@ USER_LINE = re.compile(r'^\s*user\s+')
 
 DISPLACE = (
     'libwifi-hal',
+    'camera.device@1.0-impl',
 )
 
 DROP_SHARED = {
