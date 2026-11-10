@@ -9,6 +9,10 @@ $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 # Vendor blobs
 $(call inherit-product, vendor/nubia/Z2577/Z2577-vendor.mk)
 
+# Unisoc HALs
+$(call inherit-product, hardware/unisoc/unisoc.mk)
+PRODUCT_SOONG_NAMESPACES += hardware/unisoc
+
 # APEX
 $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 
