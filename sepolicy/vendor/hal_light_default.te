@@ -7,3 +7,6 @@ allow hal_light_default property_socket:sock_file write;
 allow hal_light_default init:unix_stream_socket connectto;
 allow hal_light_default vendor_display_prop:property_service set;
 allow hal_light_default vendor_display_prop:file { read getattr map open };
+
+# Logging
+allow hal_light_default logd:unix_stream_socket connectto;
