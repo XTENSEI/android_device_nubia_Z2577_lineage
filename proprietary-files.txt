@@ -737,7 +737,6 @@ vendor/bin/hw/vendor.sprd.hardware.enhance-service
 vendor/bin/hw/vendor.sprd.hardware.hdcp-service-lazy
 vendor/bin/hw/vendor.sprd.hardware.network-service
 vendor/bin/hw/vendor.sprd.hardware.oemlock-service
-vendor/bin/hw/vendor.sprd.hardware.thermal@2.0-service
 vendor/bin/hw/vendor.sprd.hardware.tool-service
 vendor/bin/hw/vendor.sprd.hardware.trusty-service
 vendor/bin/init.ssdaemon_vendor.sh
@@ -764,7 +763,6 @@ vendor/lib/android.hardware.radio@1.1.so
 vendor/lib/android.hardware.radio@1.2.so
 vendor/lib/android.hardware.sensors@2.X-sprd_subhal.so
 vendor/lib/hw/vendor.sprd.hardware.connmgr@1.0-impl.so
-vendor/lib/hw/vendor.sprd.hardware.thermal@2.0-impl.so
 vendor/lib/hw/vendor.sprd.hardware.trusty-impl.so
 vendor/lib/libSprdGpuFilter.so
 vendor/lib/libSprdImageFilter.so
@@ -882,7 +880,6 @@ vendor/lib64/android.hardware.radio@1.1.so
 vendor/lib64/android.hardware.radio@1.2.so
 vendor/lib64/android.hardware.sensors@2.X-sprd_subhal.so
 vendor/lib64/hw/vendor.sprd.hardware.connmgr@1.0-impl.so
-vendor/lib64/hw/vendor.sprd.hardware.thermal@2.0-impl.so
 vendor/lib64/hw/vendor.sprd.hardware.trusty-impl.so
 vendor/lib64/libSprdGpuFilter.so
 vendor/lib64/libSprdImageFilter.so
@@ -4414,7 +4411,6 @@ vendor/etc/init/vendor.sprd.gnss-default.rc
 vendor/etc/init/vendor.sprd.hardware.boot@1.2-service.rc
 vendor/etc/init/vendor.sprd.hardware.broadcastradio@2.0-service.rc
 vendor/etc/init/vendor.sprd.hardware.connmgr@1.0-service.rc
-vendor/etc/init/vendor.sprd.hardware.thermal@2.0-service.rc
 vendor/etc/init/vendor.tool-default.rc
 vendor/etc/init/vowifi.rc
 vendor/etc/init/wcn_chr.rc
@@ -4463,7 +4459,6 @@ vendor/etc/vintf/manifest/vendor-power-default.xml
 vendor/etc/vintf/manifest/vendor-tool-default.xml
 vendor/etc/vintf/manifest/vendor.sprd.gnss-default.xml
 vendor/etc/vintf/manifest/vendor.sprd.hardware.boot@1.2.xml
-vendor/etc/vintf/manifest/vendor.sprd.hardware.thermal@2.0-service.xml
 
 # Seccomp
 vendor/etc/seccomp_policy/android.hardware.media.c2@1.1-unisoc-seccomp_policy
