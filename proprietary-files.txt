@@ -735,7 +735,6 @@ vendor/bin/hw/vendor.sprd.hardware.connmgr@1.0-service
 vendor/bin/hw/vendor.sprd.hardware.cplog_svc-service
 vendor/bin/hw/vendor.sprd.hardware.enhance-service
 vendor/bin/hw/vendor.sprd.hardware.hdcp-service-lazy
-vendor/bin/hw/vendor.sprd.hardware.memtrack-service
 vendor/bin/hw/vendor.sprd.hardware.network-service
 vendor/bin/hw/vendor.sprd.hardware.oemlock-service
 vendor/bin/hw/vendor.sprd.hardware.thermal@2.0-service
@@ -4388,7 +4387,6 @@ vendor/etc/init/init.sqc3_charger.rc
 vendor/etc/init/init.zte.ppt.rc
 vendor/etc/init/init.zte_battery_life.rc
 vendor/etc/init/init.zte_thermal.rc
-vendor/etc/init/memtrack.rc
 vendor/etc/init/modem_control.rc
 vendor/etc/init/network-default.rc
 vendor/etc/init/nfc-service-tms.rc
@@ -4453,7 +4451,6 @@ vendor/etc/vintf/manifest/hdcp-default.xml
 vendor/etc/vintf/manifest/manifest_android.hardware.drm-service.widevine.xml
 vendor/etc/vintf/manifest/manifest_dualsim.xml
 vendor/etc/vintf/manifest/manifest_media_c2_V1_1_unisoc.xml
-vendor/etc/vintf/manifest/memtrack.xml
 vendor/etc/vintf/manifest/network-default.xml
 vendor/etc/vintf/manifest/nfc-service-tms.xml
 # vendor/etc/vintf/manifest/power.stats-default.xml
