@@ -741,7 +741,6 @@ vendor/bin/hw/vendor.sprd.hardware.oemlock-service
 vendor/bin/hw/vendor.sprd.hardware.thermal@2.0-service
 vendor/bin/hw/vendor.sprd.hardware.tool-service
 vendor/bin/hw/vendor.sprd.hardware.trusty-service
-vendor/bin/hw/vendor.sprd.hardware.vibrator-service
 vendor/bin/init.ssdaemon_vendor.sh
 vendor/bin/modem_control
 vendor/bin/nvmerge
@@ -4419,7 +4418,6 @@ vendor/etc/init/vendor.sprd.hardware.broadcastradio@2.0-service.rc
 vendor/etc/init/vendor.sprd.hardware.connmgr@1.0-service.rc
 vendor/etc/init/vendor.sprd.hardware.thermal@2.0-service.rc
 vendor/etc/init/vendor.tool-default.rc
-vendor/etc/init/vibrator.rc
 vendor/etc/init/vowifi.rc
 vendor/etc/init/wcn_chr.rc
 vendor/etc/init/yloglite.rc
@@ -4469,7 +4467,6 @@ vendor/etc/vintf/manifest/vendor-tool-default.xml
 vendor/etc/vintf/manifest/vendor.sprd.gnss-default.xml
 vendor/etc/vintf/manifest/vendor.sprd.hardware.boot@1.2.xml
 vendor/etc/vintf/manifest/vendor.sprd.hardware.thermal@2.0-service.xml
-vendor/etc/vintf/manifest/vibrator.xml
 
 # Seccomp
 vendor/etc/seccomp_policy/android.hardware.media.c2@1.1-unisoc-seccomp_policy
