@@ -224,6 +224,7 @@
 /data/vendor/mediadrm(/.*)?            u:object_r:mediadrm_vendor_data_file:s0
 /(vendor|system/vendor)/bin/hw/android.hardware.light-service.unisoc   u:object_r:hal_light_default_exec:s0
 /(vendor|system/vendor)/bin/hw/android.hardware.vibrator-service.unisoc   u:object_r:hal_vibrator_default_exec:s0
+/(vendor|system/vendor)/bin/hw/android.hardware.memtrack-service.unisoc   u:object_r:hal_memtrack_default_exec:s0
 /(vendor|system/vendor)/bin/hw/vendor.sprd.hardware.oemlock-service        u:object_r:hal_oemlock_default_exec:s0
 /(vendor|system/vendor)/bin/swappiness.sh               u:object_r:swappiness-sh_exec:s0
 /sys/kernel/debug/sipc(/.*)?  u:object_r:debugfs_sipc:s0
