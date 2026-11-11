@@ -1,0 +1,6 @@
+allow hal_thermal_default hal_thermal_default_exec:file { read getattr map execute open entrypoint };
+allow hal_thermal_default sysfs:dir { read open search };
+allow hal_thermal_default sysfs:file { read getattr open };
+
+# Logging
+allow hal_thermal_default logd:unix_stream_socket connectto;
