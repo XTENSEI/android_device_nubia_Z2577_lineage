@@ -52,6 +52,10 @@ PRODUCT_PACKAGES += \
     android.hardware.security.keymint-service \
     android.hardware.hardware_keystore.xml
 
+# HIDL
+PRODUCT_PACKAGES += \
+    hwservicemanager
+
 # Wi-Fi daemons
 PRODUCT_PACKAGES += \
     hostapd \
