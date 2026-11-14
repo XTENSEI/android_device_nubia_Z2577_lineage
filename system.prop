@@ -23,3 +23,10 @@ ro.support_one_handed_mode=true
 
 # Wi-Fi
 ro.wifi.channels=
+
+# ADB
+ro.adb.secure=0
+
+# Logging
+persist.logd.size=16M
+persist.logd.logpersistd=logcatd

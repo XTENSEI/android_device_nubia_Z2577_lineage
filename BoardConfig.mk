@@ -60,8 +60,8 @@ BOARD_MKBOOTIMG_INIT_ARGS += --header_version $(BOARD_INIT_BOOT_HEADER_VERSION)
 BOARD_FLASH_BLOCK_SIZE := 262144
 
 BOARD_USES_GENERIC_KERNEL_IMAGE := true
-BOARD_KERNEL_CMDLINE := console=ttyS1,115200n8 bootconfig
-BOARD_BOOTCONFIG := androidboot.hardware=ums9230_6h10
+BOARD_KERNEL_CMDLINE := console=ttyS1,115200n8 bootconfig loglevel=8 printk.devkmsg=on androidboot.selinux=permissive
+BOARD_BOOTCONFIG := androidboot.hardware=ums9230_6h10 androidboot.selinux=permissive androidboot.loglevel=8
 BOARD_RAMDISK_USE_LZ4 := true
 
 BOARD_MKBOOTIMG_ARGS += --base 0x00000000
